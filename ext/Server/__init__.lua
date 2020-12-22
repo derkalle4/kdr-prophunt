@@ -1,11 +1,13 @@
 -- include shared data
-require('__shared/net')
+require('__shared/DebugMessage')
 require('__shared/GameManager')
 
--- configuration
+-- include server data
 require('configuration')
 require('PropDamage')
 require('PropsManager')
 require('SpawnManager')
-require('GameManager')
 require('PlayerManager')
+require('GameManager')
+
+ServerUtils:SetCustomGameModeName('Prop Hunt')

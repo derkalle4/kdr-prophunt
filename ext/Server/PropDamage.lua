@@ -39,11 +39,13 @@ Hooks:Install('BulletEntity:Collision', 100, function(hook, entity, hit, giverIn
 end)
 
 -- give prop player damage and heal seeker
-NetEvents:Subscribe(NetMessage.C2S_PROP_DAMAGE, function(player, targetId)
+NetEvents:Subscribe(GameMessage.C2S_PROP_DAMAGE, function(player, targetId)
+	debugMessage('[C2S_PROP_DAMAGE] from ' .. player.name .. ' to [Unknown yet] (name should be in next line)')
 	local targetPlayer = PlayerManager:GetPlayerById(targetId)
 	if targetPlayer == nil or not isProp(targetPlayer) or targetPlayer.soldier == nil or player.soldier == nil then
 		return
 	end
+	debugMessage('[C2S_PROP_DAMAGE] from ' .. player.name .. ' to ' .. targetPlayer.name)
 	-- Damage the prop player
 	local propDamage = DamageInfo()
 	propDamage.damage = 8

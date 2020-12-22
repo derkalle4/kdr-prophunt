@@ -1,48 +1,20 @@
 local playerPropNames = {}
 
--- subscribe to level destroy
-Events:Subscribe('Level:Destroy', cleanupRound)
-
--- subscribe to extension unloading
-Events:Subscribe('Extension:Unloading', cleanupRound)
-
--- subscribe to client onready event
-NetEvents:Subscribe(GameMessage.C2S_CLIENT_READY, function(player)
-	-- Sync existing props to connecting clients.
-	for id, bpName in pairs(playerPropNames) do
-		sendUpdateToPlayer(player, id, bpName)
-	end
-end)
-
--- subscribe to client prop change event
-NetEvents:Subscribe(GameMessage.C2S_PROP_CHANGE, function(player, bpName)
-	-- set new client prop
-	setPlayerProp(player, bpName)
-end)
-
--- subscribe to player killed event
-Events:Subscribe('Player:Killed', function(player)
-	removePlayerProp(player)
-end)
-
--- subscribe to player destroyed event
-Events:Subscribe('Player:Destroyed', function(player)
-	removePlayerProp(player)
-end)
-
 -- send data to specific client
 local function sendUpdateToPlayer(player, playerID, prop)
+	debugMessage('[S2C_PROP_SYNC] to ' .. player.name)
 	NetEvents:SendTo(GameMessage.S2C_PROP_SYNC, player, playerID, prop)
 end
 
 -- broadcast changed prop
 local function broadCastClients(playerID, prop)
+	debugMessage('[S2C_PROP_SYNC] broadcast')
 	NetEvents:Broadcast(GameMessage.S2C_PROP_SYNC, playerID, prop)
 end
 
 -- set new prop for player
 function setPlayerProp(player, bpName)
-	print('Setting prop for player')
+	debugMessage('Setting prop for player ' .. player.name)
 	-- player has to be alive
 	if player.soldier == nil then
 		return
@@ -71,6 +43,7 @@ end
 
 -- remove prop from player
 local function removePlayerProp(player)
+	debugMessage('removePlayerProp ' .. player.name)
 	if player.soldier ~= nil then
 		player.soldier.forceInvisible = false
 	end
@@ -81,6 +54,7 @@ end
 
 -- make player to prop
 function makePlayerProp(player)
+	debugMessage('makePlayerProp ' .. player.name)
 	local bpName = 'XP2/Objects/SkybarBarStool_01/SkybarBarStool_01'
 	-- make player invisible
 	player.soldier.forceInvisible = true
@@ -101,6 +75,7 @@ end
 
 -- make player a seeker
 function makePlayerSeeker(player)
+	debugMessage('makePlayerSeeker ' .. player.name)
 	-- make player visible
 	player.soldier.forceInvisible = false
 	-- enable most functions
@@ -120,6 +95,7 @@ end
 
 -- clean up round
 local function cleanupRound()
+	debugMessage('cleanupRound')
 	playerPropNames = {}
 	-- set all players visible again
 	for i, player in pairs(readyPlayers) do
@@ -128,3 +104,37 @@ local function cleanupRound()
 		end
 	end
 end
+
+-- subscribe to level destroy
+Events:Subscribe('Level:Destroy', cleanupRound)
+
+-- subscribe to extension unloading
+Events:Subscribe('Extension:Unloading', cleanupRound)
+
+-- subscribe to client onready event
+NetEvents:Subscribe(GameMessage.C2S_CLIENT_READY, function(player)
+	debugMessage('[C2S_CLIENT_READY] from ' .. player.name)
+	-- Sync existing props to connecting clients.
+	for id, bpName in pairs(playerPropNames) do
+		sendUpdateToPlayer(player, id, bpName)
+	end
+end)
+
+-- subscribe to client prop change event
+NetEvents:Subscribe(GameMessage.C2S_PROP_CHANGE, function(player, bpName)
+	debugMessage('[C2S_PROP_CHANGE] from ' .. player.name)
+	-- set new client prop
+	setPlayerProp(player, bpName)
+end)
+
+-- subscribe to player killed event
+Events:Subscribe('Player:Killed', function(player)
+	debugMessage('[Player:Killed] ' .. player.name)
+	removePlayerProp(player)
+end)
+
+-- subscribe to player destroyed event
+Events:Subscribe('Player:Destroyed', function(player)
+	debugMessage('[Player:Destroyed] ' .. player.name)
+	removePlayerProp(player)
+end)

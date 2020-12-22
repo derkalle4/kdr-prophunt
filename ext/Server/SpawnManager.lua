@@ -4,7 +4,7 @@ local PlayerSpawns = {
 
 -- spawns a seeker
 function spawnSeeker(player)
-	print('Spawning seeker ' .. player.name)
+	debugMessage('Spawning seeker ' .. player.name)
 
 	local seekerSoldier = ResourceManager:SearchForDataContainer('Gameplay/Kits/USSupport')
 
@@ -24,7 +24,7 @@ function spawnSeeker(player)
 
     -- Select spawn point randomly from predetermined list.
 	local spawnTransform = LinearTransform()
-	spawnTransform.trans = startingSpawns[MathUtils:GetRandomInt(1, #startingSpawns)]
+	spawnTransform.trans = PlayerSpawns[MathUtils:GetRandomInt(1, #PlayerSpawns)]
 
 	-- bots.spawn Bot1 Team2 Squad2 -100.150360 37.779110 -62.015625
 	local randomAppearance = appearances[MathUtils:GetRandomInt(1, #appearances)]
@@ -95,7 +95,7 @@ end
 
 -- spawns a prop player
 function spawnProp(player, position)
-    print('Spawning hider ' .. player.name)
+    debugMessage('Spawning prop ' .. player.name)
 
 	local hiderSoldier = ResourceManager:SearchForDataContainer('Gameplay/Kits/RUEngineer')
 	local engiAppearance = ResourceManager:SearchForDataContainer('Persistence/Unlocks/Soldiers/Visual/MP/RU/MP_RU_Engi_Appearance01')
@@ -106,7 +106,7 @@ function spawnProp(player, position)
 	local spawnTransform = LinearTransform()
 
 	if position == nil then
-		position = startingSpawns[MathUtils:GetRandomInt(1, #startingSpawns)]
+		position = PlayerSpawns[MathUtils:GetRandomInt(1, #PlayerSpawns)]
 	end
 
 	spawnTransform.trans = position
@@ -139,6 +139,7 @@ function spawnProp(player, position)
 end
 
 function spawnAllPlayers()
+	debugMessage('spawnAllPlayers')
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then
 			spawnSeeker(player)
@@ -150,10 +151,9 @@ end
 
 -- This starts the round manually, skipping any preround logic.
 -- It also requires the PreRoundEntity to be removed for it to work properly.
-Hooks:Install('EntityFactory:CreateFromBlueprint', 100, function(hook, blueprint, transform, variation, parentRepresentative)
-	if Blueprint(blueprint).name == 'Gameplay/Level_Setups/Complete_setup/Full_TeamDeathmatch' then
+Hooks:Install('EntityFactory:CreateFromblueprint', 100, function(hook, blueprint, transform, variation, parentRepresentative)
+	if blueprint(blueprint).name == 'Gameplay/Level_Setups/Complete_setup/Full_TeamDeathmatch' then
 		local tdmBus = hook:Call()
-
 		for _, entity in pairs(tdmBus.entities) do
 			if entity:Is('ServerInputRestrictionEntity') then
 				entity:FireEvent('Deactivate')
