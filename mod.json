@@ -1,0 +1,15 @@
+{
+	"Name": "Prophunt",
+	"Authors": [ "Kalle" ],
+	"URL": "https://kandru.net",
+	"Description": "Customized Prophunt",
+	"Version": "0.0.1",
+	"HasVeniceEXT": true,
+	"RequiredXPacks": [ 2 ],
+	"Dependencies": {
+		"veniceext": "^1.0.8"
+	},
+	"Tags": [
+		"prop-hunt"
+	]
+}
