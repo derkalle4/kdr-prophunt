@@ -1,16 +1,13 @@
 -- include shared data
 require('__shared/DebugMessage')
 require('__shared/GameManager')
+require('__shared/PlayerManager')
 
 -- include client data
 require('PlayerProp')
 require('PlayerSeeker')
-require('PlayerInput')
 require('PropPicker')
 require('GameUi')
-
--- global variables
-isProp = false
 
 -- player ready event
 Events:Subscribe('Extension:Loaded', function()

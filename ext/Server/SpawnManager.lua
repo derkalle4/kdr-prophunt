@@ -90,7 +90,8 @@ function spawnSeeker(player)
 
 	player.soldier:ApplyCustomization(seekerCustomization)
 
-	player:Fade(1.0, false)
+	player.soldier.health = 100
+	makePlayerSeeker(player)
 end
 
 -- spawns a prop player
@@ -135,7 +136,7 @@ function spawnProp(player, position)
 	player.soldier:ApplyCustomization(hiderCustomization)
 	player.soldier.health = 100
 
-	player.teamId = TeamId.Team2
+	makePlayerProp(player)
 end
 
 function spawnAllPlayers()

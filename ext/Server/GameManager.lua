@@ -61,8 +61,8 @@ local function prepareHidingState()
 	currentState.roundState = GameState.hiding
 	-- broadcast changes to clients
 	broadCastClients(currentState)
-	-- prepare spawned players for a new round
-	prepareSpawnedPlayers()
+	-- disable input of seekers
+	disableSeekerInput()
 	-- SendMessage to players (no gui yet)
 	ChatManager:SendMessage('Prepare to hide!')
 end
@@ -76,15 +76,8 @@ local function prepareSeekingState()
 	currentState.roundState = GameState.seeking
 	-- broadcast changes to clients
 	broadCastClients(currentState)
-	-- Fade in all the seekers and allow them to move again.
-	for _, player in pairs(readyPlayers) do
-		if isSeeker(player) then
-			player:Fade(1.0, false)
-			player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
-			player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
-			player:EnableInput(EntryInputActionEnum.EIAFire, true)
-		end
-	end
+	-- enable input of seekers
+	enableSeekerInput()
 	-- SendMessage to players (no gui yet)
 	ChatManager:SendMessage('Prepare to seek!')
 end

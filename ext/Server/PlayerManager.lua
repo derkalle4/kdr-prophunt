@@ -25,27 +25,6 @@ local function setPlayerSeeker(player)
 	player.teamId = TeamId.Team1
 end
 
--- check whether a player is seeker
-function isSeeker(player)
-	debugMessage('isSeeker ' .. player.name)
-	debugMessage(player.teamId == TeamId.Team1)
-	return player.teamId == TeamId.Team1
-end
-
--- check whether a player is prop
-function isProp(player)
-	debugMessage('isProp ' .. player.name)
-	debugMessage(player.teamId == TeamId.Team2)
-	return player.teamId == TeamId.Team2
-end
-
--- check whether a player is spectator
-function isSpectator(player)
-	debugMessage('isSpectator ' .. player.name)
-	debugMessage(player.teamId == TeamId.TeamNeutral)
-	return player.teamId == TeamId.TeamNeutral
-end
-
 -- get count of seekers
 function getSeekerCount()
 	local count = 0
@@ -130,20 +109,32 @@ function assignTeams()
 	end
 end
 
--- set props to props and seekers to seekers
-function prepareSpawnedPlayers()
+-- disable input from seekers
+function disableSeekerInput()
 	-- Make prop players into props and seekers into seekers.
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then
-			--makePlayerSeeker(player)
-			-- For seekers we also want to fade their screen to black.
+			-- For seekers we want to fade their screen to black.
 			player:Fade(1.0, true)
 			-- And also prevent them from moving.
 			player:EnableInput(EntryInputActionEnum.EIAThrottle, false)
 			player:EnableInput(EntryInputActionEnum.EIAStrafe, false)
 			player:EnableInput(EntryInputActionEnum.EIAFire, false)
-		--else
-		--	makePlayerProp(player)
+		end
+	end
+end
+
+-- enable input from seekers
+function disableSeekerInput()
+	-- Make prop players into props and seekers into seekers.
+	for _, player in pairs(readyPlayers) do
+		if isSeeker(player) then
+			-- For seekers we want to fade their screen to black.
+			player:Fade(1.0, false)
+			-- And also prevent them from moving.
+			player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
+			player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
+			player:EnableInput(EntryInputActionEnum.EIAFire, true)
 		end
 	end
 end

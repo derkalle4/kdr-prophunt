@@ -228,7 +228,7 @@ Events:Subscribe('Client:UpdateInput', function(delta)
 	elapsedTime = elapsedTime + delta
 
 	-- If we're not a prop then we shouldn't be able to pick.
-	if not isProp then
+	if not isProp(PlayerManager:GetLocalPlayer()) then
 		return
 	end
 

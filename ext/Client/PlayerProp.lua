@@ -168,7 +168,7 @@ end
 
 -- prop sync request from server
 NetEvents:Subscribe(GameMessage.S2C_PROP_SYNC, function(playerID, bpName)
-	debugMessage('[S2C_PROP_SYNC] for ' .. playerID .. ' with blueprint ' .. bpName)
+	debugMessage('[S2C_PROP_SYNC] for ' .. playerID .. ' with blueprint ' .. (bpName and bpName or "nil"))
 	-- when prop is nil (no prop anymore, then delete user)
 	if prop == nil then
 		removePlayerProp(playerID)
@@ -183,10 +183,8 @@ NetEvents:Subscribe(GameMessage.S2C_PLAYER_SYNC, function(playerID)
 	local player = PlayerManager:GetPlayerById(playerID)
 	local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
 	-- check for local player and whether he is in the prop team
-	-- TODO: shared checks for "isSeeker" and "isProp"
-	if isLocalPlayer and player.teamId == TeamId.Team2 then
+	if isLocalPlayer and isProp(player) then
 		debugMessage('[S2C_PLAYER_SYNC] for ' .. playerID .. ' is prop')
-		isProp = true
 		Camera:enable()
 	end
 end)
@@ -205,7 +203,7 @@ end)
 
 -- TODO: Do we need to optimize this further?
 Hooks:Install('Entity:ShouldCollideWith', 100, function(hook, entityA, entityB)
-	if not isProp then
+	if not isProp(PlayerManager:GetLocalPlayer()) then
 		return
 	end
 

@@ -22,7 +22,7 @@ end)
 
 Events:Subscribe('UI:DrawHud', function()
 	-- If we're a prop then render a crosshair.
-	if isProp then
+	if isProp(PlayerManager:GetLocalPlayer()) then
 		local windowSize = ClientUtils:GetWindowSize()
 		local cx = math.floor(windowSize.x / 2.0 + 0.5)
 		local cy = math.floor(windowSize.y / 2.0 + 0.5)

@@ -69,6 +69,7 @@ function makePlayerProp(player)
 	player:EnableInput(EntryInputActionEnum.EIAThrowGrenade, false)
 	-- keep parachute enabled for reasons
 	player:EnableInput(EntryInputActionEnum.EIAToggleParachute, true)
+	player:EnableInput(EntryInputActionEnum.EIASprint, true)
 	-- update local player
 	sendPlayerUpdateToPlayer(player)
 end
@@ -87,6 +88,7 @@ function makePlayerSeeker(player)
 	player:EnableInput(EntryInputActionEnum.EIAThrowGrenade, false)
 	-- keep parachute enabled for reasons
 	player:EnableInput(EntryInputActionEnum.EIAToggleParachute, true)
+	player:EnableInput(EntryInputActionEnum.EIASprint, true)
 	-- broadcast change to player
 	broadCastClients(player.id, nil)
 	-- update local player
