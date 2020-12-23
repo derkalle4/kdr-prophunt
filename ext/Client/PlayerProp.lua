@@ -1,5 +1,3 @@
-local Camera = require('Camera')
-
 -- local variables
 local playerPropBps = {}	-- player props blueprints
 local playerProps = {}		-- player props blueprint names
@@ -11,11 +9,11 @@ local bloodFx = nil
 
 local playersHit = {}
 
-function createPlayerProp(player, bpName)
-	debugMessage('createPlayerProp for ' .. player.name .. ' with blueprint ' .. bpName)
+function createPlayerProp(player, bp)
+	debugMessage('createPlayerProp for ' .. player.name)
 	local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
     -- skip when we are this prop already
-    if playerPropBps[player.id] == bpName then
+    if playerPropBps[player.id] == bp then
         return
     end
     -- delete  old prop
@@ -23,12 +21,9 @@ function createPlayerProp(player, bpName)
 		playerProps[player.id].entities[1]:Destroy()
 		playerProps[player.id] = nil
     end
-    -- get real blueprint
-    local realBp = blueprint(bpName)
-    debugMessage('Creating player prop with BP: ' .. realBp.name)
 
     -- create the new player prop
-    local bus = EntityManager:CreateEntitiesFromblueprint(bpName, player.soldier.transform)
+    local bus = EntityManager:CreateEntitiesFromBlueprint(bp, player.soldier.transform)
     -- check whether creation did work or not
     if bus == nil or #bus.entities == 0 then
         debugMessage('Failed to create prop entity for client.')
@@ -36,7 +31,7 @@ function createPlayerProp(player, bpName)
     end
 
     -- cast and initialize the entity
-	playerPropBps[player.id] = bpName
+	playerPropBps[player.id] = bp
 
 	if isLocalPlayer then
 		propInstanceIds = {}
@@ -59,7 +54,6 @@ end
 
 -- check if entity is player prop
 function isPlayerProp(otherEntity)
-	debugMessage('isPlayerProp')
 	for _, bus in pairs(playerProps) do
 		for _, entity in pairs(bus.entities) do
 			if entity.instanceId == otherEntity.instanceId then
@@ -107,18 +101,20 @@ local function removePlayerProp(playerID)
 end
 
 -- player change prop
-local function changePlayerProp(playerID)
+local function changePlayerProp(playerID, bpName)
 	debugMessage('changePlayerProp ' .. playerID)
 	-- get player
     local player = PlayerManager:GetPlayerById(playerID)
     -- check whether player is available
 	if player == nil or player.soldier == nil then
+		debugMessage('changePlayerProp player or soldier nil')
         return
     end
     -- load blueprint
     local blueprint = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Game, bpName)
     -- check whether blueprint exists
     if blueprint == nil then
+    	debugMessage('changePlayerProp blueprint ' .. bpName .. ' is nil')
         return
     end
     -- create player prop
@@ -151,6 +147,7 @@ end
 -- clean up round
 local function cleanupRound()
 	debugMessage('cleanupRound')
+	WebUI:ExecuteJS('setUserTeam(0);')
 	for _, prop in pairs(playerProps) do
 		for _, entity in pairs(prop.entities) do
 			entity:Destroy()
@@ -170,21 +167,23 @@ end
 NetEvents:Subscribe(GameMessage.S2C_PROP_SYNC, function(playerID, bpName)
 	debugMessage('[S2C_PROP_SYNC] for ' .. playerID .. ' with blueprint ' .. (bpName and bpName or "nil"))
 	-- when prop is nil (no prop anymore, then delete user)
-	if prop == nil then
+	if bpName == nil then
 		removePlayerProp(playerID)
 	else
-		changePlayerProp(playerID)
+		changePlayerProp(playerID, bpName)
 	end
 end)
 
 -- make player to prop
-NetEvents:Subscribe(GameMessage.S2C_PLAYER_SYNC, function(playerID)
+NetEvents:Subscribe(GameMessage.S2C_PLAYER_SYNC, function(playerID, teamID)
 	debugMessage('[S2C_PLAYER_SYNC] for ' .. playerID)
 	local player = PlayerManager:GetPlayerById(playerID)
 	local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
 	-- check for local player and whether he is in the prop team
-	if isLocalPlayer and isProp(player) then
-		debugMessage('[S2C_PLAYER_SYNC] for ' .. playerID .. ' is prop')
+	if isLocalPlayer and isPropByTeamID(teamID) then
+		debugMessage('[S2C_PLAYER_SYNC] local player ' .. playerID .. ' is a prop')
+		WebUI:ExecuteJS('setUserTeam(2);')
+		WebUI:ExecuteJS('setUserMessage("Press E on a Prop!");')
 		Camera:enable()
 	end
 end)

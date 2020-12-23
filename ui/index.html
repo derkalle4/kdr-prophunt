@@ -3,19 +3,31 @@
 	<head>
 		<meta charset="utf-8"/>
 		<script type="text/javascript" src="ui.js"></script>
-		<link rel="stylesheet" href="ui.css">
+		<link rel="stylesheet" href="./css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/ui.css">
 	</head>
 <body>
 	<div id="prophunt-roundinfo">
-		<p id="prophunt-roundinfo-msg">Waiting for player</p>
+		<div class="row">
+			<div class="col-sm">
+				<span id="prophunt-seeker-badge" class="badge badge-secondary">Seeker</span>
+				<h3 id="prophunt-seeker-count"></h3>
+			</div>
+			<div class="col-sm">
+				<span id="prophunt-roundstate" class="badge badge-secondary">Info</span>
+				<h2 id="prophunt-roundtimer"></h2>
+				<h6 id="prophunt-spectator-count">0 spectator</h6>
+			</div>
+			<div class="col-sm">
+				<span id="prophunt-hider-badge" class="badge badge-secondary">Hider</span>
+				<h3 id="prophunt-hider-count"></h3>
+			</div>
+		</div>
 	</div>
 	<div id="prophunt-tutorial">
-		<p id="prophunt-tutorial-seeker">
-			Find Props by shooting them
-		</p>
-		<p id="prophunt-tutorial-props">
-			Press E to choose a Prop
-		</p>
+		<div class="card">
+			<div id="prophunt-usermessage" class="card-body"></div>
+		</div>
 	</div>
 </body>
 </html>

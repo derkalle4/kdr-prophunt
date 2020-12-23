@@ -251,9 +251,9 @@ Events:Subscribe('Client:UpdateInput', function(delta)
 		-- If we managed to find one, turn the player into it.
 		if bp ~= nil then
 			-- First create it (so there's no visual delay) and then inform the server.
-			debugMessage('[Client:UpdateInput] for ' .. player.name .. ': has selected blueprint ' .. blueprint(bp).name)
+			debugMessage('[Client:UpdateInput] for ' .. player.name .. ': has selected blueprint ' .. Blueprint(bp).name)
 			createPlayerProp(player, bp)
-			NetEvents:Send(GameMessage.C2S_PROP_CHANGE, blueprint(bp).name)
+			NetEvents:Send(GameMessage.C2S_PROP_CHANGE, Blueprint(bp).name)
 		end
 	end
 end)

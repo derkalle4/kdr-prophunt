@@ -4,7 +4,7 @@ readyPlayers = {}
 -- send players their information
 function sendPlayerUpdateToPlayer(player)
 	debugMessage('[S2C_PLAYER_SYNC] to ' .. player.name)
-	NetEvents:SendTo(GameMessage.S2C_PLAYER_SYNC, player, player.id)
+	NetEvents:SendTo(GameMessage.S2C_PLAYER_SYNC, player, player.id, player.teamId)
 end
 
 -- set player to spectator
@@ -30,11 +30,10 @@ function getSeekerCount()
 	local count = 0
 	for i, player in pairs(readyPlayers) do
 		-- Ignore bots
-		if not player.onlineId ~= 0 and player.soldier ~= nil then
+		if not player.onlineId ~= 0 and player.soldier ~= nil and isSeeker(player) then
 			count = count + 1
 		end
 	end
-	debugMessage('getSeekerCount ' .. count)
 	return count
 end
 
@@ -43,11 +42,22 @@ function getPropCount()
 	local count = 0
 	for i, player in pairs(readyPlayers) do
 		-- Ignore bots and dead players.
-		if player.onlineId ~= 0 and player.soldier ~= nil then
+		if player.onlineId ~= 0 and player.soldier ~= nil and isProp(player) then
 			count = count + 1
 		end
 	end
-	debugMessage('getPropCount ' .. count)
+	return count
+end
+
+-- get count of specator
+function getSpecCount()
+	local count = 0
+	for i, player in pairs(readyPlayers) do
+		-- Ignore bots and dead players.
+		if player.onlineId ~= 0 and player.soldier == nil and isSpectator(player) then
+			count = count + 1
+		end
+	end
 	return count
 end
 
@@ -114,7 +124,8 @@ function disableSeekerInput()
 	-- Make prop players into props and seekers into seekers.
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then
-			-- For seekers we want to fade their screen to black.
+			-- For seekers we want to fade their screen to black
+			-- BUG: does not fade to black completely when it runs directly after spawn
 			player:Fade(1.0, true)
 			-- And also prevent them from moving.
 			player:EnableInput(EntryInputActionEnum.EIAThrottle, false)
@@ -125,7 +136,7 @@ function disableSeekerInput()
 end
 
 -- enable input from seekers
-function disableSeekerInput()
+function enableSeekerInput()
 	-- Make prop players into props and seekers into seekers.
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then

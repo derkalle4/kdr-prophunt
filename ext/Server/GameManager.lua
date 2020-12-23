@@ -2,7 +2,11 @@
 currentState = {
 	roundTimer = 0.0,
 	roundState = GameState.idle,
-	roundStatusMessage = ''
+	roundStatusMessage = 'Waiting',
+	numSeeker = 0,
+	numHider = 0,
+	numSpectator = 0,
+	winner = ''
 }
 
 -- local variables
@@ -18,92 +22,108 @@ end
 -- e.g. GameManager stuff like roundTimer, roundState
 -- e.g. Client UI stuff like roundStatusMessage
 local function broadCastClients(info)
-	debugMessage('[S2C_GAME_SYNC] broadcast')
 	NetEvents:Broadcast(GameMessage.S2C_GAME_SYNC, info)
 end
 
--- things to do when we go in preRound state
+-- things to do when we go in idle state
 local function prepareIdleState()
 	debugMessage('preparing idle state')
 	-- set timer to 0.0
 	currentState.roundTimer = 0.0
-	-- set round state to preRound
+	-- set round state to idle
 	currentState.roundState = GameState.idle
+	-- set info message
+	currentState.roundStatusMessage = 'Waiting'
+	-- set number of seeker and Props
+	currentState.numSeeker = 0
+	currentState.numHider = 0
 	-- broadcast changes to clients
 	broadCastClients(currentState)
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Waiting for players')
 end
 
 -- things to do when we go in preRound state
 local function preparePreRoundState()
 	debugMessage('preparing preRound state')
 	-- set timer to preRound countdown
-	currentState.roundTimer = Config.RoundStartCountdown
+	currentState.roundTimer = Config.PreRoundTime
 	-- set round state to preRound
 	currentState.roundState = GameState.preRound
+	-- set info message
+	currentState.roundStatusMessage = 'PreRound'
+	-- set number of seeker and Props
+	currentState.numSeeker = getSeekerCount()
+	currentState.numHider = getPropCount()
 	-- assign team to player
 	assignTeams()
 	-- spawn players
 	spawnAllPlayers()
 	-- broadcast changes to clients
 	broadCastClients(currentState)
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Waiting for Game to start')
 end
 
 -- things to do when we go in hiding state
 local function prepareHidingState()
 	debugMessage('preparing hiding state')
-	-- set timer to preRound countdown
+	-- set timer to hiding countdown
 	currentState.roundTimer = Config.HidingTime
-	-- set round state to preRound
+	-- set round state to hiding
 	currentState.roundState = GameState.hiding
+	-- set info message
+	currentState.roundStatusMessage = 'Hiding'
+	-- set role for players
+	setAllPlayersRole()
+	-- set number of seeker and Props
+	currentState.numSeeker = getSeekerCount()
+	currentState.numHider = getPropCount()
 	-- broadcast changes to clients
 	broadCastClients(currentState)
 	-- disable input of seekers
 	disableSeekerInput()
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Prepare to hide!')
 end
 
 -- things to do when we go in seeking state
 local function prepareSeekingState()
 	debugMessage('preparing seeking state')
-	-- set timer to preRound countdown
+	-- set timer to seeking countdown
 	currentState.roundTimer = Config.TimeLimit
-	-- set round state to preRound
+	-- set round state to seeking
 	currentState.roundState = GameState.seeking
+	-- set info message
+	currentState.roundStatusMessage = 'Seeking'
+	-- set number of seeker and Props
+	currentState.numSeeker = getSeekerCount()
+	currentState.numHider = getPropCount()
 	-- broadcast changes to clients
 	broadCastClients(currentState)
 	-- enable input of seekers
 	enableSeekerInput()
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Prepare to seek!')
 end
 
 -- things to do when we go in postRound state
 local function preparePostRoundState()
 	debugMessage('preparing postround state')
-	-- set timer to preRound countdown
+	-- set timer to postRound countdown
 	currentState.roundTimer = Config.PostRoundTime
-	-- set round state to preRound
+	-- set round state to postRound
 	currentState.roundState = GameState.postRound
+	-- set info message
+	currentState.roundStatusMessage = 'PostRound'
+	-- set winner
+	if getSeekerCount() == 0 then
+		currentState.winner = 'Hider'
+	elseif getPropCount() == 0 then
+		currentState.winner = 'Seeker'
+	else
+		currentState.winner = 'Hider'
+	end
 	-- broadcast changes to clients
 	broadCastClients(currentState)
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Round end! Do not know who won yet. LOL!')
 end
 
 -- when we are in idle state
 local function inIdleState()
 	-- check whether we have enough players on the server
 	if #readyPlayers < Config.MinPlayers then
-		-- set current roundStatusMessage and send to clients when necessary
-		local tmpRoundStatusMessage = 'Waiting for players to join. Please stand by.'
-		if not currentState.roundStatusMessage == tmpRoundStatusMessage then
-			currentState.roundStatusMessage = tmpRoundStatusMessage
-		end
 		-- end function
 		return
 	end
@@ -114,7 +134,7 @@ end
 -- when we are in preRoundState()
 local function inPreRoundState()
 	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Game starting in ' .. math.floor(currentState.roundTimer))
+	broadCastClients(currentState)
 	-- go into hiding state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		prepareHidingState()
@@ -124,7 +144,7 @@ end
 -- when we are in hiding state
 local function inHidingState()
 	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Time left to hide ' .. math.floor(currentState.roundTimer))
+	broadCastClients(currentState)
 	-- go into seeking state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		prepareSeekingState()
@@ -133,8 +153,8 @@ end
 
 -- when we are in seeking state
 local function inSeekingState()
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Time left to seek ' .. math.floor(currentState.roundTimer))
+	-- broadcast status to clients
+	broadCastClients(currentState)
 	-- go into postround state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		preparePostRoundState()
@@ -147,16 +167,8 @@ end
 
 -- when we are in postRound state
 local function inPostRoundState()
-	-- TODO: Actual messages.
-	if getSeekerCount() == 0 then
-		ChatManager:SendMessage('Props win! (Because Seeker died!)')
-	elseif getPropCount() == 0 then
-		ChatManager:SendMessage('Seekers win!')
-	else
-		ChatManager:SendMessage('Props win! (Because Time is over!)')
-	end
-	-- SendMessage to players (no gui yet)
-	ChatManager:SendMessage('Round restart in ' .. math.floor(currentState.roundTimer))
+	-- broadcast status to clients
+	broadCastClients(currentState)
 	-- go into hiding state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		-- restart map
@@ -166,6 +178,10 @@ end
 
 -- check round state
 local function checkRoundState(state)
+	-- set number of seeker and Props
+	currentState.numSeeker = getSeekerCount()
+	currentState.numHider = getPropCount()
+	currentState.numSpectator = getSpecCount()
 	if state == GameState.idle then				-- idle after mapchange
 		inIdleState()
 	elseif state == GameState.preRound then		-- pre round before game starts
@@ -188,7 +204,7 @@ end)
 
 Events:Subscribe('Engine:Update', function(deltaTime)
 	-- run event only every 1.0 seconds to save CPU time
-	if lastUpdate >= 1.0 then
+	if lastUpdate >= 0.9 then
 		-- check round state
 		checkRoundState(currentState.roundState)
 		lastUpdate = 0.0

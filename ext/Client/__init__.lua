@@ -4,6 +4,8 @@ require('__shared/GameManager')
 require('__shared/PlayerManager')
 
 -- include client data
+Camera = require('Camera')
+require('GameSync')
 require('PlayerProp')
 require('PlayerSeeker')
 require('PropPicker')

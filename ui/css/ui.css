@@ -1,0 +1,36 @@
+body {
+	background-color: transparent;
+}
+
+@font-face {
+	font-family: "bffont";
+	src: url("./bffont.ttf");
+}
+
+#prophunt-roundinfo {
+	position: absolute;
+	left:0;
+	right:0;
+	margin-left: auto;
+	margin-right: auto;
+	width: 600px;
+	height: 50px;
+	text-align: center;
+}
+
+#prophunt-roundinfo h2,
+#prophunt-roundinfo h3,
+#prophunt-roundinfo h6 {
+	color: #fff;
+	-webkit-text-stroke: 1px #000;
+}
+
+#prophunt-tutorial {
+	display: none;
+	position: absolute;
+	padding-left: 15px;
+	left:0;
+	bottom:0;
+	width: 200px;
+	height: 100px;
+}

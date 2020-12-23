@@ -12,3 +12,17 @@ require('PlayerManager')
 require('GameManager')
 
 ServerUtils:SetCustomGameModeName('Prop Hunt')
+
+Events:Subscribe('Player:Chat', function(player, recipientMask, message)
+	if message == '' or player == nil then
+		return
+	end
+
+    if message == 'pos' then
+        if player.soldier == nil then
+            return
+        end
+
+        print(player.soldier.transform)
+    end
+end)

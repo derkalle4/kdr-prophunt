@@ -38,7 +38,7 @@ function setPlayerProp(player, bpName)
 	-- save new prop name for player
 	playerPropNames[player.id] = bpName
 	-- broadcast changes to clients
-	broadCastClients(player, player.id, bpName)
+	broadCastClients(player.id, bpName)
 end
 
 -- remove prop from player
