@@ -15,6 +15,8 @@ Events:Subscribe('Extension:Loaded', function()
     if PlayerManager:GetLocalPlayer() ~= nil then
         debugMessage('Ingame after hot reload. Notifying server that we\'re ready.')
         NetEvents:SendLocal(GameMessage.C2S_CLIENT_READY)
+		-- start web UI
+		WebUI:Init()
     end
 
     -- Wait until we've entered the game to notify the server that we're ready.
@@ -22,6 +24,8 @@ Events:Subscribe('Extension:Loaded', function()
         if message.type == MessageType.CoreEnteredIngameMessage then
             debugMessage('Now ingame. Notifying server that we\'re ready.')
             NetEvents:SendLocal(GameMessage.C2S_CLIENT_READY)
+			-- start web UI
+			WebUI:Init()
         end
     end)
 end)
