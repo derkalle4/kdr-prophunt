@@ -104,7 +104,7 @@ local function doNothing(hook)
 	hook:Return()
 end
 
---Hooks:Install('UI:CreateKillMessage', 100, doNothing)
+Hooks:Install('UI:CreateKillMessage', 100, doNothing)
 Hooks:Install('UI:DrawNametags', 100, doNothing)
 Hooks:Install('UI:DrawMoreNametags', 100, doNothing)
 Hooks:Install('UI:RenderMinimap', 100, doNothing)

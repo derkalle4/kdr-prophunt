@@ -6,7 +6,7 @@ currentState = {
 	numSeeker = 0,
 	numHider = 0,
 	numSpectator = 0,
-	winner = ''
+	winner = 0
 }
 
 -- local variables
@@ -29,7 +29,7 @@ end
 local function prepareIdleState()
 	debugMessage('preparing idle state')
 	-- set timer to 0.0
-	currentState.roundTimer = 0.0
+	currentState.roundTimer = Config.IdleTime
 	-- set round state to idle
 	currentState.roundState = GameState.idle
 	-- set info message
@@ -85,7 +85,7 @@ end
 local function prepareSeekingState()
 	debugMessage('preparing seeking state')
 	-- set timer to seeking countdown
-	currentState.roundTimer = Config.TimeLimit
+	currentState.roundTimer = Config.SeekingTime
 	-- set round state to seeking
 	currentState.roundState = GameState.seeking
 	-- set info message
@@ -110,11 +110,11 @@ local function preparePostRoundState()
 	currentState.roundStatusMessage = 'PostRound'
 	-- set winner
 	if getSeekerCount() == 0 then
-		currentState.winner = 'Hider'
+		currentState.winner = TeamId.Team2
 	elseif getPropCount() == 0 then
-		currentState.winner = 'Seeker'
+		currentState.winner = TeamId.Team1
 	else
-		currentState.winner = 'Hider'
+		currentState.winner = TeamId.Team2
 	end
 	-- broadcast changes to clients
 	broadCastClients(currentState)
@@ -122,13 +122,17 @@ end
 
 -- when we are in idle state
 local function inIdleState()
+	-- broadcast status to clients
+	broadCastClients(currentState)
 	-- check whether we have enough players on the server
-	if #readyPlayers < Config.MinPlayers then
-		-- end function
-		return
+	if #readyPlayers >= Config.MinPlayers then
+		if currentState.roundTimer == 0.0 then
+			-- go into preRound state when idle is finished
+			preparePreRoundState()
+		end
+	else
+		currentState.roundTimer = Config.IdleTime
 	end
-	-- prepare PreRound state
-	preparePreRoundState()
 end
 
 -- when we are in preRoundState()
@@ -138,6 +142,10 @@ local function inPreRoundState()
 	-- go into hiding state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		prepareHidingState()
+	end
+	-- end current state when we have not enough players
+	if Config.MinPlayers > 1 and (getSeekerCount() == 0 or getPropCount() == 0) then
+		preparePostRoundState()
 	end
 end
 
@@ -149,20 +157,26 @@ local function inHidingState()
 	if currentState.roundTimer == 0.0 then
 		prepareSeekingState()
 	end
+	-- end current state when we have not enough players
+	if Config.MinPlayers > 1 and (getSeekerCount() == 0 or getPropCount() == 0) then
+		preparePostRoundState()
+	end
 end
 
 -- when we are in seeking state
 local function inSeekingState()
 	-- broadcast status to clients
 	broadCastClients(currentState)
+	-- give seekers unlimited ammo
+	setAmmoForSeekers()
 	-- go into postround state when pre round is finished
 	if currentState.roundTimer == 0.0 then
 		preparePostRoundState()
 	end
-	-- or go into postround state when one group is "dead"
-	--if currentState.roundState == GameState.seeking and (getSeekerCount() == 0 or getPropCount() == 0) then
-	--	preparePostRoundState()
-	--end
+	-- end current state when we have not enough players
+	if Config.MinPlayers > 1 and (getSeekerCount() == 0 or getPropCount() == 0) then
+		preparePostRoundState()
+	end
 end
 
 -- when we are in postRound state

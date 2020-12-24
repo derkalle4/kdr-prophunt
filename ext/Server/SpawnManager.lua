@@ -180,8 +180,8 @@ end
 
 -- This starts the round manually, skipping any preround logic.
 -- It also requires the PreRoundEntity to be removed for it to work properly.
-Hooks:Install('EntityFactory:CreateFromblueprint', 100, function(hook, blueprint, transform, variation, parentRepresentative)
-	if blueprint(blueprint).name == 'Gameplay/Level_Setups/Complete_setup/Full_TeamDeathmatch' then
+Hooks:Install('EntityFactory:CreateFromBlueprint', 100, function(hook, blueprint, transform, variation, parentRepresentative)
+	if Blueprint(blueprint).name == 'Gameplay/Level_Setups/Complete_setup/Full_TeamDeathmatch' then
 		local tdmBus = hook:Call()
 		for _, entity in pairs(tdmBus.entities) do
 			if entity:Is('ServerInputRestrictionEntity') then

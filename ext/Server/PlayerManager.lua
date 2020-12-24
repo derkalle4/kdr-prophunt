@@ -7,6 +7,20 @@ function sendPlayerUpdateToPlayer(player)
 	NetEvents:SendTo(GameMessage.S2C_PLAYER_SYNC, player, player.id, player.teamId)
 end
 
+-- set ammo for seekers
+function setAmmoForSeekers()
+	for i, player in pairs(readyPlayers) do
+		-- Ignore bots
+		if not player.onlineId ~= 0 and player.soldier ~= nil and isSeeker(player) then
+			local soldierWeapons = player.soldier.weaponsComponent.weapons
+			for _, weapon in ipairs(soldierWeapons) do
+				SoldierWeapon(weapon).secondaryAmmo = 500
+			end
+		end
+	end
+
+end
+
 -- set player to spectator
 local function setPlayerSpectating(player)
 	debugMessage('setPlayerSpectating ' .. player.name)
@@ -121,6 +135,7 @@ end
 
 -- disable input from seekers
 function disableSeekerInput()
+	debugMessage('disableSeekerInput')
 	-- Make prop players into props and seekers into seekers.
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then
@@ -137,6 +152,7 @@ end
 
 -- enable input from seekers
 function enableSeekerInput()
+	debugMessage('enableSeekerInput')
 	-- Make prop players into props and seekers into seekers.
 	for _, player in pairs(readyPlayers) do
 		if isSeeker(player) then

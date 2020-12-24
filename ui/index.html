@@ -2,7 +2,8 @@
 <html id="overlay" lang="en">
 	<head>
 		<meta charset="utf-8"/>
-		<script type="text/javascript" src="ui.js"></script>
+		<script type="text/javascript" src="./js/confetti.min.js"></script>
+		<script type="text/javascript" src="./js/ui.js"></script>
 		<link rel="stylesheet" href="./css/bootstrap.min.css">
 		<link rel="stylesheet" href="./css/ui.css">
 	</head>
@@ -24,10 +25,17 @@
 			</div>
 		</div>
 	</div>
+	<div id="prophunt-centermessage" class="fade-in fade-out"></div>
+	<div id="prophunt-scoreboard">
+		<h3 id="prophunt-scoreboard-title"></h3>
+		<ul id="prophunt-scoreboard-list" class="list-group">
+		</ul>
+	</div>
 	<div id="prophunt-tutorial">
 		<div class="card">
 			<div id="prophunt-usermessage" class="card-body"></div>
 		</div>
 	</div>
+	<canvas id="confetti-canvas"></canvas>
 </body>
 </html>

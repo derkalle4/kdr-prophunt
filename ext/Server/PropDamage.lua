@@ -33,7 +33,7 @@ Hooks:Install('BulletEntity:Collision', 100, function(hook, entity, hit, giverIn
 	-- Damage the player on each hit.
 	if giverInfo.giver.soldier ~= nil then
 		local playerDamage = DamageInfo()
-		playerDamage.damage = 3
+		playerDamage.damage = Config.BulletShootDamage
 		giverInfo.giver.soldier:ApplyDamage(playerDamage)
 	end
 end)
@@ -48,10 +48,10 @@ NetEvents:Subscribe(GameMessage.C2S_PROP_DAMAGE, function(player, targetId)
 	debugMessage('[C2S_PROP_DAMAGE] from ' .. player.name .. ' to ' .. targetPlayer.name)
 	-- Damage the prop player
 	local propDamage = DamageInfo()
-	propDamage.damage = 8
+	propDamage.damage = Config.DamageToPlayerProp
 	targetPlayer.soldier:ApplyDamage(propDamage)
 	-- heal the seeker
 	local shooterHeal = DamageInfo()
-	shooterHeal.damage = -8
+	shooterHeal.damage = Config.SeekerDamageFromPlayerProp
 	player.soldier:ApplyDamage(shooterHeal)
 end)

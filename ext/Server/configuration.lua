@@ -1,8 +1,12 @@
 Config = {
-	TimeLimit = 30, -- Round time limit in seconds for the seeking phase.
-	HidingTime = 30, -- Amount of time in seconds given for props to hide.
-	PreRoundTime = 15, -- Amount of time in seconds before start a new round
-	PostRoundTime = 15, -- Amount of time to wait after the end of a round until a new round is started.
-	MinPlayers = 1, -- Minimum amount of players required to start a game.
-	PercenTageSeeker = 20, -- Percentage of seeker from users connected (default 20)
+	IdleTime = 16, -- 16 - time in seconds in which the idle round will start (even on a new round. Should be above 10 secs to allow all players to load game)
+	PreRoundTime = 15, -- 15 - time in seconds in which players are spawned and before round begins
+	HidingTime = 30, -- 30 - time Hiders do have to hide themselves without being catched by Seekers
+	SeekingTime = 300, -- 300 - time Seekers have to find all Hiders
+	PostRoundTime = 15, -- 15 - time before map reload
+	MinPlayers = 2, -- 2 - Minimum amount of players required to start a game
+	PercenTageSeeker = 30, -- 30 - Percentage of seeker from users connected
+	BulletShootDamage = 2, -- 2 - amount of damage a Seeker gets when he is not shooting at a player prop
+	DamageToPlayerProp = 8, -- 8 - amount of damage a Seeker makes to a Hider with each bullet
+	SeekerDamageFromPlayerProp = -10 -- -10 - amount of "damage" a Seeker gets when hitting a player (usually below 0 to gain health)
 }
