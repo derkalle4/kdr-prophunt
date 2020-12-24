@@ -1,26 +1,4 @@
-local function onUIAction(hook, actionKey)
-    -- Prevent normal UI actions.
-    if actionKey == MathUtils:FNVHash('SelectSpawnPoint') or
-        actionKey == MathUtils:FNVHash('Spawn') or
-        actionKey == MathUtils:FNVHash('SetCustomization') or
-        actionKey == MathUtils:FNVHash('SetWeaponCustomization') or
-        actionKey == MathUtils:FNVHash('StorePrimaryWeaponAccessories') or
-        actionKey == MathUtils:FNVHash('StoreVehicleAccessories') or
-        actionKey == MathUtils:FNVHash('SelectTeam') or
-        actionKey == MathUtils:FNVHash('SquadAction') or
-        actionKey == MathUtils:FNVHash('Suicide') then
-        hook:Return()
-        return
-    end
-end
-
-Events:Subscribe('Extension:Loaded', function()
-    -- Register events / hooks.
-    --Hooks:Install('UI:PushScreen', 100, onPushScreen)
-    --Hooks:Install('UI:CreateAction', 100, onUIAction)
-end)
-
-Events:Subscribe('UI:DrawHud', function()
+local function onUiDrawHud()
 	-- If we're a prop then render a crosshair.
 	if isProp(PlayerManager:GetLocalPlayer()) then
 		local windowSize = ClientUtils:GetWindowSize()
@@ -39,7 +17,7 @@ Events:Subscribe('UI:DrawHud', function()
 		DebugRenderer:DrawLine2D(Vec2(cx, cy + 1), Vec2(cx, cy + 6), Vec4(1, 1, 1, 0.5))
 		DebugRenderer:DrawLine2D(Vec2(cx + 1, cy + 1), Vec2(cx + 1, cy + 6), Vec4(1, 1, 1, 0.5))
 	end
-end)
+end
 
 local function patchInGameMenuMPGraph(instance)
 	if instance == nil then
@@ -62,20 +40,21 @@ end
 
 local ingameMenuMPGraphGuid = Guid('E4386C4A-D5BB-DE8D-67DA-35456C8C51FD', 'D')
 
-Events:Subscribe('Partition:Loaded', function(partition)
+local function onPartitionLoaded(partition)
 	for _, instance in pairs(partition.instances) do
 		if instance.instanceGuid == ingameMenuMPGraphGuid then
 			patchInGameMenuMPGraph(instance)
 		end
 	end
-end)
+end
 
-Hooks:Install('UI:PushScreen', 100, function(hook, screen, priority, parentGraph, stateNodeGuid)
+local function onPushScreen(hook, screen, priority, parentGraph, stateNodeGuid)
 	local asset = UIScreenAsset(screen)
 
 	if asset.name == 'UI/Flow/Screen/SpawnScreenPC' or
 		asset.name == 'UI/Flow/Screen/SpawnButtonScreen' or
-		asset.name == 'UI/Flow/Screen/SpawnScreenTicketCounterTDMScreen' then
+		asset.name == 'UI/Flow/Screen/SpawnScreenTicketCounterTDMScreen' or
+		string.match(string.lower(asset.name), 'scoreboard') then
 		hook:Return()
 		return
 	end
@@ -98,13 +77,41 @@ Hooks:Install('UI:PushScreen', 100, function(hook, screen, priority, parentGraph
 
 		return
 	end
-end)
+end
+
 
 local function doNothing(hook)
 	hook:Return()
 end
 
+-- function to run when user is about to press a button
+local function onPlayerInput()
+	-- show scoreboard
+	if InputManager:WentKeyDown(InputDeviceKeys.IDK_Tab) then
+		WebUI:ExecuteJS('showScoreboard(true);')
+	end
+	-- hide scoreboard
+	if InputManager:WentKeyUp(InputDeviceKeys.IDK_Tab) then
+		WebUI:ExecuteJS('showScoreboard(false);')
+	end
+end
+
+local function onPlayerKilled(player)
+	WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ');')
+end
+
+local function onLevelLoaded(levelName, gameMode)
+	WebUI:ExecuteJS('showUI(true);')
+end
+
 Hooks:Install('UI:CreateKillMessage', 100, doNothing)
 Hooks:Install('UI:DrawNametags', 100, doNothing)
 Hooks:Install('UI:DrawMoreNametags', 100, doNothing)
+Hooks:Install('UI:DrawEnemyNametag', 100, doNothing)
 Hooks:Install('UI:RenderMinimap', 100, doNothing)
+Hooks:Install('UI:PushScreen', 100, onPushScreen)
+Events:Subscribe('Partition:Loaded', onPartitionLoaded)
+Events:Subscribe('UI:DrawHud', onUiDrawHud)
+Events:Subscribe('Player:UpdateInput', onPlayerInput)
+Events:Subscribe('Player:Killed', onPlayerKilled)
+Events:Subscribe('Level:Loaded', onLevelLoaded)

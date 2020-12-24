@@ -183,7 +183,6 @@ NetEvents:Subscribe(GameMessage.S2C_PLAYER_SYNC, function(playerID, teamID)
 	if isLocalPlayer and isPropByTeamID(teamID) then
 		debugMessage('[S2C_PLAYER_SYNC] local player ' .. playerID .. ' is a prop')
 		WebUI:ExecuteJS('setUserTeam(2);')
-		WebUI:ExecuteJS('setUserMessage("Press E on a Prop!");')
 		Camera:enable()
 	end
 end)

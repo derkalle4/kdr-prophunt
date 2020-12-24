@@ -6,7 +6,6 @@ NetEvents:Subscribe(GameMessage.S2C_PLAYER_SYNC, function(playerID, teamID)
 	if isLocalPlayer and isSeekerByTeamID(teamID) then
 		debugMessage('[S2C_PLAYER_SYNC] local player ' .. playerID .. ' is a seeker')
 		WebUI:ExecuteJS('setUserTeam(1);')
-		WebUI:ExecuteJS('setUserMessage("Find all props!");')
 		Camera:disable()
 	end
 end)

@@ -1,7 +1,7 @@
 local blacklist = {
 	['Levels/XP2_Skybar/XP2_Skybar'] = {
 		'invisiblecollision_',
-		'floor_',
+		'/floor_',
 		'facade_',
 		'backdrop_',
 		'cloth_',
@@ -27,35 +27,36 @@ local blacklist = {
 		'smallpillow',
 		'barshelves',
 		'glasswall',
-		'flower',
-		'hoteldoor',
+		--'flower',
+		--'hoteldoor',
 		'spotlight',
 		'wallprops',
 		'light_01',
 		'plant_01',
-		'bonsai',
-		'bushfern',
-		'planters_01',
+		--'bonsai',
+		--'bushfern',
+		--'planters_01',
 		'skybarsigns',
 		'elevator',
 		'mousekeyboard',
 		'paperpile',
-		'ziba_sign',
+		--'ziba_sign',
 		'wallsquares',
 		'pooltrim',
-		'floorvase',
+		--'floorvase',
 		'ceilingpanel',
 		'painting_01',
 		'walldecoration_01',
-		'doorgeneric',
+		'signrestaurantleft',
+		--'doorgeneric',
 		'spline',
-		'parasol',
+		--'parasol',
 		'skybarrooflights',
 		'showermodule',
 		'palace_nightstand',
 		'paintingbig_01',
 		'paintingpanel',
-		'luxurybed_02',
+		--'luxurybed_02',
 		'kitchen_ventilation',
 		'pergola',
 		'railing_',
@@ -68,21 +69,24 @@ local blacklist = {
 local function isMeshWhitelisted(mesh)
 	local meshName = mesh.name
 	meshName = string.lower(meshName)
-
+	debugMessage('isMeshWhitelisted: ' .. meshName)
 	local level = SharedUtils:GetLevelName()
 
 	if level == nil then
+		debugMessage('Level not found. Skipping prop change.')
 		return false
 	end
 
 	local blacklistedMeshes = blacklist[level]
 
 	if blacklistedMeshes == nil then
+		debugMessage('No blacklist found. Skipping prop change.')
 		return false
 	end
 
 	for _, blacklistedMesh in pairs(blacklistedMeshes) do
 		if string.find(meshName, blacklistedMesh) then
+			debugMessage('prop blacklisted. Skipping prop change.')
 			return false
 		end
 	end

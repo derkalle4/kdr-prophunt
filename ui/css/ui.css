@@ -1,10 +1,27 @@
 body {
+  display: none;
 	background-color: transparent;
 }
 
 @font-face {
 	font-family: "bffont";
 	src: url("./bffont.ttf");
+}
+
+.color-red {
+  color: #ff0000 !important;
+}
+
+.color-green {
+  color: #00ff00 !important;
+}
+
+.color-gray {
+  color: #adadad !important;
+}
+
+.color-blue {
+  color: #00bfff !important;
 }
 
 #prophunt-roundinfo {
@@ -14,57 +31,165 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 	width: 600px;
-	height: 50px;
+	height: 142px;
 	text-align: center;
+  background-image:url(../img/ui_header_options_background.png);
+  background-size:100% 100%;
 }
 
+#prophunt-roundinfo h1,
 #prophunt-roundinfo h2,
 #prophunt-roundinfo h3,
 #prophunt-roundinfo h6 {
 	color: #fff;
-	-webkit-text-stroke: 1px #000;
+  font-weight: bold;
+}
+
+#prophunt-roundinfo .row,
+#prophunt-roundinfo .col-sm {
+  height: 46px;
+}
+
+#prophunt-totalplayers {
+  position: absolute;
+  top:0;
+  right:20px;
+  width: 171px;
+  height: 90px;
+  text-align: center;
+  background-image:url(../img/ui_header_counter_background.png);
+  background-size:100% 100%;
+}
+
+#prophunt-totalplayers h1,
+#prophunt-totalplayers h2,
+#prophunt-totalplayers h3,
+#prophunt-totalplayers h6 {
+  color: #fff;
+  font-weight: bold;
+}
+
+#prophunt-totalplayers .row,
+#prophunt-totalplayers .col-sm {
+  height: 46px;
+}
+
+#prophunt-killfeed {
+  position: absolute;
+  top:100px;
+  right: 0px;
+  width: 300px;
+}
+
+#prophunt-killfeed-list li {
+  padding: 5px;
+  background-color: rgb(33, 37, 41, 0.5);
+  color: #fff;
+  font-weight: bold;
 }
 
 #prophunt-centermessage {
-	display: none;
-	width: 1024px;
-	height:150px;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 250px;
-	margin: 0 auto;
-	color: #fff;
-	-webkit-text-stroke: 1px #000;
-	font-size: 80px;
-	font-weight: bold;
-	text-align: center;
+  display: none;
+  width: 1024px;
+  height:150px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 250px;
+  margin: 0 auto;
+  color: #fff;
+  font-size: 80px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#prophunt-idlestatemessage {
+  display: none;
+  background-color: rgb(33, 37, 41, 0.5);
+  width: 1024px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 250px;
+  margin: 0 auto;
+  padding: 15px;
+  color: #fff;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: justiy;
+}
+
+#prophunt-idlestatemessage strong {
+  color: #ff9898;
+}
+
+#prophunt-hider-keys {
+  display: none;
+  position: absolute;
+  top:200px;
+  left:20px;
+  width: 200px;
+}
+
+#prophunt-hider-keys .entry {
+  width: 200px;
+  height: 48px;
+  background-image:url(../img/ui_keyboard_button_background.png);
+  background-size:100% 100%;
+  color: #fff;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+#prophunt-hider-keys .entry span {
+  width: 50px;
+  display: inline-block;
+  padding: 5px;
+  margin-left: 3px;
+  margin-top: 5px;
+  margin-right:10px;
+  font-size: 24px;
+  line-height: 24px;
+  text-align: center;
 }
 
 #prophunt-scoreboard {
+  display: none;
+  background-color: rgb(33, 37, 41, 0.8);
   position: absolute;
-  padding-left: 15px;
+  padding: 15px;
   left: 0;
+  right: 0;
+  margin: 0 auto;
   top: 200px;
-  width: 200px;
-  opacity: 0.3;
+  width: 1024px;
+  opacity: 0.8;
 }
 
+#prophunt-scoreboard table td {
+  padding: 3px;
+  border-color: #fff;
+}
+
+#prophunt-scoreboard .dead {
+  background-color: #bd6e6e;
+}
+
+#prophunt-scoreboard h2,
 #prophunt-scoreboard h3 {
   color: #fff;
-  -webkit-text-stroke: 1px #000;
 }
 
 #prophunt-scoreboard .list-group-item {
   padding: 5px;
 }
 
-#prophunt-tutorial {
+#prophunt-usermessage {
   display: none;
   position: absolute;
   padding-left: 15px;
   left:0;
-  bottom:0;
+  top:15px;
   width: 200px;
   height: 100px;
 }
@@ -72,11 +197,11 @@ body {
 
 /* animations */
 .fade-in {
-  animation: fadeIn ease 10s;
-  -webkit-animation: fadeIn ease 10s;
-  -moz-animation: fadeIn ease 10s;
-  -o-animation: fadeIn ease 10s;
-  -ms-animation: fadeIn ease 10s;
+  animation: fadeIn ease 3s;
+  -webkit-animation: fadeIn ease 3s;
+  -moz-animation: fadeIn ease 3s;
+  -o-animation: fadeIn ease 3s;
+  -ms-animation: fadeIn ease 3s;
 }
 @keyframes fadeIn {
   0% {
@@ -123,11 +248,11 @@ body {
 }
 
 .fade-out {
-  animation: fadeOut ease 8s;
-  -webkit-animation: fadeOut ease 8s;
-  -moz-animation: fadeOut ease 8s;
-  -o-animation: fadeOut ease 8s;
-  -ms-animation: fadeOut ease 8s;
+  animation: fadeOut ease 3s;
+  -webkit-animation: fadeOut ease 3s;
+  -moz-animation: fadeOut ease 3s;
+  -o-animation: fadeOut ease 3s;
+  -ms-animation: fadeOut ease 3s;
 }
 @keyframes fadeOut {
   0% {

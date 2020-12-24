@@ -141,6 +141,14 @@ local function pickProp()
 		end
 
 		local mesh = getMesh(entity)
+		-- check whether this mesh is the current player mesh (and ignore it then to get the next one)
+		local currentPlayerMesh = getMesh(player.soldier)
+		if currentPlayerMesh ~= nil then
+			debugMessage('current local player mesh is ' .. currentPlayerMesh)
+			if mesh == currentPlayerMesh then
+				goto continue
+			end
+		end
 
 		-- If we couldn't get a mesh then it means this isn't a supported entity.
 		if mesh == nil then
@@ -165,6 +173,7 @@ local function pickProp()
 		-- No intersection found
 		if intersection == false then
 			table.insert(raycastObjects, { aabb, aabbTrans, mesh.name, nil, nil, false })
+			table.insert(candidates, { mesh, spatialEntity, {0.0, hitDistance * 2.0} })
 			goto continue
 		end
 

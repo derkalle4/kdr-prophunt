@@ -3,6 +3,7 @@ currentState = {
 	roundTimer = 0.0,
 	roundState = GameState.idle,
 	roundStatusMessage = 'Waiting',
+	numPlayer = 0,
 	numSeeker = 0,
 	numHider = 0,
 	numSpectator = 0,
@@ -37,6 +38,7 @@ local function prepareIdleState()
 	-- set number of seeker and Props
 	currentState.numSeeker = 0
 	currentState.numHider = 0
+	currentState.numPlayer = 0
 	-- broadcast changes to clients
 	broadCastClients(currentState)
 end
@@ -50,9 +52,6 @@ local function preparePreRoundState()
 	currentState.roundState = GameState.preRound
 	-- set info message
 	currentState.roundStatusMessage = 'PreRound'
-	-- set number of seeker and Props
-	currentState.numSeeker = getSeekerCount()
-	currentState.numHider = getPropCount()
 	-- assign team to player
 	assignTeams()
 	-- spawn players
@@ -72,9 +71,6 @@ local function prepareHidingState()
 	currentState.roundStatusMessage = 'Hiding'
 	-- set role for players
 	setAllPlayersRole()
-	-- set number of seeker and Props
-	currentState.numSeeker = getSeekerCount()
-	currentState.numHider = getPropCount()
 	-- broadcast changes to clients
 	broadCastClients(currentState)
 	-- disable input of seekers
@@ -90,9 +86,6 @@ local function prepareSeekingState()
 	currentState.roundState = GameState.seeking
 	-- set info message
 	currentState.roundStatusMessage = 'Seeking'
-	-- set number of seeker and Props
-	currentState.numSeeker = getSeekerCount()
-	currentState.numHider = getPropCount()
 	-- broadcast changes to clients
 	broadCastClients(currentState)
 	-- enable input of seekers
@@ -196,6 +189,7 @@ local function checkRoundState(state)
 	currentState.numSeeker = getSeekerCount()
 	currentState.numHider = getPropCount()
 	currentState.numSpectator = getSpecCount()
+	currentState.numPlayer = getPlayerCount()
 	if state == GameState.idle then				-- idle after mapchange
 		inIdleState()
 	elseif state == GameState.preRound then		-- pre round before game starts

@@ -11,29 +11,97 @@
 	<div id="prophunt-roundinfo">
 		<div class="row">
 			<div class="col-sm">
-				<span id="prophunt-seeker-badge" class="badge badge-secondary">Seeker</span>
-				<h3 id="prophunt-seeker-count"></h3>
+				<h2 id="prophunt-roundinfo-seeker-title">seeker</h2>
 			</div>
 			<div class="col-sm">
-				<span id="prophunt-roundstate" class="badge badge-secondary">Info</span>
-				<h2 id="prophunt-roundtimer"></h2>
-				<h6 id="prophunt-spectator-count">0 spectator</h6>
+				<h2 id="prophunt-spectator-count" class="color-gray">0 spectator</h2>
 			</div>
 			<div class="col-sm">
-				<span id="prophunt-hider-badge" class="badge badge-secondary">Hider</span>
-				<h3 id="prophunt-hider-count"></h3>
+				<h2 id="prophunt-roundinfo-hider-title">hider</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm">
+				<h2 id="prophunt-seeker-count">0</h2>
+			</div>
+			<div class="col-sm">
+				<h2 id="prophunt-roundstate" class="color-blue">Waiting</h2>
+			</div>
+			<div class="col-sm">
+				<h2 id="prophunt-hider-count">0</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm"></div>
+			<div class="col-sm">
+				<h1 id="prophunt-roundtimer">0</h1>
+			</div>
+			<div class="col-sm"></div>
+		</div>
+	</div>
+
+	<div id="prophunt-totalplayers">
+		<div class="row">
+			<div class="col-sm">
+				<h2 class="color-blue">Player</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm">
+				<h2 id="prophunt-totalplayers-count">0</h2>
 			</div>
 		</div>
 	</div>
-	<div id="prophunt-centermessage" class="fade-in fade-out"></div>
-	<div id="prophunt-scoreboard">
-		<h3 id="prophunt-scoreboard-title"></h3>
-		<ul id="prophunt-scoreboard-list" class="list-group">
-		</ul>
+
+	<div id="prophunt-killfeed">
+		<ul id="prophunt-killfeed-list" class="list-group"></ul>
 	</div>
-	<div id="prophunt-tutorial">
+
+	<div id="prophunt-centermessage" class="fade-in fade-out"></div>
+
+	<div id="prophunt-idlestatemessage">
+		<h1>welcome to prop hunt</h1>
+		<p>In this game mode you join either <strong>Seekers</strong> or <strong>Hiders</strong>. <strong>Seekers</strong> need to chase and kill <strong>Hiders</strong> but loose health every time they shoot. If they kill a <strong>Hider</strong> they will regain health. <strong>Hiders</strong> need to change their look by selecting a prop from the map and hide as good as possible to win after the round is over.</p>
+		<p>The game will automatically start when <strong>2</strong> or more players are connected. You cannot join during an round and will automatically join next round.</p>
+		<p><strong>Spectator Mode</strong> is on the way! Please stay patient!</p>
+		<h2>currently waiting</h2>
+		<div id="prophunt-idlestatemessage-players"></div>
+	</div>
+
+	<div id="prophunt-hider-keys">
+		<div class="entry"><span>E</span>Change Prop</div>
+		<div class="entry"><span>ALT</span>Free Look</div>
+	</div>
+
+	<div id="prophunt-scoreboard">
+		<div class="row">
+			<div class="col-sm">
+				<h2>Seeker</h2>
+				<table id="prophunt-scoreboard-list-seeker" class="table table-dark">
+					<tbody>
+					</tbody>
+				</table>
+				<div id="prophunt-scoreboard-list-seeker-small"></div>
+			</div>
+			<div class="col-sm">
+				<h2>Hider</h2>
+				<table id="prophunt-scoreboard-list-hider" class="table table-dark">
+					<tbody>
+					</tbody>
+				</table>
+				<div id="prophunt-scoreboard-list-hider-small"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<h3>Spectator</h3>
+				<div id="prophunt-scoreboard-list-spectator"></div>
+			</div>
+		</div>
+	</div>
+	<div id="prophunt-usermessage">
 		<div class="card">
-			<div id="prophunt-usermessage" class="card-body"></div>
+			<div id="prophunt-usermessage-text" class="card-body"></div>
 		</div>
 	</div>
 	<canvas id="confetti-canvas"></canvas>

@@ -67,8 +67,20 @@ end
 function getSpecCount()
 	local count = 0
 	for i, player in pairs(readyPlayers) do
-		-- Ignore bots and dead players.
+		-- Ignore bots and only dead players
 		if player.onlineId ~= 0 and player.soldier == nil and isSpectator(player) then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+-- get count of player
+function getPlayerCount()
+	local count = 0
+	for i, player in pairs(readyPlayers) do
+		-- ignore bots
+		if player.onlineId ~= 0 then
 			count = count + 1
 		end
 	end

@@ -15,6 +15,8 @@ end
 -- set new prop for player
 function setPlayerProp(player, bpName)
 	debugMessage('Setting prop for player ' .. player.name)
+	-- make player invisible
+	player.soldier.forceInvisible = true
 	-- player has to be alive
 	if player.soldier == nil then
 		return
@@ -56,10 +58,10 @@ end
 function makePlayerProp(player)
 	debugMessage('makePlayerProp ' .. player.name)
 	local bpName = 'XP2/Objects/SkybarBarStool_01/SkybarBarStool_01'
-	-- make player invisible
-	player.soldier.forceInvisible = true
-	-- Set default prop for player.
-	setPlayerProp(player, bpName)
+	-- Set default prop for player when he did not choose one already
+	if playerPropNames[player.id] == nil then
+		setPlayerProp(player, bpName)
+	end
 	-- remove most functions
 	player:EnableInput(EntryInputActionEnum.EIAFire, false)
 	player:EnableInput(EntryInputActionEnum.EIAZoom, false)

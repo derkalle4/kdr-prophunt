@@ -1,39 +1,51 @@
 local oldState = -1
 
 NetEvents:Subscribe(GameMessage.S2C_GAME_SYNC, function(info)
-	WebUI:ExecuteJS('setRoundInfo(' .. info.numSeeker .. ', ' .. info.numHider .. ', ' .. info.numSpectator .. ', "' .. info.roundStatusMessage .. '", ' .. math.floor(info.roundTimer) .. ');')
+	WebUI:ExecuteJS('setRoundInfo(' .. info.numPlayer .. ',' .. info.numSeeker .. ', ' .. info.numHider .. ', ' .. info.numSpectator .. ', "' .. info.roundStatusMessage .. '", ' .. math.floor(info.roundTimer) .. ');')
 
 	if oldState ~= info.roundState then
+		local localPlayer = PlayerManager:GetLocalPlayer()
 		if info.roundState == GameState.idle then				-- idle after mapchange
-			WebUI:ExecuteJS('setUserMessage("Waiting for players");')
 			WebUI:ExecuteJS('setCenterMessage("");')
+			WebUI:ExecuteJS('showHiderKeys(false);')
+			WebUI:ExecuteJS('showIdleStateMessage(true);')
 			oldState = GameState.idle
 		elseif info.roundState == GameState.preRound then		-- pre round before game starts
-			WebUI:ExecuteJS('setUserMessage("");')
 			oldState = GameState.preRound
+			WebUI:ExecuteJS('showIdleStateMessage(false);')
+			if localPlayer.teamId == 2 then
+				WebUI:ExecuteJS('showHiderKeys(true);')
+			end
 		elseif info.roundState == GameState.hiding then		-- pre round before game starts
-			local localPlayer = PlayerManager:GetLocalPlayer()
 			-- play round start sound
 			WebUI:ExecuteJS('playSound("roundstart1");')
 			if localPlayer.teamId == 1 then
-				WebUI:ExecuteJS('setCenterMessage("Wait until Hiders are hidden", 5);')
+				WebUI:ExecuteJS('setCenterMessage("wait until hiders are hidden", 7);')
 			elseif localPlayer.teamId == 2 then
-				WebUI:ExecuteJS('setCenterMessage("Hide yourself now!", 5);')
+				WebUI:ExecuteJS('setCenterMessage("prepare to hide!", 7);')
 			else
-				WebUI:ExecuteJS('setCenterMessage("a new round is starting", 5);')
+				WebUI:ExecuteJS('setCenterMessage("hiders going to hide themself", 7);')
 			end
 			oldState = GameState.hiding
+		elseif info.roundState == GameState.seeking then
+			if localPlayer.teamId == 1 then
+				WebUI:ExecuteJS('setCenterMessage("kill all props!", 7);')
+			elseif localPlayer.teamId == 2 then
+				WebUI:ExecuteJS('setCenterMessage("hide now!", 7);')
+			else
+				WebUI:ExecuteJS('setCenterMessage("seekers starting their search", 7);')
+			end
+			oldState = GameState.seeking
 		elseif info.roundState == GameState.postRound then	-- end of game
 			if oldState ~= info.roundState then
-				local localPlayer = PlayerManager:GetLocalPlayer()
 				if info.winner == 1 then
-					WebUI:ExecuteJS('setCenterMessage("Seekers win!");')
+					WebUI:ExecuteJS('setCenterMessage("seekers win!", 15);')
 				else
-					WebUI:ExecuteJS('setCenterMessage("Hiders win!");')
+					WebUI:ExecuteJS('setCenterMessage("hiders win!", 15);')
 				end
-				WebUI:ExecuteJS('setUserMessage("");')
 				WebUI:ExecuteJS('postRoundOverlay(' .. info.winner .. ', ' .. localPlayer.teamId .. ');')
 				WebUI:ExecuteJS('setUserTeam(0);')
+				WebUI:ExecuteJS('showHiderKeys(false);')
 				oldState = GameState.postRound
 			end
 		end
@@ -49,6 +61,7 @@ local function UIsendPlayerData()
 	local players = PlayerManager:GetPlayers()
 	for _, player in pairs(players) do
 		table.insert(data, {
+			id = player.id,
 			alive = player.soldier ~= nil,
 			username = player.name,
 			team = player.teamId,
