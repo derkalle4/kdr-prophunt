@@ -91,7 +91,8 @@ local function doNothing(hook)
 end
 
 -- when user is about to press a button
-local function onPlayerInput()
+local DisconnectInSeconds = 0.0
+local function onPlayerInput(player, deltaTime)
     -- show scoreboard
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_Tab) then
         -- show scoreboard on UI
@@ -105,7 +106,14 @@ local function onPlayerInput()
 
     -- quit
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_Escape) then
-        NetEvents:SendLocal(GameMessage.C2S_QUIT_GAME)
+        WebUI:ExecuteJS('setUserMessage("Hold ESC to disconnect")')
+        DisconnectInSeconds = DisconnectInSeconds + deltaTime
+        if DisconnectInSeconds >= 0.3 then
+            NetEvents:SendLocal(GameMessage.C2S_QUIT_GAME)
+        end
+    elseif InputManager:WentKeyUp(InputDeviceKeys.IDK_Escape) then
+        DisconnectInSeconds = 0.0
+        WebUI:ExecuteJS('setUserMessage("")')
     end
 end
 
