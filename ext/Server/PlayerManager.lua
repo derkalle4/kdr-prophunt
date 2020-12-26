@@ -40,7 +40,7 @@ end
 -- set player to seeker
 local function setPlayerSeeker(player)
     debugMessage('setPlayerSeeker ' .. player.name)
-    player.teamId = TeamId.Team2
+    player.teamId = TeamId.Team1
 end
 
 -- get count of seekers
