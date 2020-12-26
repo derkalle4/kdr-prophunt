@@ -41,13 +41,15 @@ function IngameSpectator:_onEngineUpdate(deltaTime)
     if self._lastEngineUpdate >= 0.01 then
         self._lastEngineUpdate = 0.0
         -- automatic route selection for freecam (no real freecam yet just automatic routes for "movie like way to show current round")
-        if self:isEnabled() and self._spectatedPlayer == nil then
+        local level = SharedUtils:GetLevelName()
+        local tmpSpectatorRoutes = IngameSpectatorRoutes[level]
+        if self:isEnabled() and self._spectatedPlayer == nil and level ~= nil and tmpSpectatorRoutes ~= nil then
             -- select new automatic route when round is complete or not started yet
             if #self._freecamAutomaticRoute == 0 or Vec3(self._freecamAutomaticRoute[2][1], self._freecamAutomaticRoute[2][2], self._freecamAutomaticRoute[2][3]):Distance(self._freecamTrans.trans) <= 3.0  then
                 -- get new automatic route
                 math.randomseed(SharedUtils:GetTimeMS())
-                local randomNumber = MathUtils:GetRandomInt(1, #IngameSpectatorRoutes)
-                self._freecamAutomaticRoute = IngameSpectatorRoutes[randomNumber]
+                local randomNumber = MathUtils:GetRandomInt(1, #tmpSpectatorRoutes)
+                self._freecamAutomaticRoute = tmpSpectatorRoutes[randomNumber]
                 local startpoint = self._freecamAutomaticRoute[1]
                 local viewpoint = self._freecamAutomaticRoute[3]
                 local name = self._freecamAutomaticRoute[5]
@@ -265,6 +267,7 @@ end
 function IngameSpectator:spectatePlayer(player)
     debugMessage('IngameSpectator spectatePlayer ')
     if not self:isEnabled() then
+        debugMessage('not enabled')
         return
     end
 
@@ -277,6 +280,7 @@ function IngameSpectator:spectatePlayer(player)
 
     -- We can't spectate the local player.
     if localPlayer == player then
+        self:switchToFreecam()
         return
     end
 
@@ -287,7 +291,14 @@ function IngameSpectator:spectatePlayer(player)
         return
     end
 
-    WebUI:ExecuteJS('setSpectatorMessage("' .. player.name .. '");')
+    local teamName = ''
+    if isProp(player) then
+        teamName = '[HIDER] '
+    elseif isSeeker(player) then
+        teamName = '[SEEKER] '
+    end
+
+    WebUI:ExecuteJS('setSpectatorMessage("' .. teamName .. player.name .. '");')
 
     self._spectatedPlayer = player
     SpectatorManager:SpectatePlayer(self._spectatedPlayer, self._firstPerson)
