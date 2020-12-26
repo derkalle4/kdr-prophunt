@@ -1,0 +1,2 @@
+-- SoundManager
+-- does manage sounds that players can make to reveal their position <3
