@@ -15,6 +15,8 @@ local function inPreRoundState(info, localPlayer)
     WebUI:ExecuteJS('setSpectatorMessage("");')
     -- hide welcome message
     WebUI:ExecuteJS('showWelcomeMessage(false);')
+    -- show killfeed
+    WebUI:ExecuteJS('showKillfeed(true);')
 end
 
 -- when we are in hiding state
@@ -36,6 +38,8 @@ local function inHidingState(info, localPlayer)
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
     end
+    -- show killfeed
+    WebUI:ExecuteJS('showKillfeed(true);')
 end
 
 -- when we are in seeking state
@@ -53,6 +57,8 @@ local function inSeekingState(info, localPlayer)
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
     end
+    -- show killfeed
+    WebUI:ExecuteJS('showKillfeed(true);')
 end
 
 -- when we are in postRound state
@@ -73,6 +79,8 @@ local function inPostRoundState(info, localPlayer)
     WebUI:ExecuteJS('showSpectatorKeys(false);')
     -- hide health bar
     WebUI:ExecuteJS('showHealthBar(false);')
+    -- hide killfeed
+    WebUI:ExecuteJS('showKillfeed(false);')
 end
 
 -- synchronisation of each server game object
