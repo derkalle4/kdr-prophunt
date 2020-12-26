@@ -14,6 +14,7 @@ require('PropsManager')
 require('SpawnManager')
 require('PlayerManager')
 require('GameManager')
+require('SoundManager')
 
 -- set custom gamemode name
 ServerUtils:SetCustomGameModeName('Prop Hunt')

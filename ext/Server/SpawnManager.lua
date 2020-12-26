@@ -114,6 +114,10 @@ function spawnSeeker(player)
     player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
     player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
     player:EnableInput(EntryInputActionEnum.EIAFire, false)
+    -- disable spotting
+    player:EnableInput(EntryInputActionEnum.EIAThreeDimensionalMap, false)
+    player:EnableInput(EntryInputActionEnum.EIAShowCommoRose, false)
+    player:EnableInput(EntryInputActionEnum.EIAShowLeaderCommoRose, false)
 end
 
 -- spawns a prop player
@@ -162,6 +166,10 @@ function spawnProp(player, position)
     player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
     player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
     player:EnableInput(EntryInputActionEnum.EIAFire, false)
+    -- disable spotting
+    player:EnableInput(EntryInputActionEnum.EIAThreeDimensionalMap, false)
+    player:EnableInput(EntryInputActionEnum.EIAShowCommoRose, false)
+    player:EnableInput(EntryInputActionEnum.EIAShowLeaderCommoRose, false)
 end
 
 function spawnAllPlayers()
