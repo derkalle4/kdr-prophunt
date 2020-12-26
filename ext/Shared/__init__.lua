@@ -59,6 +59,37 @@ local function onPartitionLoaded(partition)
             spotting.coolDownHistoryTime = 9999.0
             spotting.coolDownAllowedSpotsWithinHistory = 0
         end
+        -- remove blue background
+        if instance.instanceGuid == Guid('9CDAC6C3-9D3E-48F1-B8D9-737DB28AE936') then -- menu UI/Assets/MenuVisualEnvironment
+            local s_Instance = ColorCorrectionComponentData(instance)
+            s_Instance:MakeWritable()
+            s_Instance.enable = false
+            s_Instance.brightness = Vec3(1, 1, 1)
+            s_Instance.contrast = Vec3(1, 1, 1)
+            s_Instance.saturation = Vec3(1, 1, 1)
+        end
+        -- remove blur
+        if instance.instanceGuid == Guid('52FD86B6-00BA-45FC-A87A-683F72CA6916') then -- menu UI/Assets/MenuVisualEnvironment
+            local s_Instance = DofComponentData(instance)
+            s_Instance:MakeWritable()
+            s_Instance.enable = false
+            s_Instance.blurAdd = 0.0
+        end
+        -- remove outofcombat color correction
+        if instance.instanceGuid == Guid('46FE1C37-5B7E-490C-8239-2EB2D6045D7B') then -- oob FX/VisualEnviroments/OutofCombat/OutofCombat
+            local s_Instance = ColorCorrectionComponentData(instance)
+            s_Instance:MakeWritable()
+            s_Instance.enable = false
+            s_Instance.brightness = Vec3(1, 1, 1)
+            s_Instance.contrast = Vec3(1, 1, 1)
+            s_Instance.saturation = Vec3(1, 1, 1)
+        end
+        -- remove out of combat filmgrain
+        if instance.instanceGuid == Guid('36C2CEAE-27D2-45F3-B3F5-B831FE40ED9B') then -- FX/VisualEnviroments/OutofCombat/OutofCombat
+            local s_Instance = FilmGrainComponentData(instance)
+            s_Instance:MakeWritable()
+            s_Instance.enable = false
+        end
     end
 end
 
