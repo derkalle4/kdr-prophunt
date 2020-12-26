@@ -282,7 +282,7 @@ function IngameSpectator:spectatePlayer(player)
 
     -- If we don't allow spectating everyone make sure that this player
     -- is in the same team as the local player.
-    if localPlayer.alive or (not self._allowSpectateAll and localPlayer.teamId ~= player.teamId) then
+    if localPlayer.alive and (not self._allowSpectateAll and localPlayer.teamId ~= player.teamId) then
         debugMessage('local player still alive')
         return
     end
