@@ -291,14 +291,7 @@ function IngameSpectator:spectatePlayer(player)
         return
     end
 
-    local teamName = ''
-    if isProp(player) then
-        teamName = '[HIDER] '
-    elseif isSeeker(player) then
-        teamName = '[SEEKER] '
-    end
-
-    WebUI:ExecuteJS('setSpectatorMessage("' .. teamName .. player.name .. '");')
+    WebUI:ExecuteJS('setSpectatorMessage("' .. player.name .. '",' .. player.teamId .. ');')
 
     self._spectatedPlayer = player
     SpectatorManager:SpectatePlayer(self._spectatedPlayer, self._firstPerson)

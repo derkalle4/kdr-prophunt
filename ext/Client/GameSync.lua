@@ -27,11 +27,15 @@ local function inHidingState(info, localPlayer)
     if localPlayer.teamId == 1 then -- when player is seeker
         -- give center message for hiding state
         WebUI:ExecuteJS('setCenterMessage("wait until hiders are hidden", 7);')
+        -- disable spectator message
+        WebUI:ExecuteJS('setSpectatorMessage("");')
     elseif localPlayer.teamId == 2 then -- when player is hider
         -- set center message for hiding state
         WebUI:ExecuteJS('setCenterMessage("prepare to hide!", 7);')
         -- show key tooltip for hider
         WebUI:ExecuteJS('showHiderKeys(true);')
+        -- disable spectator message
+        WebUI:ExecuteJS('setSpectatorMessage("");')
     else -- when player is spectator
         -- set center message for hiding state
         WebUI:ExecuteJS('setCenterMessage("hiders going to hide themself", 7);')
