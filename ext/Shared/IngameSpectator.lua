@@ -7,7 +7,7 @@ IngameSpectatorRoutes = {
     -- Vec3(x, y, z)
     -- Vec3(startpoint), Vec3(endpoint), Vec3(camera direction), tempo, title
     -- from outdoor pool to terrace
-    {{40, 14, 0}, {-20, 24, 0}, {41, 15, 0}, 0.05, "Outdoor"},
+    {{40, 24, 0}, {-20, 34, 0}, {41, 25, 0}, 0.05, "Outdoor"},
     -- left upper doorway (outdoor pool) to elevator
     {{23, 17, 16}, {-35, 17, 16}, {24, 17, 16}, 0.05, "Left Upper Doorway"},
     -- right upper doorway (outdoor pool) to elevator
