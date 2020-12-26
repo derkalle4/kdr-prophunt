@@ -113,9 +113,21 @@ window.addEventListener("load", function(){
 		}
 	};
 
+	// show or hide Hider keys
+	window.showKillfeed = (bool) => {
+		let killfeed = document.getElementById('prophunt-killfeed');
+		if (bool)
+			killfeed.style.display = 'block';
+		else
+			killfeed.style.display = 'none';
+	};
+
 	// add element to killfeed
 	window.addToKillfeed = (name, team, type) => {
-		let killfeed = document.getElementById('prophunt-killfeed-list');
+		let killfeed = document.getElementById('prophunt-killfeed');
+		let killfeedList = document.getElementById('prophunt-killfeed-list');
+		// do nothing when killfeed is not visible
+		if (killfeed.style.display == 'none') return;
 		// create li element
 		let li = document.createElement('li');
 		let text = '';
@@ -143,7 +155,7 @@ window.addEventListener("load", function(){
 		li.classList.add('list-group-item');
 		li.classList.add('fade-in');
 		// append to killfeed
-		killfeed.appendChild(li);
+		killfeedList.appendChild(li);
 		// hide after three seconds
 		setTimeout(function() {
 			li.remove();

@@ -119,6 +119,7 @@ body {
 }
 
 #prophunt-killfeed {
+  display: none;
   position: absolute;
   top:100px;
   right: 0px;
