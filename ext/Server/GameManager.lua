@@ -179,7 +179,7 @@ local function inPostRoundState()
     -- go into hiding state when pre round is finished
     if currentState.roundTimer == 0.0 then
         -- restart map
-        RCON:SendCommand('mapList.restartRound')
+        RCON:SendCommand('mapList.runNextRound')
     end
 end
 

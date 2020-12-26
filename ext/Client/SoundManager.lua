@@ -3,7 +3,7 @@
 
 
 preparedSoundList = {} -- list of prepared sounds for further use
-local playerProps = {} -- current player sound props
+local playerSounds = {} -- current player sound props
 local cooldownTime = 3.0 -- cooldown before next use
 local cooldown = 0.0 -- actual cooldown time left
 
@@ -22,9 +22,9 @@ local function spawnSound(player, sound)
         return
     end
     -- delete  old prop
-    if playerProps[player.id] ~= nil then
-        playerProps[player.id]:Destroy()
-        playerProps[player.id] = nil
+    if playerSounds[player.id] ~= nil then
+        playerSounds[player.id]:Destroy()
+        playerSounds[player.id] = nil
     end
     -- create entity position
     local entityPos = LinearTransform()
@@ -35,14 +35,14 @@ local function spawnSound(player, sound)
     -- set entity data position to player position
     data.transform = entityPos
     data.sound = SoundAsset(preparedSoundList[sound])
-    data.obstructionHandle = -1
+    data.obstructionHandle = 0
     data.playOnCreation = true
     -- create entity
     local soundEntity = SoundEntity(EntityManager:CreateEntity(data, entityPos))
     -- spawn entity
     if soundEntity ~= nil then
         soundEntity:Init(Realm.Realm_Client, true)
-        playerProps[player.id] = soundEntity
+        playerSounds[player.id] = soundEntity
     end
 end
 
@@ -138,8 +138,17 @@ local function onLevelLoaded()
     end
 end
 
+-- on level destroy
+local function onLevelDestroy()
+    for _, entity in pairs(playerSounds) do
+        entity:Destroy()
+    end
+    playerSounds = {}
+end
+
 -- events and hooks
 Events:Subscribe('Player:UpdateInput', onPlayerInput)
 Events:Subscribe('Level:Loaded', onLevelLoaded)
 NetEvents:Subscribe(GameMessage.S2C_SOUND_SYNC, onSoundSync)
 Events:Subscribe('Engine:Update', onEngineUpdate)
+Events:Subscribe('Level:Destroy', onLevelDestroy)

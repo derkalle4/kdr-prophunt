@@ -48,8 +48,6 @@ local function onUiDrawHud()
         end
         -- get player position for name tag
         local screenPosNameTag = playerTrans(player, nameTagHeight)
-        -- get player position for team tag
-        local screenPosTeamTag = playerTrans(player, teamTagHeight)
         -- check if screenPos is nil
         if screenPosNameTag == nil or screenPosTeamTag == nil then
             goto continue
@@ -57,7 +55,7 @@ local function onUiDrawHud()
         -- default text color
         local textColor = textColorDefault
         -- default team text
-        local teamText = '[UNKNOWN]'
+        local teamText = '[UNKNOWN] '
         -- check for team and set text + color
         if player.teamId == 1 then
             teamText = '[SEEKER] '
@@ -72,10 +70,8 @@ local function onUiDrawHud()
         elseif localPlayer.teamId ~= 0 then
             textColor = textColorRed
         end
-        -- draw teamtag
-        DebugRenderer:DrawText2D(screenPosTeamTag.x, screenPosTeamTag.y, teamText, textColor, 1.0)
         -- draw nametag
-        DebugRenderer:DrawText2D(screenPosNameTag.x, screenPosNameTag.y, player.name, textColorDefault, 1.0)
+        DebugRenderer:DrawText2D(screenPosNameTag.x, screenPosNameTag.y, teamText .. player.name, textColor, 1.0)
         :: continue ::
     end
 end

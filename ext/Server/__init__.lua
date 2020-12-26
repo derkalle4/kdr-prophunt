@@ -6,6 +6,7 @@
 require('__shared/DebugMessage')
 require('__shared/GameManager')
 require('__shared/PlayerManager')
+require('__shared/SpawnManager')
 
 -- include server data
 require('configuration')

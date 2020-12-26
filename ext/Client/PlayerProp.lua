@@ -67,29 +67,6 @@ function isPlayerProp(otherEntity)
     return false
 end
 
--- on engine update -> make props follow player
-local function onEngineUpdate(delta, simDelta)
-    -- reset player hit
-    playersHit = {}
-    -- iterate through all player props
-    for id, bus in pairs(playerProps) do
-        -- get player entity
-        local player = PlayerManager:GetPlayerById(id)
-        -- check for nil values
-        if player == nil or player.soldier == nil then
-            goto continue
-        end
-        -- get spatial entity
-        local entity = SpatialEntity(bus.entities[1])
-        -- entity must follow player soldier entity
-        entity.transform = player.soldier.transform
-        entity:FireEvent('Disable')
-        entity:FireEvent('Enable')
-
-        ::continue::
-    end
-end
-
 -- remove prop
 local function removePlayerProp(playerID)
     debugMessage('removePlayerProp ' .. playerID)
@@ -127,6 +104,34 @@ local function changePlayerProp(playerID, bpName)
     end
     -- create player prop
     createPlayerProp(player, blueprint)
+end
+
+-- on engine update -> make props follow player
+local function onEngineUpdate(delta, simDelta)
+    -- reset player hit
+    playersHit = {}
+    -- iterate through all player props
+    for id, bus in pairs(playerProps) do
+        -- get player entity
+        local player = PlayerManager:GetPlayerById(id)
+        -- check for nil values
+        if player == nil or player.soldier == nil then
+            goto continue
+        end
+        -- get spatial entity
+        local entity = SpatialEntity(bus.entities[1])
+        -- when entity is nil disable prop for user
+        if entity == nil then
+            removePlayerProp(id)
+            goto continue
+        end
+        -- entity must follow player soldier entity
+        entity.transform = player.soldier.transform
+        entity:FireEvent('Disable')
+        entity:FireEvent('Enable')
+
+        ::continue::
+    end
 end
 
 -- do damage to prop
