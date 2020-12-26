@@ -83,6 +83,20 @@ local function onPushScreen(hook, screen, priority, parentGraph, stateNodeGuid)
 
         return
     end
+    -- Remove Ammo and Health widget
+    if asset.name == 'UI/Flow/Screen/HudMPScreen' then
+        asset:MakeWritable()
+        asset.connections:clear()
+        for i = #asset.nodes, 1, -1 do
+        if asset.nodes[i]:Is('WidgetNode') then
+            if WidgetNode(asset.nodes[i]).name == 'Ammo' or
+                WidgetNode(asset.nodes[i]).name == 'Health' then
+                    asset.nodes:erase(i)
+                end
+            end
+        end
+        return
+    end
 end
 
 -- do nothing for some hooks (to disable them)
@@ -130,6 +144,8 @@ local function onPlayerKilled(player)
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
         -- enable spectator mode
+        Camera:disable()
+        IngameSpectator:disable()
         IngameSpectator:enable()
         -- do not progress with this function
         return
