@@ -51,6 +51,14 @@ local function onPartitionLoaded(partition)
                 end
             end
         end
+        -- remove spotting
+        if instance.instanceGuid == Guid('105707CF-F84E-4A93-B18C-A8EDED291CC4') then
+            local spotting = SpottingComponentData(instance)
+            spotting:MakeWritable()
+            spotting.spottingDistance = 0.0
+            spotting.coolDownHistoryTime = 9999.0
+            spotting.coolDownAllowedSpotsWithinHistory = 0
+        end
     end
 end
 
