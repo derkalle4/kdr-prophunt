@@ -245,14 +245,13 @@ body {
 #prophunt-spectator-message {
   display: none;
   position: absolute;
-  padding-left: 15px;
-  left:0;
-  bottom:0px;
+  left:15px;
+  bottom:15px;
   width: 250px;
   height: 100px;
 }
 
-#prophunt-spectator-message-text {
+#prophunt-spectator-message .card {
   background-color: rgb(33, 37, 41, 0.5);
   color: #fff;
   font-weight: bold;

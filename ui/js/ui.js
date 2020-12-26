@@ -41,14 +41,25 @@ window.addEventListener("load", function(){
 		userMessageText.innerHTML = msg;
 	};
 
-	window.setSpectatorMessage = (msg) => {
+	window.setSpectatorMessage = (msg, teamID = 0) => {
 		let specMessage = document.getElementById('prophunt-spectator-message');
 		let specMessageText = document.getElementById('prophunt-spectator-message-text');
+		let specMessageTeam = document.getElementById('prophunt-spectator-message-team');
 		if (msg === '')
 			specMessage.style.display = 'none';
 		else
 			specMessage.style.display = 'block';
 		specMessageText.innerHTML = msg;
+		switch (teamID) {
+			case 1:
+				specMessageTeam.innerHTML = 'seeker'
+				break;
+			case 2:
+				specMessageTeam.innerHTML = 'hider'
+				break;
+			default:
+				specMessageTeam.innerHTML = ''
+		}
 	};
 	
 
