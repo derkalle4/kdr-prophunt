@@ -5,8 +5,10 @@ Config = {
 	SeekingTime = 300, -- 300 - time Seekers have to find all Hiders
 	PostRoundTime = 15, -- 15 - time before map reload
 	MinPlayers = 2, -- 2 - Minimum amount of players required to start a game
-	PercenTageSeeker = 30, -- 30 - Percentage of seeker from users connected
-	BulletShootDamage = 2, -- 2 - amount of damage a Seeker gets when he is not shooting at a player prop
+	PercenTageSeeker = 35, -- 35 - Percentage of seeker from users connected
+	BulletShootDamage = 1, -- 2 - amount of damage a Seeker gets when he is not shooting at a player prop
 	DamageToPlayerProp = 8, -- 8 - amount of damage a Seeker makes to a Hider with each bullet
-	SeekerDamageFromPlayerProp = -10 -- -10 - amount of "damage" a Seeker gets when hitting a player (usually below 0 to gain health)
+	SeekerDamageFromPlayerProp = -10, -- -10 - amount of "damage" a Seeker gets when hitting a player (usually below 0 to gain health)
+	SeekerHealth = 100, -- health of seeker
+	HiderHealth = 50, -- health of hider when it cannot be determined automatically
 }

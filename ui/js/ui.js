@@ -15,19 +15,46 @@ window.addEventListener("load", function(){
 		roundTimer.innerHTML = timer;
 	};
 
+	// show or hide WebUI
+	window.showHealthBar = (bool) => {
+		let healthBar = document.getElementById('prophunt-health-bar');
+		if (bool)
+			healthBar.style.display = 'block';
+		else
+			healthBar.style.display = 'none';
+	};
+
+	window.setHealthBar = (hp, ammo) => {
+		let playerHp = document.getElementById('prophunt-health-bar-hp');
+		let playerAmmo = document.getElementById('prophunt-health-bar-ammo');
+		playerHp.innerHTML = hp;
+		playerAmmo.innerHTML = ammo;
+	};
+
 	window.setUserMessage = (msg) => {
 		let userMessage = document.getElementById('prophunt-usermessage');
 		let userMessageText = document.getElementById('prophunt-usermessage-text');
-		if (msg == '')
+		if (msg === '')
 			userMessage.style.display = 'none';
 		else
 			userMessage.style.display = 'block';
 		userMessageText.innerHTML = msg;
 	};
 
+	window.setSpectatorMessage = (msg) => {
+		let specMessage = document.getElementById('prophunt-spectator-message');
+		let specMessageText = document.getElementById('prophunt-spectator-message-text');
+		if (msg === '')
+			specMessage.style.display = 'none';
+		else
+			specMessage.style.display = 'block';
+		specMessageText.innerHTML = msg;
+	};
+	
+
 	window.setCenterMessage = (msg, hideAfter = 10) => {
 		let centerMessage = document.getElementById('prophunt-centermessage');
-		if (msg == '')
+		if (msg === '')
 			centerMessage.style.display = 'none';
 		else{
 			centerMessage.style.display = 'block';
@@ -68,10 +95,8 @@ window.addEventListener("load", function(){
 	// overlay when round is over
 	window.postRoundOverlay = (winner, clientTeam) => {
 		// client has won so give him a end he deserves
-		if (clientTeam == 0) {
-			// do nothing for spectator for now
-		}else if (winner == clientTeam) {
-			playSound('victory' + (Math.floor(Math.random() * 2) + 1));
+		if (winner == clientTeam || clientTeam === 0) {
+			playSound('victory' + (Math.floor(Math.random() * 3) + 1));
 			var confettiSettings = {
 				target: 'confetti-canvas',
 				width: window.innerWidth - 10,
@@ -84,25 +109,35 @@ window.addEventListener("load", function(){
 				confetti.clear();
 			}, 15 * 1000);
 		}else{
-			playSound('defeated' + (Math.floor(Math.random() * 2) + 1));
+			playSound('defeated' + (Math.floor(Math.random() * 3) + 1));
 		}
 	};
 
 	// add element to killfeed
-	window.addToKillfeed = (name, team) => {
+	window.addToKillfeed = (name, team, type) => {
 		let killfeed = document.getElementById('prophunt-killfeed-list');
 		// create li element
 		let li = document.createElement('li');
 		let text = '';
-		switch(team) {
-			case 1:
-				text = '[SEEKER] ' + name + ' got killed';
+		switch(type) {
+			case 'kill':
+				switch(team) {
+					case 1:
+						text = '[SEEKER] ' + name + ' got killed';
+						break;
+					case 2:
+						text = '[HIDER] ' + name + ' got killed';
+						break;
+					default:
+						text = name + ' got killed';
+				}
 				break;
-			case 2:
-				text = '[HIDER] ' + name + ' got killed';
+			case 'connect':
+				text = name + ' joined';
 				break;
-			default:
-				text = name + ' got killed';
+			case 'disconnect':
+				text = name + ' left';
+				break;
 		}
 		li.appendChild(document.createTextNode(text));
 		li.classList.add('list-group-item');
@@ -112,7 +147,7 @@ window.addEventListener("load", function(){
 		// hide after three seconds
 		setTimeout(function() {
 			li.remove();
-		}, 5 * 1000);
+		}, 10 * 1000);
 	};
 
 	window.playSound = (sound) => {
@@ -127,6 +162,15 @@ window.addEventListener("load", function(){
 			hiderKeys.style.display = 'block';
 		else
 			hiderKeys.style.display = 'none';
+	};
+
+	// show or hide spectator keys
+	window.showSpectatorKeys = (bool) => {
+		let spectatorKeys = document.getElementById('prophunt-spectator-keys');
+		if (bool)
+			spectatorKeys.style.display = 'block';
+		else
+			spectatorKeys.style.display = 'none';
 	};
 
 	// show or hide WebUI
@@ -148,8 +192,8 @@ window.addEventListener("load", function(){
 	};
 
 	// show or hide idle round message
-	window.showIdleStateMessage = (bool) => {
-		let idleStateMessage = document.getElementById('prophunt-idlestatemessage');
+	window.showWelcomeMessage = (bool) => {
+		let idleStateMessage = document.getElementById('prophunt-welcomemessage');
 		if (bool)
 			idleStateMessage.style.display = 'block';
 		else
@@ -163,9 +207,11 @@ window.addEventListener("load", function(){
 		let scoreboardListHider = document.getElementById('prophunt-scoreboard-list-hider');
 		let scoreboardListHiderSmall = document.getElementById('prophunt-scoreboard-list-hider-small');
 		let scoreboardListSpectator = document.getElementById('prophunt-scoreboard-list-spectator');
-		let idlelistSpectator = document.getElementById('prophunt-idlestatemessage-players');
+		let idlelistSpectator = document.getElementById('prophunt-welcomemessage-players');
 		scoreboardListSeeker.innerHTML = '';
+		scoreboardListSeekerSmall.innerHTML = '';
 		scoreboardListHider.innerHTML = '';
+		scoreboardListHiderSmall.innerHTML = '';
 		scoreboardListSpectator.innerHTML = '';
 		idlelistSpectator.innerHTML = '';
 		// sort data by living players first
@@ -240,5 +286,5 @@ window.addEventListener("load", function(){
 					scoreboardListSpectator.appendChild(button);
 			}
 		}
-	}
+	};
 });

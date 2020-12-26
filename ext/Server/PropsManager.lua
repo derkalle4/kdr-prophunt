@@ -8,13 +8,17 @@ end
 
 -- broadcast changed prop
 local function broadCastClients(playerID, prop)
-	debugMessage('[S2C_PROP_SYNC] broadcast')
+	if prop == nil then
+		debugMessage('[S2C_PROP_SYNC] broadcast: nil')
+	else
+		debugMessage('[S2C_PROP_SYNC] broadcast: ' .. prop)
+	end
 	NetEvents:Broadcast(GameMessage.S2C_PROP_SYNC, playerID, prop)
 end
 
 -- set new prop for player
 function setPlayerProp(player, bpName)
-	debugMessage('Setting prop for player ' .. player.name)
+	debugMessage('Setting prop ' .. bpName .. ' for player ' .. player.name)
 	-- make player invisible
 	player.soldier.forceInvisible = true
 	-- player has to be alive
@@ -25,10 +29,8 @@ function setPlayerProp(player, bpName)
 	if not isProp(player) then
 		return
 	end
-    -- Set the prop for this player.
-    local oldProp = playerPropNames[player.id]
     -- If it has not changed then do nothing.
-	if oldProp == bpName then
+	if playerPropNames[player.id] == bpName then
 		return
 	end
 	-- check for blueprint
@@ -37,6 +39,25 @@ function setPlayerProp(player, bpName)
     if bp == nil then
         return
     end
+	-- set temporary entity position
+	local entityPos = LinearTransform()
+	entityPos.trans = Vec3(0.0, 0.0, 0.0)
+	-- create temporary entity from blueprint
+    local tmpEntity = EntityManager:CreateEntitiesFromBlueprint(bp, entityPos)
+    -- create spatial entity from entity
+    tmpEntity = SpatialEntity(tmpEntity.entities[1])
+    -- calculate health from entity magnitude
+    tmpHealth = math.floor(MathUtils:Lerp(5.0, 75.0, tmpEntity.aabb.max.magnitude))
+    -- set current health to 1 when 0 to avoid divide by zero
+    if player.soldier.health == 0 then
+    	player.soldier.health = 1
+    end
+    -- calculate current health from user (take percentage from current health for new health)
+    local curHealthPercentage = player.soldier.health / player.soldier.maxHealth
+    -- set new maxHealth to player
+    player.soldier.maxHealth = tmpHealth
+    -- set new current health to player
+    player.soldier.health = player.soldier.maxHealth * curHealthPercentage
 	-- save new prop name for player
 	playerPropNames[player.id] = bpName
 	-- broadcast changes to clients

@@ -102,7 +102,8 @@ function spawnSeeker(player)
 
 	player.soldier:ApplyCustomization(seekerCustomization)
 
-	player.soldier.health = 100
+	player.soldier.health = Config.SeekerHealth
+	player.soldier.maxHealth = Config.SeekerHealth
 
 	player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
 	player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
@@ -149,7 +150,8 @@ function spawnProp(player, position)
 	hiderCustomization.weapons:add(unlockWeapon)
 
 	player.soldier:ApplyCustomization(hiderCustomization)
-	player.soldier.health = 100
+	player.soldier.health = Config.HiderHealth
+	player.soldier.maxHealth = Config.HiderHealth
 
 	player:EnableInput(EntryInputActionEnum.EIAThrottle, true)
 	player:EnableInput(EntryInputActionEnum.EIAStrafe, true)
@@ -183,6 +185,7 @@ end
 Hooks:Install('EntityFactory:CreateFromBlueprint', 100, function(hook, blueprint, transform, variation, parentRepresentative)
 	if Blueprint(blueprint).name == 'Gameplay/Level_Setups/Complete_setup/Full_TeamDeathmatch' then
 		local tdmBus = hook:Call()
+
 		for _, entity in pairs(tdmBus.entities) do
 			if entity:Is('ServerInputRestrictionEntity') then
 				entity:FireEvent('Deactivate')

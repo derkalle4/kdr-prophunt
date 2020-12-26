@@ -50,12 +50,11 @@ end
 
 local function onPushScreen(hook, screen, priority, parentGraph, stateNodeGuid)
 	local asset = UIScreenAsset(screen)
-
 	if asset.name == 'UI/Flow/Screen/SpawnScreenPC' or
 		asset.name == 'UI/Flow/Screen/SpawnButtonScreen' or
 		asset.name == 'UI/Flow/Screen/SpawnScreenTicketCounterTDMScreen' or
 		string.match(string.lower(asset.name), 'scoreboard') then
-		hook:Return()
+			hook:Return()
 		return
 	end
 
@@ -94,14 +93,55 @@ local function onPlayerInput()
 	if InputManager:WentKeyUp(InputDeviceKeys.IDK_Tab) then
 		WebUI:ExecuteJS('showScoreboard(false);')
 	end
+
+	-- quit
+	if InputManager:WentKeyDown(InputDeviceKeys.IDK_Escape) then
+		NetEvents:SendLocal(GameMessage.C2S_QUIT_GAME)
+	end
 end
 
 local function onPlayerKilled(player)
-	WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ');')
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	if player == localPlayer then
+		WebUI:ExecuteJS('showHealthBar(false);')
+		WebUI:ExecuteJS('showHiderKeys(false);')
+		WebUI:ExecuteJS('showSpectatorKeys(true);')
+		IngameSpectator:enable()
+		return
+	end
+	WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ', "kill");')
+end
+
+local function onPlayerRespawn(player)
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	if player == localPlayer then
+		IngameSpectator:disable()
+		WebUI:ExecuteJS('showHealthBar(true);')
+	end
+end
+
+local function onPlayerConnected(player)
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	if player == localPlayer then
+		return
+	end
+	WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ', "connect");')
+end
+
+local function onPlayerDisconnect(player)
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	if player == localPlayer then
+		return
+	end
+	WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ', "disconnect");')
 end
 
 local function onLevelLoaded(levelName, gameMode)
 	WebUI:ExecuteJS('showUI(true);')
+end
+
+local function onLevelDestroy(levelName, gameMode)
+	WebUI:ExecuteJS('showUI(false);')
 end
 
 Hooks:Install('UI:CreateKillMessage', 100, doNothing)
@@ -114,4 +154,8 @@ Events:Subscribe('Partition:Loaded', onPartitionLoaded)
 Events:Subscribe('UI:DrawHud', onUiDrawHud)
 Events:Subscribe('Player:UpdateInput', onPlayerInput)
 Events:Subscribe('Player:Killed', onPlayerKilled)
+Events:Subscribe('Player:Respawn', onPlayerRespawn)
+Events:Subscribe('Player:Connected', onPlayerConnected)
+Events:Subscribe('Player:Deleted', onPlayerDisconnect)
 Events:Subscribe('Level:Loaded', onLevelLoaded)
+Events:Subscribe('Level:Destroy', onLevelDestroy)

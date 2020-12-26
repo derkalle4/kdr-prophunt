@@ -189,6 +189,21 @@ NetEvents:Subscribe(GameMessage.C2S_CLIENT_READY, function(player)
 	sendPlayerUpdateToPlayer(player)
 end)
 
+
+-- when a player joined and is ready
+NetEvents:Subscribe(GameMessage.C2S_QUIT_GAME, function(player)
+	debugMessage('[C2S_QUIT_GAME] from ' .. player.name)
+	-- remove player from readyPlayers
+	for i, readyPlayer in pairs(readyPlayers) do
+		if readyPlayer == player then
+			table.remove(readyPlayers, i)
+			break
+		end
+	end
+	-- kick player
+	player:Kick('see you next time!')
+end)
+
 -- Remove player from list of ready players when they disconnect.
 Events:Subscribe('Player:Destroyed', function(player)
 	debugMessage('[Player:Destroyed] from ' .. player.name)

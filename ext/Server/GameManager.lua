@@ -208,6 +208,8 @@ NetEvents:Subscribe(GameMessage.C2S_CLIENT_READY, function(player)
 	debugMessage('[C2S_CLIENT_READY] from ' .. player.name)
 	-- send event
 	sendUpdateToPlayer(player, currentState)
+	-- fake spawn player
+	player:Fade(1.0, false)
 end)
 
 Events:Subscribe('Engine:Update', function(deltaTime)

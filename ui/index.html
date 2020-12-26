@@ -14,7 +14,7 @@
 				<h2 id="prophunt-roundinfo-seeker-title">seeker</h2>
 			</div>
 			<div class="col-sm">
-				<h2 id="prophunt-spectator-count" class="color-gray">0 spectator</h2>
+				<h3 id="prophunt-spectator-count" class="color-gray">0 spectator</h3>
 			</div>
 			<div class="col-sm">
 				<h2 id="prophunt-roundinfo-hider-title">hider</h2>
@@ -59,18 +59,22 @@
 
 	<div id="prophunt-centermessage" class="fade-in fade-out"></div>
 
-	<div id="prophunt-idlestatemessage">
+	<div id="prophunt-welcomemessage">
 		<h1>welcome to prop hunt</h1>
 		<p>In this game mode you join either <strong>Seekers</strong> or <strong>Hiders</strong>. <strong>Seekers</strong> need to chase and kill <strong>Hiders</strong> but loose health every time they shoot. If they kill a <strong>Hider</strong> they will regain health. <strong>Hiders</strong> need to change their look by selecting a prop from the map and hide as good as possible to win after the round is over.</p>
 		<p>The game will automatically start when <strong>2</strong> or more players are connected. You cannot join during an round and will automatically join next round.</p>
-		<p><strong>Spectator Mode</strong> is on the way! Please stay patient!</p>
 		<h2>currently waiting</h2>
-		<div id="prophunt-idlestatemessage-players"></div>
+		<div id="prophunt-welcomemessage-players"></div>
 	</div>
 
 	<div id="prophunt-hider-keys">
 		<div class="entry"><span>E</span>Change Prop</div>
 		<div class="entry"><span>ALT</span>Free Look</div>
+	</div>
+
+	<div id="prophunt-spectator-keys">
+		<div class="entry"><span>1</span>Next</div>
+		<div class="entry"><span>2</span>AutoCam</div>
 	</div>
 
 	<div id="prophunt-scoreboard">
@@ -99,9 +103,33 @@
 			</div>
 		</div>
 	</div>
+
 	<div id="prophunt-usermessage">
 		<div class="card">
 			<div id="prophunt-usermessage-text" class="card-body"></div>
+		</div>
+	</div>
+
+	<div id="prophunt-spectator-message">
+		<div class="card">
+			<div id="prophunt-spectator-message-text" class="card-body"></div>
+		</div>
+	</div>
+
+	<div id="prophunt-health-bar">
+		<div class="row">
+			<div class="col-3"></div>
+			<div class="col-2">
+				<img id="prophunt-health-bar-heart" src="./img/health_bar_heart.png" />
+			</div>
+			<div class="col-7" id="prophunt-health-bar-hp"></div>
+		</div>
+		<div class="row">
+			<div class="col-2"></div>
+			<div id="prophunt-health-bar-ammo" class="col-4"></div>
+			<div class="col-6">
+				<img id="prophunt-health-bar-reload-ammo" src="./img/health_bar_reload_ammo.png" />
+			</div>
 		</div>
 	</div>
 	<canvas id="confetti-canvas"></canvas>

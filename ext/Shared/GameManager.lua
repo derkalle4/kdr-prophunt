@@ -13,4 +13,5 @@ GameMessage = {
     S2C_GAME_SYNC = "phgsync",
     S2C_PLAYER_SYNC = "phpsync",
     S2C_PROP_SYNC = "phprsync",
+    C2S_QUIT_GAME = "phpquit",
 }

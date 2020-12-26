@@ -1,17 +1,94 @@
 class('IngameSpectator')
 
 function IngameSpectator:__init()
-	self._allowSpectateAll = true
+	self._allowSpectateAll = false
 	self._spectatedPlayer = nil
 	self._firstPerson = true
 	self._freecamTrans = LinearTransform()
-
-	-- TODO: Third person camera
+	self._lastEngineUpdate = 0.0
+	self._freecamAutomaticRoute = {}
+    self:enable()
 
 	Events:Subscribe('Extension:Unloading', self, self.disable)
 	Events:Subscribe('Player:Respawn', self, self._onPlayerRespawn)
 	Events:Subscribe('Player:Killed', self, self._onPlayerKilled)
 	Events:Subscribe('Player:Deleted', self, self._onPlayerDeleted)
+	Events:Subscribe('Engine:Update', self, self._onEngineUpdate)
+	Events:Subscribe('Player:UpdateInput', self, self._onPlayerInput)
+end
+
+function IngameSpectator:_onPlayerInput(deltaTime)
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	-- only when player is spectator
+	if localPlayer.alive then
+		return
+	end
+	-- spectate previous player
+	if InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
+		self:spectateNextPlayer()
+	end
+	-- spectate next player
+	if InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
+		self:switchToFreecam()
+	end
+end
+
+function IngameSpectator:_onEngineUpdate(deltaTime)
+	-- run event only every 0.05 seconds to save CPU time
+	if self._lastEngineUpdate >= 0.01 then
+		self._lastEngineUpdate = 0.0
+		-- automatic route selection for freecam (no real freecam yet just automatic routes for "movie like way to show current round")
+		if self:isEnabled() and self._spectatedPlayer == nil then
+			-- select new automatic route when round is complete or not started yet
+			if #self._freecamAutomaticRoute == 0 or Vec3(self._freecamAutomaticRoute[2][1], self._freecamAutomaticRoute[2][2], self._freecamAutomaticRoute[2][3]):Distance(self._freecamTrans.trans) <= 3.0  then
+				-- get new automatic route
+				math.randomseed(SharedUtils:GetTimeMS())
+				local randomNumber = MathUtils:GetRandomInt(1, #IngameSpectatorRoutes)
+				self._freecamAutomaticRoute = IngameSpectatorRoutes[randomNumber]
+				local startpoint = self._freecamAutomaticRoute[1]
+				local viewpoint = self._freecamAutomaticRoute[3]
+				local name = self._freecamAutomaticRoute[5]
+				WebUI:ExecuteJS('setSpectatorMessage("' .. name .. '");')
+				debugMessage('IngameSpectator loading ' .. name)
+				-- set start point of new automatic route
+				self._freecamTrans.trans = Vec3(
+					startpoint[1],
+					startpoint[2],
+					startpoint[3]
+				)
+				-- set view direction of new automatic route
+				self._freecamTrans:LookAtTransform(
+					Vec3(
+						startpoint[1],
+						startpoint[2],
+						startpoint[3]
+					),
+					Vec3(
+						viewpoint[1],
+						viewpoint[2],
+						viewpoint[3]
+					)
+				)
+			end
+			-- if we have a automatic route just go through it
+			if #self._freecamAutomaticRoute > 2 then
+				-- move Vec3 position forward to goal
+				local endpoint = self._freecamAutomaticRoute[2]
+				local tempo = self._freecamAutomaticRoute[4]
+				self._freecamTrans.trans = Vec3(self._freecamTrans.trans):MoveTowards(
+					Vec3(
+						endpoint[1],
+						endpoint[2],
+						endpoint[3]
+					)
+				, tempo)
+				-- move player camera
+				self:setFreecamTransform(self._freecamTrans)
+			end
+		end
+	end
+	-- increase self._lastEngineUpdate value
+	self._lastEngineUpdate = self._lastEngineUpdate + deltaTime
 end
 
 function IngameSpectator:_onPlayerRespawn(player)
@@ -30,7 +107,7 @@ function IngameSpectator:_onPlayerRespawn(player)
 	-- If we have nobody to spectate and this player is spectatable
 	-- then switch to them.
 	if self._spectatedPlayer == nil then
-		if not self._allowSpectateAll and player.teamId ~= localPlayer.teamId then
+		if localPlayer.alive and not self._allowSpectateAll and player.teamId ~= localPlayer.teamId then
 			return
 		end
 
@@ -78,7 +155,7 @@ function IngameSpectator:_findFirstPlayerToSpectate()
 
 		-- If we don't allow spectating everyone we should check the
 		-- player's team to determine if we can spectate them.
-		if not self._allowSpectateAll and player.teamId ~= localPlayer.teamId then
+		if localPlayer.alive and not self._allowSpectateAll and player.teamId ~= localPlayer.teamId then
 			goto continue_enable
 		end
 
@@ -155,7 +232,7 @@ function IngameSpectator:enable()
 	-- If we're alive we don't allow spectating.
 	local localPlayer = PlayerManager:GetLocalPlayer()
 
-	if localPlayer.soldier ~= nil then
+	if localPlayer.alive then
 		return
 	end
 
@@ -183,6 +260,7 @@ function IngameSpectator:disable()
 end
 
 function IngameSpectator:spectatePlayer(player)
+	debugMessage('IngameSpectator spectatePlayer ')
 	if not self:isEnabled() then
 		return
 	end
@@ -201,12 +279,12 @@ function IngameSpectator:spectatePlayer(player)
 
 	-- If we don't allow spectating everyone make sure that this player
 	-- is in the same team as the local player.
-	if not self._allowSpectateAll and localPlayer.teamId ~= player.teamId then
+	if localPlayer.alive or (not self._allowSpectateAll and localPlayer.teamId ~= player.teamId) then
+		debugMessage('local player still alive')
 		return
 	end
 
-	print('Spectating player')
-	print(player)
+	WebUI:ExecuteJS('setSpectatorMessage("' .. player.name .. '");')
 
 	self._spectatedPlayer = player
 	SpectatorManager:SpectatePlayer(self._spectatedPlayer, self._firstPerson)
@@ -223,6 +301,8 @@ function IngameSpectator:spectateNextPlayer()
 
 		if playerToSpectate ~= nil then
 			self:spectatePlayer(playerToSpectate)
+		else
+			self:switchToFreecam()
 		end
 
 		return
@@ -259,7 +339,7 @@ function IngameSpectator:spectateNextPlayer()
 
 		local player = players[playerIndex]
 
-		if player.soldier ~= nil and player ~= localPlayer and (self._allowSpectateAll or player.teamId == localPlayer.teamId) then
+		if player.soldier ~= nil and player ~= localPlayer and (not localPlayer.alive or self._allowSpectateAll or player.teamId == localPlayer.teamId) then
 			nextPlayer = player
 			break
 		end
@@ -320,7 +400,7 @@ function IngameSpectator:spectatePreviousPlayer()
 
 		local player = players[playerIndex]
 
-		if player.soldier ~= nil and player ~= localPlayer and (self._allowSpectateAll or player.teamId == localPlayer.teamId) then
+		if player.soldier ~= nil and player ~= localPlayer and (not localPlayer.alive or self._allowSpectateAll or player.teamId == localPlayer.teamId) then
 			nextPlayer = player
 			break
 		end
@@ -335,13 +415,20 @@ function IngameSpectator:spectatePreviousPlayer()
 end
 
 function IngameSpectator:switchToFreecam()
+	debugMessage('IngameSpectator switchToFreecam')
 	if not self:isEnabled() then
+		debugMessage('specator disabled')
 		return
 	end
 
-	print('Switching to freecam.')
-
 	self._spectatedPlayer = nil
+
+	local localPlayer = PlayerManager:GetLocalPlayer()
+	if localPlayer.alive then
+		debugMessage('local player still alive')
+		return
+	end
+	self._freecamAutomaticRoute = {}
 
 	SpectatorManager:SetCameraMode(SpectatorCameraMode.FreeCamera)
 	SpectatorManager:SetFreecameraTransform(self._freecamTrans)

@@ -2,19 +2,17 @@
 require('__shared/DebugMessage')
 require('__shared/GameManager')
 require('__shared/PlayerManager')
+require('__shared/IngameSpectator')
 
 -- include client data
 Camera = require('Camera')
---IngameSpectator = require('IngameSpectator')
+IngameSpectator = require('IngameSpectator')
 require('GameSync')
 require('PlayerProp')
 require('PlayerSeeker')
 require('PropPicker')
 require('GameUi')
 require('NameTags')
-
--- enable IngameSpectator
---IngameSpectator:enable()
 
 -- player ready event
 Events:Subscribe('Extension:Loaded', function()

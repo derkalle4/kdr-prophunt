@@ -33,5 +33,18 @@ Events:Subscribe('Partition:Loaded', function(partition)
 			data.allowPickup = false
 			data.timeToLive = 0.0
 		end
+		-- set team size to 127 per team
+        if instance:Is('GameModeSettings') then
+            local settings = GameModeSettings(instance)
+            settings:MakeWritable()
+
+            for _, information in pairs(settings.information) do
+                for _, size in pairs(information.sizes) do
+                    for _, team in pairs(size.teams) do
+                       team.playerCount = 127
+                    end
+                end
+            end
+        end
 	end
 end)

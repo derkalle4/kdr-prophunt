@@ -6,6 +6,14 @@ local function doRender()
 	local localPlayer = PlayerManager:GetLocalPlayer()
 	local teamText = ''
 	for _, player in pairs(players) do
+		-- check whether player does exist
+		if player == nil then
+			goto continue
+		end
+		-- check whether local player does exist
+		if localPlayer == nil then
+			goto continue
+		end
 		-- only spawned players
 		if player.soldier == nil then
 			goto continue
