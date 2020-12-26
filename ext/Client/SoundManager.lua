@@ -38,7 +38,7 @@ local function spawnSound(player, sound)
     data.obstructionHandle = -1
     data.playOnCreation = true
     -- create entity
-    local soundEntity = EntityManager:CreateEntity(data, entityPos)
+    local soundEntity = SoundEntity(EntityManager:CreateEntity(data, entityPos))
     -- spawn entity
     if soundEntity ~= nil then
         soundEntity:Init(Realm.Realm_Client, true)
