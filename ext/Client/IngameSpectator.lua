@@ -316,7 +316,7 @@ function IngameSpectator:spectateNextPlayer()
     local players = PlayerManager:GetPlayers()
     local localPlayer = PlayerManager:GetLocalPlayer()
 
-    for i, player in players do
+    for i, player in pairs(players) do
         if player == self._spectatedPlayer then
             currentIndex = i
             break
