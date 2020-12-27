@@ -117,10 +117,10 @@ function ThirdPersonCamera:_onInputPreUpdate(hook, cache, dt)
 
             self._lockedCameraYaw = player.input.authoritativeAimingYaw
             self._lockedCameraPitch = player.input.authoritativeAimingPitch
+         elseif self._locked then
+            -- If we were previously locked then unlock.
+            self._locked = false
         end
-    elseif self._locked then
-        -- If we were previously locked then unlock.
-        self._locked = false
     end
 
     -- If we are locking then prevent the player from looking around.
