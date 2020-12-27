@@ -118,9 +118,6 @@ function ThirdPersonCamera:onPlayerInput(player, deltaTime)
             -- highlight key on UI
             WebUI:ExecuteJS('highlightKey("alt","green",true);')
          else
-            -- set player input to last known values to avoid flipping back to old position
-            player.input.authoritativeAimingYaw = self._lockedCameraYaw
-            player.input.authoritativeAimingPitch = self._lockedCameraPitch
             -- If we were previously locked then unlock.
             self._isLocked = false
             -- unhighlight key on UI
