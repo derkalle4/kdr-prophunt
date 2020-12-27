@@ -217,8 +217,8 @@ end
 local lastUpdate = 0.0
 -- when engine gets updated
 local function onEngineUpdate(deltaTime)
-    -- run event only every 1.0 seconds to save CPU time
-    if lastUpdate >= 0.9 then
+    -- run event only every 0.25 seconds to save CPU time
+    if lastUpdate >= 0.25 then
         -- check round state
         checkRoundState(currentState.roundState)
         lastUpdate = 0.0
