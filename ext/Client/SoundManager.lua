@@ -106,6 +106,8 @@ end
 local function onSoundSync(playerID, sound)
     debugMessage('[S2C_SOUND_SYNC] for ' .. playerID .. ' with sound ' .. sound)
     local player = PlayerManager:GetPlayerById(playerID)
+    local playername = player.name
+    local localPlayer = PlayerManager:GetLocalPlayer()
     -- do not proceed when player is not spawned
     if player.soldier == nil then
         return
@@ -114,6 +116,13 @@ local function onSoundSync(playerID, sound)
     if preparedSoundList[sound] == nil then
         return
     end
+    -- when player is local player
+    if player == localPlayer then
+        playername = 'You'
+    end
+    -- add to killfeed
+    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "whistle");')
+    -- spawn sound
     spawnSound(player, sound)
 end
 
