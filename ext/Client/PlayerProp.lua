@@ -214,7 +214,8 @@ local function onPlayerKilled(soldier)
     end
 end
 
--- TODO: Do we need to optimize this further?
+-- check whether an entity should collide with another entity
+-- TODO maybe check with checkEntityForPlayerEntity
 local function onEntityShouldCollideWith(hook, entityA, entityB)
     if not isProp(PlayerManager:GetLocalPlayer()) then
         return

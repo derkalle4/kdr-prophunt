@@ -43,6 +43,17 @@ local function setPlayerSeeker(player)
     player.teamId = TeamId.Team1
 end
 
+-- check whether given entity is client entity
+function checkEntityForPlayerEntity(entity)
+    local players = PlayerManager:GetPlayers()
+    for i, player in pairs(players) do
+        if player == entity then
+            return true
+        end
+    end
+    return false
+end
+
 -- get count of seekers
 function getSeekerCount()
     local count = 0
