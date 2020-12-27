@@ -4,8 +4,9 @@
 
 -- draw UI HUD
 local function onUiDrawHud()
-    -- If we're a prop then render a crosshair.
-    if isProp(PlayerManager:GetLocalPlayer()) then
+    -- If we're a prop and alive then render a crosshair.
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    if isProp(localPlayer) and localPlayer.alive then
         local windowSize = ClientUtils:GetWindowSize()
         local cx = math.floor(windowSize.x / 2.0 + 0.5)
         local cy = math.floor(windowSize.y / 2.0 + 0.5)
