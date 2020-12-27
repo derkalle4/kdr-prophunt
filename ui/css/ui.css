@@ -6,7 +6,7 @@ body {
 
 @font-face {
 	font-family: "bffont";
-	src: url("./bffont.ttf");
+	src: url("../bffont.ttf");
 }
 
 .color-red {
