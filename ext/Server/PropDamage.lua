@@ -8,7 +8,9 @@ local itemsHit = {}
 -- hooking the soldier damage function
 local function onSoldierDamage(hook, soldier, info, giverInfo)
     -- do nothing when we are not seeking (no damage at all)
-    if currentState.roundState ~= GameState.seeking then
+    if currentState.roundState == GameState.idle
+        or currentState.roundState == GameState.postRound
+        or currentState.roundState == GameState.mapChange then
         hook:Return()
         return
     end
