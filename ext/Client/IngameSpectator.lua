@@ -440,6 +440,11 @@ function IngameSpectator:switchToFreecam()
     self._spectatedPlayer = nil
 
     local localPlayer = PlayerManager:GetLocalPlayer()
+
+    if localPlayer == nil then
+        return
+    end
+
     if localPlayer.alive then
         debugMessage('local player still alive')
         return
