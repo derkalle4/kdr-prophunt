@@ -142,6 +142,7 @@ end
 local function onPlayerKilled(player)
     -- get local player
     local localPlayer = PlayerManager:GetLocalPlayer()
+    local playername = player.name
     -- when killed player is local player
     if player == localPlayer then
         -- hide health bar
@@ -154,11 +155,11 @@ local function onPlayerKilled(player)
         Camera:disable()
         IngameSpectator:disable()
         IngameSpectator:enable()
-        -- do not progress with this function
-        return
+        -- set playername to localPlayer
+        playername = 'You'
     end
     -- add death to killfeed
-    WebUI:ExecuteJS('addToKillfeed("' .. player.name .. '", ' .. player.teamId .. ', "kill");')
+    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "kill");')
 end
 
 -- when a player gets respawned
