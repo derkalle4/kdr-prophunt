@@ -9,6 +9,7 @@ GameState = {
     hiding = 2,
     seeking = 3,
     postRound = 4,
+    mapChange = 5,
 }
 
 -- game message types

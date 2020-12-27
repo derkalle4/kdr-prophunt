@@ -180,6 +180,8 @@ local function inPostRoundState()
     if currentState.roundTimer == 0.0 then
         -- restart map
         RCON:SendCommand('mapList.runNextRound')
+        -- change GameState
+        currentState.roundState = GameState.mapChange
     end
 end
 
