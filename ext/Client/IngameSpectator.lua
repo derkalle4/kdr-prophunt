@@ -28,10 +28,14 @@ function IngameSpectator:_onPlayerInput(deltaTime)
     end
     -- spectate previous player
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
-        self:spectateNextPlayer()
+        self:spectatePreviousPlayer()
     end
     -- spectate next player
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
+        self:spectateNextPlayer()
+    end
+    -- swap autocam
+    if InputManager:WentKeyDown(InputDeviceKeys.IDK_3) then
         self:switchToFreecam()
     end
 end
