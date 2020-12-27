@@ -24,6 +24,15 @@ window.addEventListener("load", function(){
 			healthBar.style.display = 'none';
 	};
 
+	// highlight key
+	window.highlightKey = (key, color, highlight) => {
+		let tmpKey = document.getElementById('key-' + key);
+		if (highlight)
+			tmpKey.classList.add('color-' + color);
+		else
+			tmpKey.classList.remove('color-' + color);
+	};
+
 	window.setHealthBar = (hp, ammo) => {
 		let playerHp = document.getElementById('prophunt-health-bar-hp');
 		let playerAmmo = document.getElementById('prophunt-health-bar-ammo');

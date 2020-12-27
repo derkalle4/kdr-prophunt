@@ -23,6 +23,7 @@ function ThirdPersonCamera:__init()
     self._lockedCameraPitch = 0.0
 
     self._isLocked = false
+    self._canAltPressAgain = true
     self._data = nil
     self._entity = nil
     self._active = false
@@ -30,7 +31,7 @@ function ThirdPersonCamera:__init()
 
     -- Subscribe to relevant events and install necessary hooks.
     Hooks:Install('Input:PreUpdate', 100, self, self._onInputPreUpdate)
-
+    Events:Subscribe('Player:UpdateInput', self, self.onPlayerInput)
     Events:Subscribe('Engine:Update', self, self._onUpdate)
     Events:Subscribe('Level:Destroy', self, self._onLevelDestroy)
 end
@@ -97,6 +98,37 @@ function ThirdPersonCamera:_releaseControl()
     end
 end
 
+function ThirdPersonCamera:onPlayerInput(player, deltaTime)
+    if not self._active then
+        return
+    end
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    if player == nil or localPlayer ~= player then
+        return
+    end
+    -- when freelook key went down
+    if self._freelookKey ~= InputDeviceKeys.IDK_None and InputManager:WentKeyDown(self._freelookKey) then
+        -- if it is currently not locked
+        if not self._isLocked and player.input ~= nil then
+            -- lock it
+            self._isLocked = true
+            -- set view
+            self._lockedCameraYaw = player.input.authoritativeAimingYaw
+            self._lockedCameraPitch = player.input.authoritativeAimingPitch
+            -- highlight key on UI
+            WebUI:ExecuteJS('highlightKey("alt","green",true);')
+         else
+            -- set player input to last known values to avoid flipping back to old position
+            player.input.authoritativeAimingYaw = self._lockedCameraYaw
+            player.input.authoritativeAimingPitch = self._lockedCameraPitch
+            -- If we were previously locked then unlock.
+            self._isLocked = false
+            -- unhighlight key on UI
+            WebUI:ExecuteJS('highlightKey("alt","green",false);')
+        end
+    end
+end
+
 function ThirdPersonCamera:_onInputPreUpdate(hook, cache, dt)
     -- Don't do anything if the camera is not active.
     if not self._active then
@@ -109,22 +141,8 @@ function ThirdPersonCamera:_onInputPreUpdate(hook, cache, dt)
         return
     end
 
-    -- Check if the player is locking the camera.
-    if self._freelookKey ~= InputDeviceKeys.IDK_None and InputManager:IsKeyDown(self._freelookKey) then
-        -- If we're not already locked then save the initial position.
-        if not self._locked and player.input ~= nil then
-            self._locked = true
-
-            self._lockedCameraYaw = player.input.authoritativeAimingYaw
-            self._lockedCameraPitch = player.input.authoritativeAimingPitch
-         elseif self._locked then
-            -- If we were previously locked then unlock.
-            self._locked = false
-        end
-    end
-
     -- If we are locking then prevent the player from looking around.
-    if self._locked then
+    if self._isLocked then
         player:EnableInput(EntryInputActionEnum.EIAYaw, false)
         player:EnableInput(EntryInputActionEnum.EIAPitch, false)
     else
@@ -133,7 +151,7 @@ function ThirdPersonCamera:_onInputPreUpdate(hook, cache, dt)
     end
 
     -- If we're locked then we need to update the yaw and pitch manually.
-    if self._locked then
+    if self._isLocked then
         -- 1.916686 is a magic number we use to somewhat match the rotation speed
         -- with the actual soldier rotation speed.
 
@@ -184,7 +202,7 @@ function ThirdPersonCamera:_onUpdate(delta, simDelta)
     local pitch = player.input.authoritativeAimingPitch
 
     -- If the camera is locked then we use custom angles.
-    if self._locked then
+    if self._isLocked then
         yaw = self._lockedCameraYaw
         pitch = self._lockedCameraPitch
     end
@@ -258,7 +276,7 @@ end
 
 -- Returns `true` if the camera is currently in free-look mode, `false` otherwise.
 function ThirdPersonCamera:isFreelooking()
-    return self._locked
+    return self._isLocked
 end
 
 -- Returns `true` if the camera is currently active, `false` otherwise.
