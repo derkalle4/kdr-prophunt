@@ -29,7 +29,9 @@ local function spawnSound(player, sound)
     -- create entity position
     local entityPos = LinearTransform()
     -- set entity position to player position
-    entityPos.trans = player.soldier.transform.trans
+    entityPos.trans = player.soldier.transform.trans:Clone()
+    -- set entity sound a little bit higher
+    entityPos.trans.y = entityPos.trans.y + 1.5
     -- create sound entity data
     local data = SoundEntityData()
     -- set entity data position to player position
