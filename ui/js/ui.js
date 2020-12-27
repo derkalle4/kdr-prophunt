@@ -107,7 +107,7 @@ window.addEventListener("load", function(){
 	window.postRoundOverlay = (winner, clientTeam) => {
 		// client has won so give him a end he deserves
 		if (winner == clientTeam || clientTeam === 0) {
-			playSound('victory' + (Math.floor(Math.random() * 3) + 1));
+			playSound('victory1');
 			var confettiSettings = {
 				target: 'confetti-canvas',
 				width: window.innerWidth - 10,
@@ -120,7 +120,7 @@ window.addEventListener("load", function(){
 				confetti.clear();
 			}, 15 * 1000);
 		}else{
-			playSound('defeated' + (Math.floor(Math.random() * 3) + 1));
+			playSound('defeated1');
 		}
 	};
 

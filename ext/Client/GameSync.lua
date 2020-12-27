@@ -22,7 +22,7 @@ end
 -- when we are in hiding state
 local function inHidingState(info, localPlayer)
     -- play round start sound (TODO: same sound for all clients)
-    WebUI:ExecuteJS('playSound("roundstart" + (Math.floor(Math.random() * 6) + 1));')
+    WebUI:ExecuteJS('playSound("roundstart1");')
     -- check for player team
     if localPlayer.teamId == 1 then -- when player is seeker
         -- give center message for hiding state
