@@ -6,6 +6,7 @@ preparedSoundList = {} -- list of prepared sounds for further use
 local playerSounds = {} -- current player sound props
 local cooldownTime = 3.0 -- cooldown before next use
 local cooldown = 0.0 -- actual cooldown time left
+local randomSoundTime = MathUtils:GetRandomInt(30, 60)
 
 
 -- spawn sound on entity
@@ -48,6 +49,40 @@ local function spawnSound(player, sound)
     end
 end
 
+-- get a sound which can be played
+local function getSoundToPlay()
+    local sound = nil
+    -- check for cooldown
+    if cooldown > 0.0 then
+        return
+    end
+    -- set cooldown time
+    cooldown = cooldownTime
+    -- check whether sound exist and choose another when not
+    local loop = #soundList
+    while loop > 0 do
+        local randomNumber = MathUtils:GetRandomInt(1, #soundList)
+        sound = soundList[randomNumber]
+        -- when sound does exist
+        if preparedSoundList[sound] ~= nil then
+            -- end loop
+            loop = 0
+        else
+            -- sound does not exist, remove it from the list
+            table.remove(soundList, randomNumber)
+            loop = loop - 1
+        end
+    end
+    -- do not continue when no sound was found
+    if sound == nil then
+        debugMessage('did not find sound to send to all players')
+        return
+    end
+    debugMessage('request to send sound ' .. sound .. ' to all players')
+    -- send sound request to server (do not play sound locally. Let server decide...)
+    NetEvents:SendLocal(GameMessage.C2S_PROP_SOUND, sound)
+end
+
 -- when a client does make an input
 local function onPlayerInput(player, deltaTime)
     -- do not proceed when player is not spawned
@@ -60,36 +95,7 @@ local function onPlayerInput(player, deltaTime)
     end
     -- sound on button Q
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_Q) then
-        local sound = nil
-        -- check for cooldown
-        if cooldown > 0.0 then
-            return
-        end
-        -- set cooldown time
-        cooldown = cooldownTime
-        -- check whether sound exist and choose another when not
-        local loop = #soundList
-        while loop > 0 do
-            local randomNumber = MathUtils:GetRandomInt(1, #soundList)
-            sound = soundList[randomNumber]
-            -- when sound does exist
-            if preparedSoundList[sound] ~= nil then
-                -- end loop
-                loop = 0
-            else
-                -- sound does not exist, remove it from the list
-                table.remove(soundList, randomNumber)
-                loop = loop - 1
-            end
-        end
-        -- do not continue when no sound was found
-        if sound == nil then
-            debugMessage('did not find sound to send to all players')
-            return
-        end
-        debugMessage('request to send sound ' .. sound .. ' to all players')
-        -- send sound request to server (do not play sound locally. Let server decide...)
-        NetEvents:SendLocal(GameMessage.C2S_PROP_SOUND, sound)
+        getSoundToPlay()
     end
 end
 
@@ -113,9 +119,19 @@ local lastUpdate = 0.0
 local function onEngineUpdate(deltaTime)
     -- run event only every 1.0 seconds to save CPU time
     if lastUpdate >= 0.1 then
+        local localPlayer = PlayerManager:GetLocalPlayer()
         -- descrease cooldown
         if cooldown > 0.0 then
             cooldown = cooldown - lastUpdate
+        end
+        -- check whether to play a random sound
+        if (randomSoundTime > 0.0) then
+            -- decrease random sound time
+            randomSoundTime = randomSoundTime - lastUpdate
+        elseif isProp(localPlayer) then -- only decrease when we are a prop
+            -- reset random sound time
+            randomSoundTime = MathUtils:GetRandomInt(30, 60)
+            getSoundToPlay()
         end
         -- reset last engine update
         lastUpdate = 0.0
