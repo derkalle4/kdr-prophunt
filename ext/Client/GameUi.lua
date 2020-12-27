@@ -129,6 +129,12 @@ local function onPlayerInput(player, deltaTime)
         DisconnectInSeconds = 0.0
         WebUI:ExecuteJS('setUserMessage("")')
     end
+
+    -- show welcome message
+    if InputManager:WentKeyDown(InputDeviceKeys.IDK_F1) then
+        -- show scoreboard on UI
+        WebUI:ExecuteJS('showWelcomeMessage();')
+    end
 end
 
 -- when a player gets killed

@@ -1,6 +1,7 @@
 body {
   display: none;
 	background-color: transparent;
+  font-family: "bffont";
 }
 
 @font-face {
@@ -159,13 +160,21 @@ body {
   color: #fff;
   font-size: 25px;
   font-weight: bold;
-  text-align: justiy;
+  text-align: justify;
+}
+#prophunt-welcomemessage h1:nth-child(1) {
+  float:left;
+}
+
+#prophunt-welcomemessage h1:nth-child(2) {
+  float:right;
 }
 
 #prophunt-welcomemessage h1,
 #prophunt-welcomemessage h2,
+#prophunt-welcomemessage h3,
 #prophunt-welcomemessage strong {
-  color: #ff9898;
+  color: #ffabab;
 }
 
 #prophunt-spectator-keys,

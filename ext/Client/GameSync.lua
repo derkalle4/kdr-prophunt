@@ -5,8 +5,6 @@
 local function inIdleState(info, localPlayer)
     -- disable any center message
     WebUI:ExecuteJS('setCenterMessage("");')
-    -- show welcome message
-    WebUI:ExecuteJS('showWelcomeMessage(true);')
 end
 
 -- when we are in preRound state
@@ -15,6 +13,8 @@ local function inPreRoundState(info, localPlayer)
     WebUI:ExecuteJS('setSpectatorMessage("");')
     -- hide welcome message
     WebUI:ExecuteJS('showWelcomeMessage(false);')
+    -- hide spectator keys
+    WebUI:ExecuteJS('showSpectatorKeys(false);')
     -- show killfeed
     WebUI:ExecuteJS('showKillfeed(true);')
 end

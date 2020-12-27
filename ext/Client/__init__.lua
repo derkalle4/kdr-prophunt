@@ -28,6 +28,8 @@ local function playerReady()
     WebUI:Init()
     -- enable spectator
     IngameSpectator:enable()
+    -- show welcome message
+    WebUI:ExecuteJS('showWelcomeMessage(true);')
 end
 
 -- when engine wrote a message

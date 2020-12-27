@@ -215,12 +215,17 @@ window.addEventListener("load", function(){
 	};
 
 	// show or hide idle round message
-	window.showWelcomeMessage = (bool) => {
+	window.showWelcomeMessage = (bool = null) => {
 		let idleStateMessage = document.getElementById('prophunt-welcomemessage');
-		if (bool)
+		if (bool === true)
 			idleStateMessage.style.display = 'block';
-		else
+		else if(bool === false)
 			idleStateMessage.style.display = 'none';
+		else
+			if (idleStateMessage.style.display == 'block')
+				showWelcomeMessage(false);
+			else
+				showWelcomeMessage(true);
 	};
 
 	// update scoreboard
@@ -301,4 +306,7 @@ window.addEventListener("load", function(){
 			}
 		}
 	};
+	showUI(true);
+	showWelcomeMessage(true);
+	showSpectatorKeys(true);
 });
