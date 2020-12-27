@@ -79,8 +79,8 @@ body {
   position: absolute;
   bottom: 100px;
   right: 0;
-  width: 400px;
-  height: 118px;
+  width: 300px;
+  height: 153px;
   text-align: center;
   background-image:url(../img/health_bar_background.png);
   background-size:100% 100%;
@@ -92,30 +92,27 @@ body {
 }
 
 #prophunt-health-bar .row {
-  width: 400px;
+  width: 300px;
   padding-top: 20px;
 }
 
-#prophunt-health-bar .row:nth-child(1) .col-7 {
+#prophunt-health-bar .row {
   color: #fff;
   font-weight: bold;
   line-height: 30px;
-  font-size: 20px;
+  font-size: 30px;
 }
 
-#prophunt-health-bar .row:nth-child(2) .col-4 {
+#prophunt-health-bar .row:nth-child(2) .col-4:nth-child(2) {
   background:url(../img/health_bar_ammo.png) no-repeat;
   background-size: 95px auto;
-  color: #fff;
-  font-weight: bold;
-  font-size: 20px;
   text-align: left;
 }
 
-#prophunt-health-bar-health {
-  height: 30px;
-  width: 100%;
-  background-color: #ff0000;
+#prophunt-health-bar .row:nth-child(2) .col-4:nth-child(3) {
+  background:url(../img/health_bar_reload_ammo.png) no-repeat;
+  background-size: 95px auto;
+  text-align: left;
 }
 
 #prophunt-killfeed {
