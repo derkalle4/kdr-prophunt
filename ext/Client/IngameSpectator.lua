@@ -26,13 +26,13 @@ function IngameSpectator:_onPlayerInput(deltaTime)
     if localPlayer.alive then
         return
     end
-    -- spectate previous player
-    if InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
-        self:spectatePreviousPlayer()
-    end
     -- spectate next player
-    if InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
+    if InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
         self:spectateNextPlayer()
+    end
+    -- spectate previous player
+    if InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
+        self:spectatePreviousPlayer()
     end
     -- swap autocam
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_3) then
