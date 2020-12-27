@@ -151,6 +151,7 @@ window.addEventListener("load", function(){
 		// create li element
 		let li = document.createElement('li');
 		let text = '';
+		let bgcolor = '';
 		switch(type) {
 			case 'kill':
 				switch(team) {
@@ -163,23 +164,29 @@ window.addEventListener("load", function(){
 					default:
 						text = name + ' got killed';
 				}
+				bgcolor = 'bgcolor-50-red';
 				break;
 			case 'connect':
 				text = name + ' joined';
+				bgcolor = 'bgcolor-50-green';
 				break;
 			case 'disconnect':
 				text = name + ' left';
 				break;
+			case 'whistle':
+				text = name + ' whistled';
+				bgcolor = 'bgcolor-50-orange';
+				break;
 		}
+		// remove first child when we have 5 or more
+		if(killfeedList.children.length >= 5) killfeedList.removeChild(killfeedList.childNodes[0]);
+		// create new child
 		li.appendChild(document.createTextNode(text));
 		li.classList.add('list-group-item');
 		li.classList.add('fade-in');
+		if (bgcolor !== '') li.classList.add(bgcolor);
 		// append to killfeed
 		killfeedList.appendChild(li);
-		// hide after three seconds
-		setTimeout(function() {
-			li.remove();
-		}, 10 * 1000);
 	};
 
 	window.playSound = (sound) => {

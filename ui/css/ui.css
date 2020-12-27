@@ -25,6 +25,18 @@ body {
   color: #00bfff !important;
 }
 
+.bgcolor-50-red {
+  background-color: rgb(33, 37, 41, 0.5) !important;
+}
+
+.bgcolor-50-orange {
+  background-color: rgb(234, 180, 105, 0.5) !important;
+}
+
+.bgcolor-50-green {
+  background-color: rgb(133, 234, 105, 0.5) !important;
+}
+
 #prophunt-roundinfo {
 	position: absolute;
 	left:0;
