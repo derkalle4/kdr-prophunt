@@ -150,7 +150,8 @@ body {
 
 #prophunt-welcomemessage {
   display: none;
-  background-color: rgb(33, 37, 41, 0.5);
+  background-color: rgb(33, 37, 41, 0.7);
+  border-radius: 25px;
   width: 1024px;
   position: absolute;
   left: 0;
@@ -164,6 +165,8 @@ body {
   text-align: justiy;
 }
 
+#prophunt-welcomemessage h1,
+#prophunt-welcomemessage h2,
 #prophunt-welcomemessage strong {
   color: #ff9898;
 }
@@ -203,7 +206,8 @@ body {
 
 #prophunt-scoreboard {
   display: none;
-  background-color: rgb(33, 37, 41, 0.8);
+  background-color: rgb(33, 37, 41, 0.9);
+  border-radius: 25px;
   position: absolute;
   padding: 15px;
   left: 0;

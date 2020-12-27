@@ -230,13 +230,11 @@ window.addEventListener("load", function(){
 		let scoreboardListHider = document.getElementById('prophunt-scoreboard-list-hider');
 		let scoreboardListHiderSmall = document.getElementById('prophunt-scoreboard-list-hider-small');
 		let scoreboardListSpectator = document.getElementById('prophunt-scoreboard-list-spectator');
-		let idlelistSpectator = document.getElementById('prophunt-welcomemessage-players');
 		scoreboardListSeeker.innerHTML = '';
 		scoreboardListSeekerSmall.innerHTML = '';
 		scoreboardListHider.innerHTML = '';
 		scoreboardListHiderSmall.innerHTML = '';
 		scoreboardListSpectator.innerHTML = '';
-		idlelistSpectator.innerHTML = '';
 		// sort data by living players first
 		data.sort(function(a, b){
 			if (!a.alive && b.alive) {
@@ -254,13 +252,6 @@ window.addEventListener("load", function(){
 			let row = null;
 			let cell1 = null;
 			let button = null;
-			// create complete player list for idle round players list
-			button = document.createElement('button');
-			button.appendChild(document.createTextNode(data[i].username));
-			button.classList.add('btn');
-			button.classList.add('btn-secondary');
-			button.classList.add('m-1');
-			idlelistSpectator.appendChild(button);
 			// switch between player teams
 			switch(data[i].team) {
 				case 1:
