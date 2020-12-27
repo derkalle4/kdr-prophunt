@@ -58,6 +58,9 @@ local function getSoundToPlay()
     end
     -- set cooldown time
     cooldown = cooldownTime
+    -- set cooldown button to red
+    WebUI:ExecuteJS('highlightKey("q","green",false);')
+    WebUI:ExecuteJS('highlightKey("q","red",true);')
     -- check whether sound exist and choose another when not
     local loop = #soundList
     while loop > 0 do
@@ -123,6 +126,11 @@ local function onEngineUpdate(deltaTime)
         -- descrease cooldown
         if cooldown > 0.0 then
             cooldown = cooldown - lastUpdate
+            if cooldown <= 0.0 then
+                -- set cooldown button to red
+                WebUI:ExecuteJS('highlightKey("q","green",true);')
+                WebUI:ExecuteJS('highlightKey("q","red",false);')
+            end
         end
         -- check whether to play a random sound
         if (randomSoundTime > 0.0) then
