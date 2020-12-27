@@ -324,6 +324,11 @@ function IngameSpectator:spectateNextPlayer()
     local players = PlayerManager:GetPlayers()
     local localPlayer = PlayerManager:GetLocalPlayer()
 
+    if localPlayer == nil then
+        self:switchToFreecam()
+        return
+    end
+
     for i, player in pairs(players) do
         if player == self._spectatedPlayer then
             currentIndex = i
