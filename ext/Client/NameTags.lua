@@ -3,7 +3,6 @@
 
 
 local nameTagHeight = 1.8 -- height of nameTagHeight
-local teamTagHeight = 1.9 -- height of nameTagHeight
 local textColorDefault = Vec4(1, 1, 1, 0.8) -- default text color
 local textColorRed = Vec4(1, 0, 0, 0.8) -- text color for hider
 local textColorGreen = Vec4(0, 1, 0, 0.8) -- text color for seeker
@@ -49,7 +48,7 @@ local function onUiDrawHud()
         -- get player position for name tag
         local screenPosNameTag = playerTrans(player, nameTagHeight)
         -- check if screenPos is nil
-        if screenPosNameTag == nil or screenPosTeamTag == nil then
+        if screenPosNameTag == nil then
             goto continue
         end
         -- default text color
