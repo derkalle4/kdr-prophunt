@@ -91,7 +91,8 @@ local function onPushScreen(hook, screen, priority, parentGraph, stateNodeGuid)
         for i = #asset.nodes, 1, -1 do
         if asset.nodes[i]:Is('WidgetNode') then
             if WidgetNode(asset.nodes[i]).name == 'Ammo' or
-                WidgetNode(asset.nodes[i]).name == 'Health' then
+                WidgetNode(asset.nodes[i]).name == 'Health' or 
+                WidgetNode(asset.nodes[i]).name == 'Minimap' then
                     asset.nodes:erase(i)
                 end
             end
