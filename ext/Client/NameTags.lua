@@ -37,8 +37,8 @@ local function onUiDrawHud()
         if player.soldier == nil then
             goto continue
         end
-        -- check whether player is in same team or if player is spectator
-        if localPlayer.teamId ~= 0 and localPlayer.teamId ~= player.teamId then
+        -- check whether player is in same team or if player is spectator or GameState is postRound
+        if localPlayer.teamId ~= 0 and localPlayer.teamId ~= player.teamId and currentState.roundState ~= GameState.postRound then
             goto continue
         end
         -- check whether we are that player (we do not need our nametag)
