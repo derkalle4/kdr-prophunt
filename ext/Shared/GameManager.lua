@@ -24,3 +24,15 @@ GameMessage = {
     C2S_PROP_SOUND = "phpsound",
     S2C_SOUND_SYNC = "phssync",
 }
+
+-- the current state of the game (will be synced to client)
+currentState = {
+    roundTimer = 0.0,
+    roundState = GameState.idle,
+    roundStatusMessage = 'Waiting',
+    numPlayer = 0,
+    numSeeker = 0,
+    numHider = 0,
+    numSpectator = 0,
+    winner = 0
+}

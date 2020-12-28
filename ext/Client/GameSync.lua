@@ -90,6 +90,8 @@ end
 -- synchronisation of each server game object
 local oldState = -1
 local function onGameSync(info)
+    -- sync currentState with state we got from server
+    currentState = info
     -- set UI round information
     WebUI:ExecuteJS('setRoundInfo(' .. info.numPlayer .. ',' .. info.numSeeker .. ', ' .. info.numHider .. ', ' .. info.numSpectator .. ', "' .. info.roundStatusMessage .. '", ' .. math.floor(info.roundTimer) .. ');')
     -- check whether we got into a new state
