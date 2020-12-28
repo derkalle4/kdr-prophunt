@@ -258,12 +258,7 @@ window.addEventListener("load", function(){
 		scoreboardListSpectator.innerHTML = '';
 		// sort data by living players first
 		data.sort(function(a, b){
-			if (!a.alive && b.alive) {
-				return -1;
-			} else if (a.alive && !b.alive) {
-				return 1;
-			}   
-			return 0;
+			return (a.alive === b.alive)? 0 : a.alive? -1 : 1;
 		});
 		// populate scoreboard
 		var i;
@@ -273,16 +268,25 @@ window.addEventListener("load", function(){
 			let row = null;
 			let cell1 = null;
 			let button = null;
+			console.log(i + ' - ' + data[i].alive);
 			// switch between player teams
 			switch(data[i].team) {
 				case 1:
 					count_seeker += 1;
 					// only display first 10 people in large view
 					if(count_seeker <= 10) {
-						row = scoreboardListSeeker.insertRow(0);
+						row = scoreboardListSeeker.insertRow(scoreboardListSeeker.rows.length);
 						cell1 = row.insertCell(0);
 						cell1.innerHTML = data[i].username;
-						if (!data[i].alive)	cell1.classList.add('dead');
+						cell2 = row.insertCell(1);
+						cell2.innerHTML = ((data[i].score) ? data[i].score : '-');
+						cell3 = row.insertCell(2);
+						cell3.innerHTML = ((data[i].kills) ? data[i].kills : '-');
+						cell4 = row.insertCell(3);
+						cell4.innerHTML = ((data[i].deaths) ? data[i].deaths : '-');
+						cell5 = row.insertCell(4);
+						cell5.innerHTML = ((data[i].ping) ? data[i].ping : '-');
+						if (!data[i].alive)	row.classList.add('dead');
 					}else{	// display other ones as small buttons after the table
 						button = document.createElement('button');
 						button.appendChild(document.createTextNode(data[i].username));
@@ -297,10 +301,18 @@ window.addEventListener("load", function(){
 					count_hider += 1;
 					// only display first 10 people in large view
 					if(count_hider <= 10) {
-						row = scoreboardListHider.insertRow(0);
+						row = scoreboardListHider.insertRow(scoreboardListHider.rows.length);
 						cell1 = row.insertCell(0);
 						cell1.innerHTML = data[i].username;
-						if (!data[i].alive)	cell1.classList.add('dead');
+						cell2 = row.insertCell(1);
+						cell2.innerHTML = ((data[i].score) ? data[i].score : '-');
+						cell3 = row.insertCell(2);
+						cell3.innerHTML = ((data[i].kills) ? data[i].kills : '-');
+						cell4 = row.insertCell(3);
+						cell4.innerHTML = ((data[i].deaths) ? data[i].deaths : '-');
+						cell5 = row.insertCell(4);
+						cell5.innerHTML = ((data[i].ping) ? data[i].ping : '-');
+						if (!data[i].alive)	row.classList.add('dead');
 					}else{	// display other ones as small buttons after the table
 						button = document.createElement('button');
 						button.appendChild(document.createTextNode(data[i].username));
