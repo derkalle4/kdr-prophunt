@@ -198,12 +198,16 @@ local function onPropSync(playerID, bpName, magnitude)
         removePlayerProp(playerID)
         -- reset camera distance
         Camera:setDistance(2.0)
+        -- reset camera height
+        Camera:setHeight(1.5)
     else
         changePlayerProp(playerID, bpName)
         -- set player camera distance to prop depending on prop size
-        local distance = MathUtils:Lerp(1.5, 3.0, magnitude)
+        local distance = MathUtils:Lerp(1.0, 3.0, magnitude)
         if distance > 3.0 then
             distance = 3.0
+        elseif distance < 1.0 then
+            distance = 1.0
         end
         Camera:setDistance(distance)
     end
