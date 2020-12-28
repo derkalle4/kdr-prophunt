@@ -11,6 +11,20 @@ local bloodFx = nil -- blood FX
 local playersHit = {} -- whether a player got hit
 
 
+-- check whether we are hitting the player physics entity
+function isHittingPlayerPhysicsEntity(player, hit)
+        local bus = playerProps[player.id]
+        if bus == nil then
+            return false
+        end
+        for _, prop in pairs(bus.entities) do
+            if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
+                return true
+            end
+        end
+    return false
+end
+
 -- create a player prop
 function createPlayerProp(player, bp)
     debugMessage('createPlayerProp for ' .. player.name)
@@ -177,13 +191,21 @@ local function cleanupRound()
 end
 
 -- prop sync request from server
-local function onPropSync(playerID, bpName)
+local function onPropSync(playerID, bpName, magnitude)
     debugMessage('[S2C_PROP_SYNC] for ' .. playerID .. ' with blueprint ' .. (bpName and bpName or "nil"))
     -- when prop is nil (no prop anymore, then delete user)
     if bpName == nil then
         removePlayerProp(playerID)
+        -- reset camera distance
+        Camera:setDistance(2.0)
     else
         changePlayerProp(playerID, bpName)
+        -- set player camera distance to prop depending on prop size
+        local distance = MathUtils:Lerp(1.5, 3.0, magnitude)
+        if distance > 3.0 then
+            distance = 3.0
+        end
+        Camera:setDistance(distance)
     end
 end
 

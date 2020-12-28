@@ -14,13 +14,13 @@ local function sendUpdateToPlayer(player, playerID, prop)
 end
 
 -- broadcast changed prop
-local function broadCastClients(playerID, prop)
+local function broadCastClients(playerID, prop, magnitude)
     if prop == nil then
         debugMessage('[S2C_PROP_SYNC] broadcast: nil')
     else
         debugMessage('[S2C_PROP_SYNC] broadcast: ' .. prop)
     end
-    NetEvents:Broadcast(GameMessage.S2C_PROP_SYNC, playerID, prop)
+    NetEvents:Broadcast(GameMessage.S2C_PROP_SYNC, playerID, prop, magnitude)
 end
 
 -- set new prop for player
@@ -68,7 +68,7 @@ function setPlayerProp(player, bpName)
     -- save new prop name for player
     playerPropNames[player.id] = bpName
     -- broadcast changes to clients
-    broadCastClients(player.id, bpName)
+    broadCastClients(player.id, bpName, tmpEntity.aabb.max.magnitude)
 end
 
 -- remove prop from player
@@ -79,7 +79,7 @@ local function removePlayerProp(player)
     end
     playerPropNames[player.id] = nil
     -- broadcast to clients
-    broadCastClients(player.id, nil)
+    broadCastClients(player.id, nil, nil)
 end
 
 -- make player to prop
@@ -120,7 +120,7 @@ function makePlayerSeeker(player)
     player:EnableInput(EntryInputActionEnum.EIAToggleParachute, true)
     player:EnableInput(EntryInputActionEnum.EIASprint, true)
     -- broadcast change to player
-    broadCastClients(player.id, nil)
+    broadCastClients(player.id, nil, nil)
     -- update local player
     sendPlayerUpdateToPlayer(player)
 end
