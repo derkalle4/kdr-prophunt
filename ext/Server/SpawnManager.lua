@@ -30,9 +30,11 @@ function spawnSeeker(player)
 
     -- Select spawn point randomly from predetermined list.
     local spawnTransform = LinearTransform()
+    math.randomseed(SharedUtils:GetTimeMS())
     spawnTransform.trans = PlayerSpawns[level][MathUtils:GetRandomInt(1, #PlayerSpawns[level])]
 
     -- bots.spawn Bot1 Team2 Squad2 -100.150360 37.779110 -62.015625
+    math.randomseed(SharedUtils:GetTimeMS())
     local randomAppearance = appearances[MathUtils:GetRandomInt(1, #appearances)]
 
     player:SelectUnlockAssets(seekerSoldier, { randomAppearance })
@@ -75,6 +77,7 @@ function spawnSeeker(player)
     seekerCustomization.overrideCriticalHealthThreshold = 1.0
 
     -- Pick a random loadout.
+    math.randomseed(SharedUtils:GetTimeMS())
     local loadout = loadouts[MathUtils:GetRandomInt(1, #loadouts)]
 
     local primaryWeapon = UnlockWeaponAndSlot()
@@ -125,7 +128,7 @@ function spawnProp(player)
     if level == nil or PlayerSpawns[level] == nil then
         return
     end
-
+    math.randomseed(SharedUtils:GetTimeMS())
     spawnTransform.trans = PlayerSpawns[level][MathUtils:GetRandomInt(1, #PlayerSpawns[level])]
 
     player:SelectUnlockAssets(hiderSoldier, { engiAppearance })

@@ -6,6 +6,7 @@ preparedSoundList = {} -- list of prepared sounds for further use
 local playerSounds = {} -- current player sound props
 local cooldownTime = 3.0 -- cooldown before next use
 local cooldown = 0.0 -- actual cooldown time left
+math.randomseed(SharedUtils:GetTimeMS())
 local randomSoundTime = MathUtils:GetRandomInt(30, 60)
 
 
@@ -64,6 +65,7 @@ local function getSoundToPlay()
     -- check whether sound exist and choose another when not
     local loop = #soundList
     while loop > 0 do
+        math.randomseed(SharedUtils:GetTimeMS())
         local randomNumber = MathUtils:GetRandomInt(1, #soundList)
         sound = soundList[randomNumber]
         -- when sound does exist
@@ -147,6 +149,7 @@ local function onEngineUpdate(deltaTime)
             randomSoundTime = randomSoundTime - lastUpdate
         elseif isProp(localPlayer) then -- only decrease when we are a prop
             -- reset random sound time
+            math.randomseed(SharedUtils:GetTimeMS())
             randomSoundTime = MathUtils:GetRandomInt(30, 60)
             getSoundToPlay()
         end
