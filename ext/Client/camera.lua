@@ -28,6 +28,8 @@ function ThirdPersonCamera:__init()
     self._entity = nil
     self._active = false
     self._lookAtPos = nil
+    -- the player id we want to spectate (when we are not alive)
+    self._spectatePlayerID = nil
 
     -- Subscribe to relevant events and install necessary hooks.
     Hooks:Install('Input:PreUpdate', 100, self, self._onInputPreUpdate)
@@ -190,14 +192,29 @@ function ThirdPersonCamera:_onUpdate(delta, simDelta)
 
     -- Don't update if we don't have a player with an alive soldier.
     local player = PlayerManager:GetLocalPlayer()
+    local specPlayer = nil
+    -- set player to external player when we have a player id
+    if self._spectatePlayerID ~= nil then
+        specPlayer = PlayerManager:GetPlayerById(self._spectatePlayerID)
+        if specPlayer == nil or specPlayer.soldier == nil then
+            return
+        end
+    end
 
-    if player == nil or player.soldier == nil or player.input == nil then
+    if player == nil or (player.soldier == nil and (specPlayer == nil or specPlayer.soldier == nil)) or player.input == nil then
         return
     end
 
     -- Get the soldier's aiming angles.
     local yaw = player.input.authoritativeAimingYaw
     local pitch = player.input.authoritativeAimingPitch
+    -- get the spectator player aiming angle
+    if specPlayer ~= nil then
+        yaw = specPlayer.soldier.authoritativeYaw
+        pitch = specPlayer.soldier.authoritativePitch
+        -- set specPlayer to player when exists to work with that player instead of our own player
+        player = specPlayer
+    end
 
     -- If the camera is locked then we use custom angles.
     if self._isLocked then
@@ -324,6 +341,11 @@ end
 -- Sets the maximum distance between the camera and the soldier.
 function ThirdPersonCamera:setDistance(distance)
     self._distance = distance
+end
+
+-- Sets the spectator player id to spectate
+function ThirdPersonCamera:setSpectatorPlayerId(playerID)
+    self._spectatePlayerID = playerID
 end
 
 -- Gets the height of the camera target, relative to the soldier's feet.

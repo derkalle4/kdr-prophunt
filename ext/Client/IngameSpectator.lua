@@ -299,6 +299,10 @@ function IngameSpectator:spectatePlayer(player)
 
     self._spectatedPlayer = player
     SpectatorManager:SpectatePlayer(self._spectatedPlayer, self._firstPerson)
+    -- set third person camera
+    Camera:setSpectatorPlayerId(player.id)
+    Camera:enable()
+    WebUI:DisableMouse()
 end
 
 function IngameSpectator:spectateNextPlayer()
@@ -438,6 +442,9 @@ function IngameSpectator:switchToFreecam()
     end
 
     self._spectatedPlayer = nil
+
+    -- disable third person camera
+    Camera:disable()
 
     local localPlayer = PlayerManager:GetLocalPlayer()
 
