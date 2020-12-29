@@ -156,10 +156,10 @@ local function SendScoreBoardData()
             alive = player.soldier ~= nil,
             username = player.name,
             team = player.teamId,
-            score = player.score,
-            kills = player.kills,
-            deaths = player.deaths,
-            ping = player.ping,
+            score = (player.score >= 0 and player.score or 0),
+            kills = (player.kills >= 0 and player.kills or 0),
+            deaths = (player.deaths >= 0 and player.deaths or 0),
+            ping = (player.ping >= 0 and player.ping or 0),
         })
     end
     -- send players to scoreboard UI
