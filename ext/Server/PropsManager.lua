@@ -142,8 +142,8 @@ local function cleanupRound()
 end
 
 -- subscribe to client onready event
-local function onClientSync(player)
-    debugMessage('[C2S_CLIENT_SYNC] from ' .. player.name)
+local function onClientReady(player)
+    debugMessage('[C2S_CLIENT_READY] from ' .. player.name)
     -- Sync existing props to connecting clients.
     for id, bpName in pairs(playerPropNames) do
         sendUpdateToPlayer(player, id, bpName)
@@ -174,5 +174,5 @@ Events:Subscribe('Level:Destroy', cleanupRound)
 Events:Subscribe('Extension:Unloading', cleanupRound)
 Events:Subscribe('Player:Killed', onPlayerKilled)
 Events:Subscribe('Player:Destroyed', onPlayerDestroyed)
-NetEvents:Subscribe(GameMessage.C2S_CLIENT_SYNC, onClientSync)
+NetEvents:Subscribe(GameMessage.C2S_CLIENT_READY, onClientReady)
 NetEvents:Subscribe(GameMessage.C2S_PROP_CHANGE, onPropChange)
