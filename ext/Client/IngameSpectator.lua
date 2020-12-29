@@ -28,14 +28,17 @@ function IngameSpectator:_onPlayerInput(deltaTime)
     end
     -- spectate next player
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
+        Camera:disable()
         self:spectateNextPlayer()
     end
     -- spectate previous player
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
+        Camera:disable()
         self:spectatePreviousPlayer()
     end
     -- swap autocam
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_3) then
+        Camera:disable()
         self:switchToFreecam()
     end
 end
@@ -300,8 +303,8 @@ function IngameSpectator:spectatePlayer(player)
     self._spectatedPlayer = player
     SpectatorManager:SpectatePlayer(self._spectatedPlayer, self._firstPerson)
     -- set third person camera
-    Camera:setSpectatorPlayerId(player.id)
     Camera:enable()
+    Camera:setSpectatorPlayerId(player.id)
     WebUI:DisableMouse()
 end
 

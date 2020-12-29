@@ -303,6 +303,7 @@ end
 
 -- Enables the third person camera.
 function ThirdPersonCamera:enable()
+    self:_resetVariables()
     self:_createCamera()
     self:_takeControl()
 end
