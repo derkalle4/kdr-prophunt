@@ -21,6 +21,10 @@ require('GameUi')
 require('NameTags')
 require('SoundManager')
 
+
+-- local variables
+local lastSyncUpdate = 0.0 -- initial prop sync update
+
 -- make player ready
 local function playerReady()
     debugMessage('player is ready!')
@@ -50,6 +54,21 @@ local function onExtensionLoaded()
     end
 end
 
+-- on engine update
+local function onEngineUpdate(deltaTime)
+    -- run event after three seconds
+    if lastSyncUpdate >= 3.0 then
+        -- ask for prop sync
+        NetEvents:SendLocal(GameMessage.C2S_CLIENT_SYNC)
+        -- reset last engine update
+        lastSyncUpdate = -1.0
+    elseif lastSyncUpdate >= 0.0 then
+        -- increase lastUpdate value
+        lastSyncUpdate = lastSyncUpdate + deltaTime
+    end
+end
+
 -- events and hooks
+Events:Subscribe('Engine:Update', onEngineUpdate)
 Events:Subscribe('Extension:Loaded', onExtensionLoaded)
 Events:Subscribe('Engine:Message', onEngineMessage)

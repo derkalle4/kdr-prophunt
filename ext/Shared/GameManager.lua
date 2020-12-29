@@ -16,6 +16,7 @@ GameState = {
 -- game message types
 GameMessage = {
     C2S_CLIENT_READY = "phclr",
+    C2S_CLIENT_SYNC = "phcls",
     C2S_PROP_DAMAGE = "phpd",
     C2S_PROP_CHANGE = "phprchange",
     S2C_GAME_SYNC = "phgsync",
