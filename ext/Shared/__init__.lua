@@ -90,6 +90,12 @@ local function onPartitionLoaded(partition)
             s_Instance:MakeWritable()
             s_Instance.enable = false
         end
+       -- remove water from being considered physically, so bullet entity collisions occur on props hiding in water too
+        if instance:Is('WaterAsset') then
+            if instance:Is('WaterAsset') then
+                partition:RemoveInstance(instance)
+            end
+        end
     end
 end
 
