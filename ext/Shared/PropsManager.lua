@@ -69,6 +69,7 @@ local PlayerPropsBlacklist = {
         'binder_01',
         'sprinkler',
         'ventilationsmall',
+        'spoon',
     },
     ['Levels/XP2_Office/XP2_Office'] = {
         'invisiblecollision_',
@@ -109,6 +110,7 @@ local PlayerPropsBlacklist = {
         'ground',
         'pipe',
         'copper',
+        'spoon',
     }
 }
 
