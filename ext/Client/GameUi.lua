@@ -171,6 +171,12 @@ local function onPlayerRespawn(player)
     if player == localPlayer then
         -- disable spectator mode
         IngameSpectator:disable()
+        -- disable third person camera when seeker, enable otherwise
+        if isSeeker(player) then
+            Camera:disable()
+        elseif isProp(player) then
+            Camera:enable()
+        end
         -- show health bar
         WebUI:ExecuteJS('showHealthBar(true);')
     end
