@@ -145,8 +145,10 @@ local function onEngineUpdate(deltaTime)
         end
         -- check whether to play a random sound
         if (randomSoundTime > 0.0) then
-            -- decrease random sound time
-            randomSoundTime = randomSoundTime - lastUpdate
+            -- decrease random sound time when we are in the seeking gamestate
+            if currentState.roundState = GameState.seeking then
+                randomSoundTime = randomSoundTime - lastUpdate
+            end
         elseif isProp(localPlayer) then -- only decrease when we are a prop
             -- reset random sound time
             math.randomseed(SharedUtils:GetTimeMS())
