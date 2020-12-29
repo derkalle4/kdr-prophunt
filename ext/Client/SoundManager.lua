@@ -98,6 +98,11 @@ local function onPlayerInput(player, deltaTime)
     if not isProp(player) then
         return
     end
+    -- check whether we are in hiding or seeking state to be able to make noises
+    if currentState.roundState ~= GameState.hiding and
+        currentState.roundState ~= GameState.seeking then
+        return
+    end
     -- sound on button Q
     if InputManager:WentKeyDown(InputDeviceKeys.IDK_Q) then
         getSoundToPlay()
