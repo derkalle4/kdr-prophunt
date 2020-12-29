@@ -232,6 +232,7 @@ local function onPlayerSync(playerID, teamID)
     if isLocalPlayer and isPropByTeamID(teamID) then
         debugMessage('[S2C_PLAYER_SYNC] local player ' .. playerID .. ' is a prop')
         WebUI:ExecuteJS('setUserTeam(2);')
+        Camera:disable()
         Camera:enable()
     end
 end
