@@ -205,21 +205,29 @@ function ThirdPersonCamera:_onUpdate(delta, simDelta)
         return
     end
 
-    -- Get the soldier's aiming angles.
-    local yaw = player.input.authoritativeAimingYaw
-    local pitch = player.input.authoritativeAimingPitch
-    -- get the spectator player aiming angle
-    if specPlayer ~= nil then
-        yaw = specPlayer.soldier.authoritativeYaw
-        pitch = specPlayer.soldier.authoritativePitch
-        -- set specPlayer to player when exists to work with that player instead of our own player
-        player = specPlayer
-    end
+    local yaw = nil
+    local pitch = nil
 
-    -- If the camera is locked then we use custom angles.
     if self._isLocked then
+        -- If the camera is locked then we use custom angles.
         yaw = self._lockedCameraYaw
         pitch = self._lockedCameraPitch
+
+        if specPlayer ~= nil then
+            -- set specPlayer to player when exists to work with that player instead of our own player
+            player = specPlayer
+        end
+    else
+        if specPlayer ~= nil then  
+            yaw = -math.atan(specPlayer.soldier.worldTransform.forward.x, specPlayer.soldier.worldTransform.forward.z)
+            pitch = 0
+            -- set specPlayer to player when exists to work with that player instead of our own player
+            player = specPlayer
+        else
+            -- Get the soldier's aiming angles.
+            yaw = player.input.authoritativeAimingYaw
+            pitch = player.input.authoritativeAimingPitch
+        end  
     end
 
     -- Fix angles so we're looking at the right thing.
