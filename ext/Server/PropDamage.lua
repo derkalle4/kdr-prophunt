@@ -62,9 +62,11 @@ local function onPropDamage(player, targetId)
     propDamage.damage = Config.DamageToPlayerProp
     targetPlayer.soldier:ApplyDamage(propDamage)
     -- heal the seeker
-    local shooterHeal = DamageInfo()
-    shooterHeal.damage = Config.SeekerDamageFromPlayerProp
-    player.soldier:ApplyDamage(shooterHeal)
+    if currentState.roundState ~= GameState.revenge then
+        local shooterHeal = DamageInfo()
+        shooterHeal.damage = Config.SeekerDamageFromPlayerProp
+        player.soldier:ApplyDamage(shooterHeal)
+    end
 end
 
 -- events and hooks
