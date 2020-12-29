@@ -72,6 +72,20 @@ function ThirdPersonCamera:_onLevelDestroy()
     self:disable()
 end
 
+function ThirdPersonCamera:_resetVariables()
+    -- When the level is getting destroyed we should disable the camera.
+    -- This will release control and destroy our entity.
+    self._lockedCameraYaw = 0.0
+    self._lockedCameraPitch = 0.0
+    self._isLocked = false
+    self._canAltPressAgain = true
+    self._data = nil
+    self._entity = nil
+    self._active = false
+    self._lookAtPos = nil
+    self._spectatePlayerID = nil
+end
+
 function ThirdPersonCamera:_destroyCamera()
     if self._entity == nil then
         return
@@ -297,6 +311,7 @@ end
 function ThirdPersonCamera:disable()
     self:_releaseControl()
     self:_destroyCamera()
+    self:_resetVariables()
 end
 
 -- Gets the current transform of the third person camera.
