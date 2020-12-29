@@ -22,7 +22,19 @@ function setAmmoForSeekers()
             end
         end
     end
+end
 
+-- set ammo for props
+function setAmmoForProps()
+    for i, player in pairs(readyPlayers) do
+        -- Ignore bots
+        if not player.onlineId ~= 0 and player.soldier ~= nil and isProp(player) then
+            local soldierWeapons = player.soldier.weaponsComponent.weapons
+            for _, weapon in ipairs(soldierWeapons) do
+                SoldierWeapon(weapon).secondaryAmmo = 500
+            end
+        end
+    end
 end
 
 -- set player to spectator

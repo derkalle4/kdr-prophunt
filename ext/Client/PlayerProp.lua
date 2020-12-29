@@ -280,7 +280,10 @@ end
 -- hooking bullet collision
 local function onBulletEntityCollision(hook, entity, hit, shooter)
     local localPlayer = PlayerManager:GetLocalPlayer()
-
+    -- do not give anyone damage when in revenge mode
+    if currentState.roundState == GameState.revenge then
+        return
+    end
     if shooter ~= localPlayer or hit.rigidBody == nil then
         return
     end

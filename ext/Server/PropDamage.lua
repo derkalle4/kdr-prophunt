@@ -30,6 +30,10 @@ local function onBulletEntityCollision(hook, entity, hit, giverInfo)
     if giverInfo.giver == nil or hit.rigidBody == nil then
         return
     end
+    -- do not give anyone damage when in revenge mode
+    if currentState.roundState == GameState.revenge then
+        return
+    end
     -- Only apply one damage per tick.
     local hitId = tostring(giverInfo.giver.id) .. tostring(hit.rigidBody.instanceId)
     if itemsHit[hitId] then

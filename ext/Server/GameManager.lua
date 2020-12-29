@@ -43,6 +43,9 @@ local function preparePreRoundState()
     assignTeams()
     -- spawn players
     spawnAllPlayers()
+    -- save number of total seekers and props for further game logic
+    currentState.totalNumSeeker = getSeekerCount()
+    currentState.totalNumHider = getPropCount()
     -- broadcast changes to clients
     broadCastClients(currentState)
 end
@@ -77,6 +80,31 @@ local function prepareSeekingState()
     broadCastClients(currentState)
     -- enable input of seekers
     enableSeekerInput()
+end
+
+-- things to do when we go in revenge state
+local function prepareRevengeState()
+    debugMessage('preparing revenge state')
+    -- set timer to seeking countdown
+    currentState.roundTimer = Config.RevengeTime
+    -- set round state to seeking
+    currentState.roundState = GameState.revenge
+    -- set info message
+    currentState.roundStatusMessage = 'Revenge'
+    -- give props a weapon
+    for i, player in pairs(readyPlayers) do
+        -- Ignore bots and dead players.
+        if player.onlineId ~= 0 and player.soldier ~= nil and isProp(player) then
+            -- give prop weapons
+            givePlayerLoadout(player)
+            -- allow prop to shoot
+            player:EnableInput(EntryInputActionEnum.EIAFire, true)
+            -- allow prop to reload
+            player:EnableInput(EntryInputActionEnum.EIAReload, true)
+        end
+    end
+    -- broadcast changes to clients
+    broadCastClients(currentState)
 end
 
 -- things to do when we go in postRound state
@@ -157,6 +185,28 @@ local function inSeekingState()
     if Config.MinPlayers > 1 and (getSeekerCount() == 0 or getPropCount() == 0) then
         preparePostRoundState()
     end
+    -- go into revenge state when we have only one prop left (but hat more then one during round start)
+    if currentState.totalNumHider >= Config.MinTotalHiderForRevenge and currentState.numHider <= Config.AmountHiderForRevenge then
+        prepareRevengeState()
+    end 
+end
+
+-- when we are in revenge state
+local function inRevengeState()
+    -- broadcast status to clients
+    broadCastClients(currentState)
+    -- give seekers unlimited ammo
+    setAmmoForSeekers()
+    -- give props unlimited ammo
+    setAmmoForProps()
+    -- go into postround state when pre round is finished
+    if currentState.roundTimer == 0.0 then
+        preparePostRoundState()
+    end
+    -- end current state when we have not enough players
+    if Config.MinPlayers > 1 and (getSeekerCount() == 0 or getPropCount() == 0) then
+        preparePostRoundState()
+    end
 end
 
 -- when we are in postRound state
@@ -187,6 +237,8 @@ local function checkRoundState(state)
         inHidingState()
     elseif state == GameState.seeking then      -- seek phase for seekers
         inSeekingState()
+    elseif state == GameState.revenge then      -- revenge phase for last prop
+        inRevengeState()
     elseif state == GameState.postRound then    -- end of game
         inPostRoundState()
     end

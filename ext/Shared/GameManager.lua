@@ -8,8 +8,9 @@ GameState = {
     preRound = 1,
     hiding = 2,
     seeking = 3,
-    postRound = 4,
-    mapChange = 5,
+    revenge = 4,
+    postRound = 5,
+    mapChange = 6,
 }
 
 -- game message types
@@ -31,7 +32,9 @@ currentState = {
     roundState = GameState.idle,
     roundStatusMessage = 'Waiting',
     numPlayer = 0,
+    totalNumSeeker = 0,
     numSeeker = 0,
+    totalNumHider = 0,
     numHider = 0,
     numSpectator = 0,
     winner = 0

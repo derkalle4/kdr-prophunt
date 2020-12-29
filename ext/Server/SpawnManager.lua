@@ -2,6 +2,63 @@
 -- manages spawn for all players
 
 
+-- give player a loadout
+function givePlayerLoadout(player)
+    local knife = ResourceManager:SearchForDataContainer('Weapons/Knife/U_Knife')
+
+    local p90 = ResourceManager:SearchForDataContainer('Weapons/P90/U_P90')
+    local p90Attachments = { 'Weapons/P90/U_P90_Kobra', 'Weapons/P90/U_P90_Targetpointer' }
+
+    local mp7 = ResourceManager:SearchForDataContainer('Weapons/MP7/U_MP7')
+    local mp7Attachments = { 'Weapons/MP7/U_MP7_Kobra', 'Weapons/MP7/U_MP7_ExtendedMag' }
+
+    local asval = ResourceManager:SearchForDataContainer('Weapons/ASVal/U_ASVal')
+    local asvalAttachments = { 'Weapons/ASVal/U_ASVal_Kobra', 'Weapons/ASVal/U_ASVal_ExtendedMag' }
+
+    local loadouts = {
+        { p90, p90Attachments },
+        { mp7, mp7Attachments },
+        { asval, asvalAttachments },
+    }
+
+    local function setAttachments(unlockWeapon, attachments)
+        for _, attachment in pairs(attachments) do
+            local unlockAsset = UnlockAsset(ResourceManager:SearchForDataContainer(attachment))
+            unlockWeapon.unlockAssets:add(unlockAsset)
+        end
+    end
+
+    local m1911 = ResourceManager:SearchForDataContainer('Weapons/M1911/U_M1911')
+    -- Create the seeker customization
+    local seekerCustomization = CustomizeSoldierData()
+    seekerCustomization.activeSlot = WeaponSlot.WeaponSlot_0
+    seekerCustomization.removeAllExistingWeapons = true
+    seekerCustomization.overrideCriticalHealthThreshold = 1.0
+
+    -- Pick a random loadout.
+    math.randomseed(SharedUtils:GetTimeMS())
+    local loadout = loadouts[MathUtils:GetRandomInt(1, #loadouts)]
+
+    local primaryWeapon = UnlockWeaponAndSlot()
+    primaryWeapon.weapon = SoldierWeaponUnlockAsset(loadout[1])
+    primaryWeapon.slot = WeaponSlot.WeaponSlot_0
+    setAttachments(primaryWeapon, loadout[2])
+
+    local secondaryWeapon = UnlockWeaponAndSlot()
+    secondaryWeapon.weapon = SoldierWeaponUnlockAsset(m1911)
+    secondaryWeapon.slot = WeaponSlot.WeaponSlot_1
+
+    local meleeWeapon = UnlockWeaponAndSlot()
+    meleeWeapon.weapon = SoldierWeaponUnlockAsset(knife)
+    meleeWeapon.slot = WeaponSlot.WeaponSlot_5
+
+    seekerCustomization.weapons:add(primaryWeapon)
+    seekerCustomization.weapons:add(secondaryWeapon)
+    seekerCustomization.weapons:add(meleeWeapon)
+
+    player.soldier:ApplyCustomization(seekerCustomization)
+end
+
 -- spawns a seeker
 function spawnSeeker(player)
     debugMessage('Spawning seeker ' .. player.name)
@@ -44,60 +101,7 @@ function spawnSeeker(player)
         player:SpawnSoldierAt(soldier, spawnTransform, CharacterPoseType.CharacterPoseType_Stand)
     end
 
-    local knife = ResourceManager:SearchForDataContainer('Weapons/Knife/U_Knife')
-
-    local p90 = ResourceManager:SearchForDataContainer('Weapons/P90/U_P90')
-    local p90Attachments = { 'Weapons/P90/U_P90_Kobra', 'Weapons/P90/U_P90_Targetpointer' }
-
-    local mp7 = ResourceManager:SearchForDataContainer('Weapons/MP7/U_MP7')
-    local mp7Attachments = { 'Weapons/MP7/U_MP7_Kobra', 'Weapons/MP7/U_MP7_ExtendedMag' }
-
-    local asval = ResourceManager:SearchForDataContainer('Weapons/ASVal/U_ASVal')
-    local asvalAttachments = { 'Weapons/ASVal/U_ASVal_Kobra', 'Weapons/ASVal/U_ASVal_ExtendedMag' }
-
-    local loadouts = {
-        { p90, p90Attachments },
-        { mp7, mp7Attachments },
-        { asval, asvalAttachments },
-    }
-
-    local function setAttachments(unlockWeapon, attachments)
-        for _, attachment in pairs(attachments) do
-            local unlockAsset = UnlockAsset(ResourceManager:SearchForDataContainer(attachment))
-            unlockWeapon.unlockAssets:add(unlockAsset)
-        end
-    end
-
-    local m1911 = ResourceManager:SearchForDataContainer('Weapons/M1911/U_M1911')
-
-    -- Create the seeker customization
-    local seekerCustomization = CustomizeSoldierData()
-    seekerCustomization.activeSlot = WeaponSlot.WeaponSlot_0
-    seekerCustomization.removeAllExistingWeapons = true
-    seekerCustomization.overrideCriticalHealthThreshold = 1.0
-
-    -- Pick a random loadout.
-    math.randomseed(SharedUtils:GetTimeMS())
-    local loadout = loadouts[MathUtils:GetRandomInt(1, #loadouts)]
-
-    local primaryWeapon = UnlockWeaponAndSlot()
-    primaryWeapon.weapon = SoldierWeaponUnlockAsset(loadout[1])
-    primaryWeapon.slot = WeaponSlot.WeaponSlot_0
-    setAttachments(primaryWeapon, loadout[2])
-
-    local secondaryWeapon = UnlockWeaponAndSlot()
-    secondaryWeapon.weapon = SoldierWeaponUnlockAsset(m1911)
-    secondaryWeapon.slot = WeaponSlot.WeaponSlot_1
-
-    local meleeWeapon = UnlockWeaponAndSlot()
-    meleeWeapon.weapon = SoldierWeaponUnlockAsset(knife)
-    meleeWeapon.slot = WeaponSlot.WeaponSlot_5
-
-    seekerCustomization.weapons:add(primaryWeapon)
-    seekerCustomization.weapons:add(secondaryWeapon)
-    seekerCustomization.weapons:add(meleeWeapon)
-
-    player.soldier:ApplyCustomization(seekerCustomization)
+    givePlayerLoadout(player)
 
     player.soldier.health = Config.SeekerHealth
     player.soldier.maxHealth = Config.SeekerHealth

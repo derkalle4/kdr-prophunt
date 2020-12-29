@@ -100,7 +100,8 @@ local function onPlayerInput(player, deltaTime)
     end
     -- check whether we are in hiding or seeking state to be able to make noises
     if currentState.roundState ~= GameState.hiding and
-        currentState.roundState ~= GameState.seeking then
+        currentState.roundState ~= GameState.seeking and
+        currentState.roundState ~= GameState.revenge then
         return
     end
     -- sound on button Q

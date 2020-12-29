@@ -108,8 +108,9 @@ function ThirdPersonCamera:onPlayerInput(player, deltaTime)
     end
     -- when freelook key went down
     if self._freelookKey ~= InputDeviceKeys.IDK_None and InputManager:WentKeyDown(self._freelookKey) then
-        -- if it is currently not locked
-        if not self._isLocked and player.input ~= nil then
+        -- if it is currently not locked and we are in hiding or seeking state
+        if not self._isLocked and player.input ~= nil and
+            (currentState.roundState == GameState.hiding or currentState.roundState == GameState.seeking) then
             -- lock it
             self._isLocked = true
             -- set view
@@ -279,6 +280,16 @@ end
 -- Returns `true` if the camera is currently in free-look mode, `false` otherwise.
 function ThirdPersonCamera:isFreelooking()
     return self._isLocked
+end
+
+-- disable or enable freelooking
+function ThirdPersonCamera:setFreelooking(isLocked)
+    self._isLocked = isLocked
+    -- show UI alt state as red when freelooking got disabled
+    if not isLocked then
+        WebUI:ExecuteJS('highlightKey("alt","green",false);')
+        WebUI:ExecuteJS('highlightKey("alt","red",true);')
+    end
 end
 
 -- Returns `true` if the camera is currently active, `false` otherwise.

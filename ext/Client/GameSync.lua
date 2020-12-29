@@ -71,6 +71,25 @@ local function inSeekingState(info, localPlayer)
     WebUI:ExecuteJS('showKillfeed(true);')
 end
 
+-- when we are in revenge state
+local function inRevengeState(info, localPlayer)
+    -- check for player team
+    if localPlayer.teamId == 1 then -- when player is seeker
+        -- set center message for seeking state
+        WebUI:ExecuteJS('setCenterMessage("revenge! Last prop is hunting you!", 7);')
+    elseif localPlayer.teamId == 2 then -- when player is hider
+        -- set center message for seeking state
+        WebUI:ExecuteJS('setCenterMessage("revenge! Kill seekers now!", 7);')
+        -- remove free look (if active)
+        Camera:setFreelooking(false)
+    else -- when player is spectator
+        -- set center message for seeking state
+        WebUI:ExecuteJS('setCenterMessage("revenge! Last hider is hunting seekers", 7);')
+        -- show spectator keys
+        WebUI:ExecuteJS('showSpectatorKeys(true);')
+    end
+end
+
 -- when we are in postRound state
 local function inPostRoundState(info, localPlayer)
     -- check for winning team
@@ -129,6 +148,11 @@ local function onGameSync(info)
             oldState = GameState.seeking
             -- run inSeekingState
             inSeekingState(info, localPlayer)
+        elseif info.roundState == GameState.revenge then -- game starts with revenge
+            -- set current state to revenge
+            oldState = GameState.revenge
+            -- run inSeekingState
+            inRevengeState(info, localPlayer)
         elseif info.roundState == GameState.postRound then  -- end of game
             -- set current state to postRound
             oldState = GameState.postRound
