@@ -76,15 +76,23 @@ local function inRevengeState(info, localPlayer)
     -- check for player team
     if localPlayer.teamId == 1 then -- when player is seeker
         -- set center message for seeking state
-        WebUI:ExecuteJS('setCenterMessage("revenge! Last prop is hunting you!", 7);')
+        if info.numHider == 1 then
+            WebUI:ExecuteJS('setCenterMessage("revenge! last prop is hunting you!", 7);')
+        else
+            WebUI:ExecuteJS('setCenterMessage("revenge! ' .. math.floor(info.numHider) .. ' hider are hunting you!", 7);')
+        end
     elseif localPlayer.teamId == 2 then -- when player is hider
         -- set center message for seeking state
-        WebUI:ExecuteJS('setCenterMessage("revenge! Kill seekers now!", 7);')
+        if info.numSeeker == 1 then
+            WebUI:ExecuteJS('setCenterMessage("revenge! kill last seeker now!", 7);')
+        else
+            WebUI:ExecuteJS('setCenterMessage("revenge! kill ' .. math.floor(info.numSeeker) .. ' seekers now!", 7);')
+        end
         -- remove free look (if active)
         Camera:setFreelooking(false)
     else -- when player is spectator
         -- set center message for seeking state
-        WebUI:ExecuteJS('setCenterMessage("revenge! Last hider is hunting seekers", 7);')
+        WebUI:ExecuteJS('setCenterMessage("revenge started! hider got weapons!", 7);')
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
     end
