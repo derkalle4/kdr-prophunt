@@ -50,6 +50,24 @@ local function onExtensionLoaded()
     end
 end
 
+-- when a partition is loaded
+local function onPartitionLoaded(partition)
+    if partition == nil then
+        return
+    end
+
+    local instances = partition.instances
+    for _, instance in pairs(instances) do
+        -- remove water from being considered physically, so bullet entity collisions occur on props hiding in water too
+        if instance ~= nil and instance:Is('WaterAsset') then
+            if instance:Is('WaterAsset') then
+                partition:RemoveInstance(instance)
+            end
+        end
+    end
+end
+
 -- events and hooks
 Events:Subscribe('Extension:Loaded', onExtensionLoaded)
 Events:Subscribe('Engine:Message', onEngineMessage)
+Events:Subscribe('Partition:Loaded', onPartitionLoaded)
