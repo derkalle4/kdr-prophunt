@@ -229,12 +229,20 @@ function ThirdPersonCamera:_onUpdate(delta, simDelta)
     -- Raycast from the look at position backwards to the camera position
     -- to find if there's anything that intersects.
     local hit = RaycastManager:Raycast(self._lookAtPos, cameraLocation, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.DontCheckRagdoll)
-    -- when the first hit is the players physics entity check for a second hit from the players physics entity to the camera
-    -- TODO further optimization (see parasol on XP2_Skybar for example)
+    
+    -- when the first hit is the players physics entity check for a second hit from the players physics entity to the camera, then for a third, fourth etc.
+    -- (trying to find the first hit of the ray which is not a hit on the players physics entity)
     if hit ~= nil and isHittingPlayerPhysicsEntity(player, hit) then
-        -- second raycast behind that first model
-        hit = RaycastManager:Raycast(hit.position:MoveTowards(cameraLocation, player.input.deltaTime * 2), cameraLocation, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.DontCheckRagdoll)
+        for i=1,5 do
+            hit = RaycastManager:Raycast(hit.position:MoveTowards(cameraLocation, player.input.deltaTime * 2), cameraLocation, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.DontCheckRagdoll)
+
+            -- if no hit is found on the ray or an object was found which is not the player, we don't need to search further and have our camera position
+            if hit == nil or not isHittingPlayerPhysicsEntity(player, hit) then
+                break
+            end
+        end
     end
+
     -- if something does hit change the camera perspective to avoid geometry
     if hit ~= nil then
         cameraLocation = hit.position
