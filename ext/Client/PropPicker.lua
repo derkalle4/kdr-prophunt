@@ -252,6 +252,12 @@ local function onClientUpdateInput(delta)
         return
     end
 
+    -- check whether we are in hiding or seeking state to be able to change props
+    if currentState.roundState ~= GameState.hiding and
+        currentState.roundState ~= GameState.seeking then
+        return
+    end
+
     -- If the player is pressing down the prop selection key do a
     -- raycast to find a valid prop. We allow prop selection once every
     -- 250ms to prevent lag.
