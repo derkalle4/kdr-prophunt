@@ -26,8 +26,6 @@ end
 -- set new prop for player
 function setPlayerProp(player, bpName)
     debugMessage('Setting prop ' .. bpName .. ' for player ' .. player.name)
-    -- make player invisible
-    player.soldier.forceInvisible = true
     -- player has to be alive
     if player.soldier == nil then
         return
@@ -46,6 +44,8 @@ function setPlayerProp(player, bpName)
     if bp == nil then
         return
     end
+    -- make player invisible
+    player.soldier.forceInvisible = true
     -- set temporary entity position
     local entityPos = LinearTransform()
     entityPos.trans = Vec3(0.0, 0.0, 0.0)
@@ -85,7 +85,11 @@ end
 -- make player to prop
 function makePlayerProp(player)
     debugMessage('makePlayerProp ' .. player.name)
-    local bpName = 'XP2/Objects/SkybarBarStool_01/SkybarBarStool_01'
+    -- get level name
+    local level = SharedUtils:GetLevelName()
+    -- get random prop for spawn
+    math.randomseed(SharedUtils:GetTimeMS())
+    local bpName = RandomPropsBlueprints[level][MathUtils:GetRandomInt(1, #RandomPropsBlueprints[level])]
     -- Set default prop for player when he did not choose one already
     if playerPropNames[player.id] == nil then
         setPlayerProp(player, bpName)

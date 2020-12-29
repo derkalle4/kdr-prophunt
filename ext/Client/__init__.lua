@@ -8,6 +8,7 @@ require('__shared/GameManager')
 require('__shared/PlayerManager')
 require('__shared/IngameSpectator')
 require('__shared/SoundManager')
+require('__shared/PropsManager')
 
 -- include client data
 Camera = require('Camera')

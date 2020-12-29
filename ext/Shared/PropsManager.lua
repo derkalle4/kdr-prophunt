@@ -2,7 +2,7 @@
 -- shared functions for checking whether a prop is allowed or not
 
 
-local blacklist = {
+local PlayerPropsBlacklist = {
     ['Levels/XP2_Skybar/XP2_Skybar'] = {
         'invisiblecollision_',
         '/floor_',
@@ -112,6 +112,28 @@ local blacklist = {
     }
 }
 
+-- random prop blueprint list to choose from
+RandomPropsBlueprints =  {
+    ['Levels/XP2_Skybar/XP2_Skybar'] = {
+        'XP2/Objects/SkybarBarStool_01/SkybarBarStool_01',
+        'XP2/Objects/SunBed/SunBed',
+        'XP2/Objects/SkybarBarDesk_01/SkybarBarDesk_01',
+        'XP2/Objects/SkybarSofa_01/SkybarSofa_01',
+        'XP2/Objects/LowTable_01/LowTable_01',
+        'XP2/Objects/SkybarArmchair_02/SkybarArmchair_02',
+        'XP2/Objects/SkybarArmchair_01/SkybarArmchair_01',
+        'XP2/Objects/SkybarDiner/SkybarDiner_Chair',
+        'XP2/Objects/LampFloor_01/LampFloor_01_Medium',
+        'XP2/Objects/LampFloor_01/LampFloor_01_Big',
+        'XP2/Objects/Towel_01/Towel_01',
+        'Objects/Computer_01/Computer_SP_Paris_01',
+        'XP2/Objects/SkybarDesk_01/SkybarDesk_01',
+        'XP2/Objects/SkybarDesk_01/SkybarDeskCorner_01',
+    },
+    ['Levels/XP2_Office/XP2_Office'] = {
+        'XP2/Objects/SkybarBarStool_01/SkybarBarStool_01',
+    },
+}
 
 local function isMeshWhitelisted(mesh)
     local meshName = mesh.name
@@ -124,14 +146,14 @@ local function isMeshWhitelisted(mesh)
         return false
     end
 
-    local blacklistedMeshes = blacklist[level]
+    local PlayerPropsBlacklistedMeshes = PlayerPropsBlacklist[level]
 
-    if blacklistedMeshes == nil then
-        debugMessage('No blacklist found. Skipping prop change.')
+    if PlayerPropsBlacklistedMeshes == nil then
+        debugMessage('No blacklisted found. Skipping prop change.')
         return false
     end
 
-    for _, blacklistedMesh in pairs(blacklistedMeshes) do
+    for _, blacklistedMesh in pairs(PlayerPropsBlacklistedMeshes) do
         if string.find(meshName, blacklistedMesh) then
             debugMessage('prop blacklisted. Skipping prop change.')
             return false

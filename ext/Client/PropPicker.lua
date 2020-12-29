@@ -4,7 +4,6 @@
 
 local Debug = require('debug')
 local Camera = require('camera')
-local isMeshWhitelisted = require('__shared/whitelist')
 
 local function getMesh(entity)
     local data = entity.data
