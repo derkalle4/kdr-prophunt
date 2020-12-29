@@ -274,6 +274,24 @@ local function onClientUpdateInput(delta)
             NetEvents:Send(GameMessage.C2S_PROP_CHANGE, Blueprint(bp).name)
         end
     end
+    -- If the player is requesting a random prop
+    if InputManager:IsKeyDown(InputDeviceKeys.IDK_R) and elapsedTime >= 1.0 then
+        elapsedTime = 0.0
+
+        -- get level name
+        local level = SharedUtils:GetLevelName()
+        -- get random prop
+        math.randomseed(SharedUtils:GetTimeMS())
+        local bpName = RandomPropsBlueprints[level][MathUtils:GetRandomInt(1, #RandomPropsBlueprints[level])]
+
+        -- If we managed to find one, turn the player into it.
+        if bpName ~= nil then
+            -- First create it (so there's no visual delay) and then inform the server.
+            debugMessage('[Client:UpdateInput] for ' .. player.name .. ': got random blueprint ' .. bpName)
+            changePlayerProp(player.id, bpName)
+            NetEvents:Send(GameMessage.C2S_PROP_CHANGE, bpName)
+        end
+    end
 end
 
 -- events and hooks

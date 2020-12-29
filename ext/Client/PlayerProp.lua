@@ -33,6 +33,10 @@ function createPlayerProp(player, bp)
     if playerPropBps[player.id] == bp then
         return
     end
+    -- skip when bp is nil
+    if bp == nil then
+        return
+    end
     -- delete  old prop
     if playerProps[player.id] ~= nil then
         playerProps[player.id].entities[1]:Destroy()
@@ -100,7 +104,7 @@ local function removePlayerProp(playerID)
 end
 
 -- player change prop
-local function changePlayerProp(playerID, bpName)
+function changePlayerProp(playerID, bpName)
     debugMessage('changePlayerProp ' .. playerID)
     -- get player
     local player = PlayerManager:GetPlayerById(playerID)

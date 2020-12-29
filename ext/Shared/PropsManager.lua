@@ -135,7 +135,7 @@ RandomPropsBlueprints =  {
     },
 }
 
-local function isMeshWhitelisted(mesh)
+function isMeshWhitelisted(mesh)
     local meshName = mesh.name
     meshName = string.lower(meshName)
     debugMessage('isMeshWhitelisted: ' .. meshName)
