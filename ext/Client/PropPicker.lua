@@ -276,7 +276,7 @@ local function onClientUpdateInput(delta)
         end
     end
     -- If the player is requesting a random prop
-    if InputManager:IsKeyDown(InputDeviceKeys.IDK_R) and elapsedTime >= 1.0 then
+    if InputManager:IsKeyDown(InputDeviceKeys.IDK_T) and elapsedTime >= 1.0 then
         elapsedTime = 0.0
 
         -- get level name
