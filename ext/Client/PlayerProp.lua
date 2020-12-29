@@ -197,23 +197,29 @@ end
 -- prop sync request from server
 local function onPropSync(playerID, bpName, magnitude)
     debugMessage('[S2C_PROP_SYNC] for ' .. playerID .. ' with blueprint ' .. (bpName and bpName or "nil"))
+    local player = PlayerManager:GetPlayerById(playerID)
+    local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
     -- when prop is nil (no prop anymore, then delete user)
     if bpName == nil then
         removePlayerProp(playerID)
-        -- reset camera distance
-        Camera:setDistance(2.0)
-        -- reset camera height
-        Camera:setHeight(1.5)
+        if isLocalPlayer then
+            -- reset camera distance
+            Camera:setDistance(2.0)
+            -- reset camera height
+            Camera:setHeight(1.5)
+        end
     else
         changePlayerProp(playerID, bpName)
         -- set player camera distance to prop depending on prop size
-        local distance = MathUtils:Lerp(1.0, 3.0, magnitude)
-        if distance > 3.0 then
-            distance = 3.0
-        elseif distance < 1.0 then
-            distance = 1.0
+        if isLocalPlayer then
+            local distance = MathUtils:Lerp(1.0, 3.0, magnitude)
+            if distance > 3.0 then
+                distance = 3.0
+            elseif distance < 1.0 then
+                distance = 1.0
+            end
+            Camera:setDistance(distance)
         end
-        Camera:setDistance(distance)
     end
 end
 
