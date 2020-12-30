@@ -156,6 +156,7 @@ local function onPlayerKilled(player)
         Camera:disable()
         IngameSpectator:disable()
         IngameSpectator:enable()
+        WebUI:DisableMouse()
         -- set playername to localPlayer
         playername = 'You'
     end
