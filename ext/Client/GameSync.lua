@@ -23,6 +23,9 @@ local function inPreRoundState(info, localPlayer)
     WebUI:ExecuteJS('showHiderKeys(false);')
     -- show killfeed
     WebUI:ExecuteJS('showKillfeed(true);')
+    -- disable Camera
+    IngameSpectator:disable()
+    Camera:disable()
 end
 
 -- when we are in hiding state
