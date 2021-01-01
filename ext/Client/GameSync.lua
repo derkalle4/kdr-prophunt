@@ -89,7 +89,7 @@ local function inRevengeState(info, localPlayer)
             WebUI:ExecuteJS('setCenterMessage("revenge! kill ' .. math.floor(info.numSeeker) .. ' seekers now!", 7);')
         end
         -- remove free look (if active)
-        Camera:setFreelooking(false)
+        setCameraFreelooking(false)
     else -- when player is spectator
         -- set center message for seeking state
         WebUI:ExecuteJS('setCenterMessage("revenge started! hider got weapons!", 7);')

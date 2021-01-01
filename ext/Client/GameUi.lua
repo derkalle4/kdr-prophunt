@@ -153,10 +153,7 @@ local function onPlayerKilled(player)
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
         -- enable spectator mode
-        Camera:disable()
-        IngameSpectator:disable()
-        IngameSpectator:enable()
-        WebUI:DisableMouse()
+        enableIngameCamera()
         -- set playername to localPlayer
         playername = 'You'
     end
@@ -171,8 +168,7 @@ local function onPlayerRespawn(player)
     -- if current player is local player
     if player == localPlayer then
         -- disable spectator mode
-        IngameSpectator:disable()
-        Camera:disable()
+        disableIngameCamera()
         -- show health bar
         WebUI:ExecuteJS('showHealthBar(true);')
     end

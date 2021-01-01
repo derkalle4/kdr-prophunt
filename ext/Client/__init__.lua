@@ -6,13 +6,12 @@
 require('__shared/DebugMessage')
 require('__shared/GameManager')
 require('__shared/PlayerManager')
-require('__shared/IngameSpectator')
+require('__shared/IngameCamera')
 require('__shared/SoundManager')
 require('__shared/PropsManager')
 
 -- include client data
-Camera = require('Camera')
-IngameSpectator = require('IngameSpectator')
+require('IngameCamera')
 require('GameSync')
 require('PlayerProp')
 require('PlayerSeeker')
@@ -27,8 +26,6 @@ local function playerReady()
     NetEvents:SendLocal(GameMessage.C2S_CLIENT_READY)
     -- start web UI
     WebUI:Init()
-    -- enable spectator
-    IngameSpectator:enable()
     -- show welcome message
     WebUI:ExecuteJS('showWelcomeMessage(true);')
 end
@@ -50,6 +47,13 @@ local function onExtensionLoaded()
     end
 end
 
+-- when the level got loaded
+local function onLevelLoaded()
+    -- enable spectator
+    enableIngameCamera()
+end
+
 -- events and hooks
 Events:Subscribe('Extension:Loaded', onExtensionLoaded)
 Events:Subscribe('Engine:Message', onEngineMessage)
+Events:Subscribe('Level:Loaded', onLevelLoaded)

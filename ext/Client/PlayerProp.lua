@@ -184,9 +184,8 @@ local function cleanupRound()
             entity:Destroy()
         end
     end
-
-    Camera:disable()
-
+    -- disable ingame camera
+    disableIngameCamera()
     playerProps = {}
     playerPropBps = {}
     soldierEntityInstanceId = nil
@@ -204,9 +203,9 @@ local function onPropSync(playerID, bpName, magnitude)
         removePlayerProp(playerID)
         if isLocalPlayer then
             -- reset camera distance
-            Camera:setDistance(2.0)
+            setCameraDistance(2.0)
             -- reset camera height
-            Camera:setHeight(1.5)
+            setCameraHeight(1.5)
         end
     else
         changePlayerProp(playerID, bpName)
@@ -218,7 +217,7 @@ local function onPropSync(playerID, bpName, magnitude)
             elseif distance < 1.0 then
                 distance = 1.0
             end
-            Camera:setDistance(distance)
+            setCameraDistance(distance)
         end
     end
 end
@@ -232,9 +231,10 @@ local function onPlayerSync(playerID, teamID)
     if isLocalPlayer and isPropByTeamID(teamID) then
         debugMessage('[S2C_PLAYER_SYNC] local player ' .. playerID .. ' is a prop')
         WebUI:ExecuteJS('setUserTeam(2);')
-        IngameSpectator:disable()
-        Camera:disable()
-        Camera:enable()
+        -- enable ingame camera
+        enableIngameCamera()
+        -- spectate yourself in third person
+        spectatePlayer(player)
     end
 end
 

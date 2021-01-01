@@ -3,7 +3,6 @@
 
 
 local Debug = require('debug')
-local Camera = require('camera')
 
 local function getMesh(entity)
     local data = entity.data
@@ -96,15 +95,19 @@ end
 local function pickProp()
     -- Make sure we have a local player.
     local player = PlayerManager:GetLocalPlayer()
-
+    -- disable pick prop when player does not exist
     if player == nil or player.soldier == nil then
+        return nil
+    end
+    -- disable pick prop when camera transformation is not possible
+    if getCameraTransform() == nil then
         return nil
     end
 
     -- Our prop-picking ray will start at what the camera is looking at and
     -- extend forward by 3.0m.
-    local from = Camera:getLookAtPos()
-    local target = from - Camera:getTransform().forward * 3.0
+    local from = getCameraLookAtPos()
+    local target = from - getCameraTransform().forward * 3.0
 
     -- Do a spatial raycast and a normal raycast.
     -- We use the spatial raycast to find available propsand the normal raycast
