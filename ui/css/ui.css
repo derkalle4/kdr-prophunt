@@ -25,12 +25,20 @@ body {
   color: #00bfff !important;
 }
 
+.bgcolor-red {
+  background-color: rgb(208 34 34) !important;
+}
+
 .bgcolor-50-red {
   background-color: rgb(33, 37, 41, 0.5) !important;
 }
 
 .bgcolor-50-orange {
   background-color: rgb(234, 180, 105, 0.5) !important;
+}
+
+.bgcolor-green {
+      background-color: rgb(65 187 91) !important;
 }
 
 .bgcolor-50-green {
@@ -187,6 +195,10 @@ body {
 #prophunt-welcomemessage h3,
 #prophunt-welcomemessage strong {
   color: #ffabab;
+}
+
+#prophunt-welcomemessage .row .col-6 {
+  border-radius: 25px;
 }
 
 #prophunt-spectator-keys,

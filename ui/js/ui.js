@@ -334,4 +334,6 @@ window.addEventListener("load", function(){
 			}
 		}
 	};
+	showUI(true);
+	showWelcomeMessage(true);
 });
