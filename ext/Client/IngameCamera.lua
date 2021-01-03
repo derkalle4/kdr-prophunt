@@ -20,6 +20,8 @@ local cameraHeight = 1.5
 local cameraDistance = 2.0
 local cameraYaw = 0.0
 local cameraPitch = 0.0
+local cameraForward = 0.0
+local cameraSidewards = 0.0
 local cameraLookAtPos = nil
 local isLocked = false
 local canAltPressAgain = true
@@ -206,6 +208,8 @@ function switchToFreeCam()
     end
     -- change camera type to auto cam
     cameraType = CameraTypes.freeCam
+    -- disable mouse
+    WebUI:DisableMouse()
 end
 
 function spectatePlayer(player)
@@ -400,7 +404,7 @@ local function onInputPreUpdate(hook, cache, deltaTime)
         player:EnableInput(EntryInputActionEnum.EIAPitch, true)
     end
     -- update the pitch manually when camera position is locked
-    if isLocked then
+    if isLocked or cameraType == CameraTypes.freeCam then
         -- 1.916686 is a magic number we use to somewhat match the rotation speed
         -- with the actual soldier rotation speed.
 
@@ -424,6 +428,21 @@ local function onInputPreUpdate(hook, cache, deltaTime)
         end
         while cameraYaw > twoPi do
             cameraYaw = cameraYaw - twoPi
+        end
+        -- get the forward / sideward movement
+        local moveForward = cache[InputConceptIdentifiers.ConceptMoveForward]
+        local moveBackward = cache[InputConceptIdentifiers.ConceptMoveBackward]
+        local moveLeft = cache[InputConceptIdentifiers.ConceptMoveLeft]
+        local moveRight = cache[InputConceptIdentifiers.ConceptMoveRight]
+        if moveForward > 0 then
+            cameraForward = cameraForward + moveForward * (rotateMultiplier / 2)
+        else
+            cameraForward = cameraForward - moveBackward * (rotateMultiplier / 2)
+        end
+        if moveLeft > 0 then
+            cameraSidewards = cameraSidewards - moveLeft * (rotateMultiplier / 2)
+        else
+            cameraSidewards = cameraSidewards + moveRight * (rotateMultiplier / 2)
         end
     end
 end
@@ -583,20 +602,22 @@ local function onEngineUpdate(deltaTime)
         yaw = yaw - math.pi / 2
         pitch = pitch + math.pi / 2
         -- Set the look at position above the soldier's feet.
-        cameraLookAtPos = cameraEntityData.transform.trans:Clone()
+        cameraLookAtPos = Vec3(30,30,30)
         -- Calculate where our camera has to be base on the angles.
         local cosfi = math.cos(yaw)
         local sinfi = math.sin(yaw)
         local costheta = math.cos(pitch)
         local sintheta = math.sin(pitch)
         -- calculate position of our camera
-        local cx = cameraLookAtPos.x + (cameraDistance * sintheta * cosfi)
-        local cy = cameraLookAtPos.y + (cameraDistance * costheta)
-        local cz = cameraLookAtPos.z + (cameraDistance * sintheta * sinfi)
+        local cx = cameraLookAtPos.x + (sintheta * cosfi)
+        local cy = cameraLookAtPos.y + costheta
+        local cz = cameraLookAtPos.z + (sintheta * sinfi)
         -- set camera location
         local cameraLocation = Vec3(cx, cy, cz)
-        -- finally calculate our new look at position
+        -- cameraEntityData calculate our new look at position
         cameraEntityData.transform:LookAtTransform(cameraLocation, cameraLookAtPos)
+        cameraEntityData.transform.left = cameraEntityData.transform.left + cameraForward
+        cameraEntityData.transform.forward = cameraEntityData.transform.forward + cameraSidewards
     end
 end
 
