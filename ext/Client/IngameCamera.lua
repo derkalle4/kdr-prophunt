@@ -435,14 +435,14 @@ local function onInputPreUpdate(hook, cache, deltaTime)
         local moveLeft = cache[InputConceptIdentifiers.ConceptMoveLeft]
         local moveRight = cache[InputConceptIdentifiers.ConceptMoveRight]
         if moveForward > 0 then
-            cameraForward = cameraForward + moveForward * (rotateMultiplier / 2)
+            cameraForward = moveForward * (rotateMultiplier / 2)
         else
-            cameraForward = cameraForward - moveBackward * (rotateMultiplier / 2)
+            cameraForward = -1 * moveBackward * (rotateMultiplier / 2)
         end
-        if moveLeft > 0 then
-            cameraSidewards = cameraSidewards - moveLeft * (rotateMultiplier / 2)
+        if moveRight > 0 then
+            cameraSidewards = -1 * moveRight * (rotateMultiplier / 2)
         else
-            cameraSidewards = cameraSidewards + moveRight * (rotateMultiplier / 2)
+            cameraSidewards = moveLeft * (rotateMultiplier / 2)
         end
     end
 end
@@ -596,28 +596,37 @@ local function onEngineUpdate(deltaTime)
             end
         end
     elseif cameraType == CameraTypes.freeCam then
+        if cameraLookAtPos == nil then
+            cameraLookAtPos = Vec3(30,30,30)
+        end
+
         local yaw = cameraYaw
         local pitch = cameraPitch
-        -- Fix angles so we're looking at the right thing.
         yaw = yaw - math.pi / 2
         pitch = pitch + math.pi / 2
-        -- Set the look at position above the soldier's feet.
-        cameraLookAtPos = Vec3(30,30,30)
-        -- Calculate where our camera has to be base on the angles.
+
         local cosfi = math.cos(yaw)
         local sinfi = math.sin(yaw)
         local costheta = math.cos(pitch)
         local sintheta = math.sin(pitch)
-        -- calculate position of our camera
-        local cx = cameraLookAtPos.x + (sintheta * cosfi)
-        local cy = cameraLookAtPos.y + costheta
-        local cz = cameraLookAtPos.z + (sintheta * sinfi)
-        -- set camera location
-        local cameraLocation = Vec3(cx, cy, cz)
+        local forward_direction = Vec3(sintheta * cosfi, costheta, sintheta * sinfi) * -1
+        forward_direction = forward_direction:Normalize()
+
+        if cameraForward ~= 0.0 then
+            cameraLookAtPos = cameraLookAtPos + forward_direction * cameraForward
+        end
+
+        if cameraSidewards ~= 0.0 then
+            local right_direction = forward_direction:Cross(Vec3.up)
+            cameraLookAtPos = cameraLookAtPos - right_direction * cameraSidewards
+        end
+
+        local cameraLocation = cameraLookAtPos - forward_direction * 5 -- change to camera distance (scroll wheel?)
+
         -- cameraEntityData calculate our new look at position
         cameraEntityData.transform:LookAtTransform(cameraLocation, cameraLookAtPos)
-        cameraEntityData.transform.left = cameraEntityData.transform.left + cameraForward
-        cameraEntityData.transform.forward = cameraEntityData.transform.forward + cameraSidewards
+        cameraEntityData.transform.left = cameraEntityData.transform.left * -1
+        cameraEntityData.transform.forward = cameraEntityData.transform.forward * -1
     end
 end
 
