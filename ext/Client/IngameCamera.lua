@@ -741,6 +741,7 @@ end
 -- when extension is unloading
 local function onExtensionUnloading()
     disable()
+    resetIngameCamera()
     destroyCamera()
 end
 
@@ -749,6 +750,7 @@ Hooks:Install('Input:PreUpdate', 100, onInputPreUpdate)
 Events:Subscribe('Engine:Update', onEngineUpdate)
 Events:Subscribe('Player:UpdateInput', onPlayerUpdateInput)
 Events:Subscribe('Extension:Unloading', onExtensionUnloading)
+Events:Subscribe('Level:Destroy', onExtensionUnloading)
 Events:Subscribe('Player:Respawn', onPlayerRespawn)
 Events:Subscribe('Player:Killed', onPlayerKilled)
 Events:Subscribe('Player:Deleted', onPlayerDeleted)
