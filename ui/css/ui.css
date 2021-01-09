@@ -25,6 +25,14 @@ body {
   color: #00bfff !important;
 }
 
+.bgcolor-seeker {
+  background-color: #860000 !important;
+}
+
+.bgcolor-hider {
+  background-color: #001167 !important;
+}
+
 .bgcolor-red {
   background-color: rgb(208 34 34) !important;
 }
@@ -195,10 +203,6 @@ body {
 #prophunt-welcomemessage h3,
 #prophunt-welcomemessage strong {
   color: #ffabab;
-}
-
-#prophunt-welcomemessage .row .col-6 {
-  border-radius: 25px;
 }
 
 #prophunt-spectator-keys,
