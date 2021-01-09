@@ -230,7 +230,7 @@ function spectatePlayer(player)
     local localPlayer = PlayerManager:GetLocalPlayer()
     -- When local player is still alive the player can only spectate himself
     if localPlayer.alive and localPlayer ~= player then
-        --return
+        return
     end
     -- only show ui message when we are not "spectating" our self
     if localPlayer ~= player then
