@@ -70,7 +70,7 @@ window.addEventListener("load", function(){
 				specMessageTeam.parentNode.parentNode.classList.add('hider');
 				break;
 			default:
-				specMessageTeam.innerHTML = 'unkown'
+				specMessageTeam.innerHTML = 'autocam'
 		}
 	};
 	
