@@ -30,6 +30,7 @@ local maxPitch = 85.0 * (math.pi / 180.0)
 local minPitch = -70.0 * (math.pi / 180.0)
 local twoPi = math.pi * 2
 local rotateMultiplier = 1.916686
+local freelookMultiplier = 0.6
 local freelookKey = InputDeviceKeys.IDK_LeftAlt
 
 local function resetIngameCamera()
@@ -435,14 +436,14 @@ local function onInputPreUpdate(hook, cache, deltaTime)
         local moveLeft = cache[InputConceptIdentifiers.ConceptMoveLeft]
         local moveRight = cache[InputConceptIdentifiers.ConceptMoveRight]
         if moveForward > 0 then
-            cameraForward = moveForward * (rotateMultiplier / 2)
+            cameraForward = moveForward * (freelookMultiplier / 4)
         else
-            cameraForward = -1 * moveBackward * (rotateMultiplier / 2)
+            cameraForward = -1 * moveBackward * (freelookMultiplier / 4)
         end
         if moveRight > 0 then
-            cameraSidewards = -1 * moveRight * (rotateMultiplier / 2)
+            cameraSidewards = -1 * moveRight * (freelookMultiplier / 4)
         else
-            cameraSidewards = moveLeft * (rotateMultiplier / 2)
+            cameraSidewards = moveLeft * (freelookMultiplier / 4)
         end
     end
 end
@@ -596,8 +597,15 @@ local function onEngineUpdate(deltaTime)
             end
         end
     elseif cameraType == CameraTypes.freeCam then
+        -- set initial camera position when nil
         if cameraLookAtPos == nil then
-            cameraLookAtPos = Vec3(30,30,30)
+            -- when camera entity data is nil spawn at a default position
+            if cameraEntityData.transform.trans == nil then
+                cameraLookAtPos = Vec3(30,30,30)
+            else
+                -- set current camera position to current camera entity data
+                cameraLookAtPos = cameraEntityData.transform.trans:Clone()
+            end
         end
 
         local yaw = cameraYaw
@@ -621,7 +629,7 @@ local function onEngineUpdate(deltaTime)
             cameraLookAtPos = cameraLookAtPos - right_direction * cameraSidewards
         end
 
-        local cameraLocation = cameraLookAtPos - forward_direction * 5 -- change to camera distance (scroll wheel?)
+        local cameraLocation = cameraLookAtPos - forward_direction
 
         -- cameraEntityData calculate our new look at position
         cameraEntityData.transform:LookAtTransform(cameraLocation, cameraLookAtPos)
