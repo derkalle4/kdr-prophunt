@@ -211,6 +211,8 @@ function switchToFreeCam()
     cameraType = CameraTypes.freeCam
     -- disable mouse
     WebUI:DisableMouse()
+    -- remove spectator message
+    WebUI:ExecuteJS('setSpectatorMessage("");')
 end
 
 function spectatePlayer(player)
