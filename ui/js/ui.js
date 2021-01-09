@@ -268,7 +268,6 @@ window.addEventListener("load", function(){
 			let row = null;
 			let cell1 = null;
 			let button = null;
-			console.log(i + ' - ' + data[i].alive);
 			// switch between player teams
 			switch(data[i].team) {
 				case 1:
@@ -294,6 +293,7 @@ window.addEventListener("load", function(){
 						button.classList.add('btn-secondary');
 						button.classList.add('btn-sm');
 						button.classList.add('m-1');
+						if (!data[i].alive)	button.classList.add('dead');
 						scoreboardListSeekerSmall.appendChild(button);
 					}
 					break;
@@ -320,6 +320,7 @@ window.addEventListener("load", function(){
 						button.classList.add('btn-secondary');
 						button.classList.add('btn-sm');
 						button.classList.add('m-1');
+						if (!data[i].alive)	button.classList.add('dead');
 						scoreboardListHiderSmall.appendChild(button);
 					}
 					break;
