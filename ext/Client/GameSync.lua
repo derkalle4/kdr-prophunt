@@ -6,7 +6,7 @@ local function inIdleState(info, localPlayer)
     -- disable any center message
     WebUI:ExecuteJS('setCenterMessage("");')
     -- hide spectator keys
-    WebUI:ExecuteJS('showSpectatorKeys(false);')
+    WebUI:ExecuteJS('showSpectatorKeys(true);')
     -- hide hider keys
     WebUI:ExecuteJS('showHiderKeys(false);')
 end
