@@ -323,17 +323,39 @@ body {
 #prophunt-spectator-message {
   display: none;
   position: absolute;
-  left:15px;
+  left:30px;
   bottom:15px;
   width: 250px;
-  height: 100px;
-}
-
-#prophunt-spectator-message .card {
-  background-color: rgb(33, 37, 41, 0.5);
-  color: #fff;
+  height: 70px;
+  border-radius: 15px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 35px;
   font-weight: bold;
   font-size: 17px;
+  color: #fff;
+}
+
+#prophunt-spectator-message .row {
+  height: 35px;
+}
+
+#prophunt-spectator-message .seeker {
+  background-color: #860000 !important;
+}
+
+#prophunt-spectator-message .hider {
+  background-color: #001167 !important;
+}
+
+#prophunt-spectator-message .row:nth-child(1) {
+  border-radius: 15px 15px 0 0;
+  background-color: rgb(33, 37, 41, 0.5);
+}
+
+#prophunt-spectator-message .row:nth-child(2) {
+  border-radius: 0 0 15px 15px;
+  background-color: rgb(33, 37, 41, 0.5);
 }
 
 

@@ -59,15 +59,18 @@ window.addEventListener("load", function(){
 		else
 			specMessage.style.display = 'block';
 		specMessageText.innerHTML = msg;
+		specMessageTeam.parentNode.parentNode.className = 'row';
 		switch (teamID) {
 			case 1:
 				specMessageTeam.innerHTML = 'seeker'
+				specMessageTeam.parentNode.parentNode.classList.add('seeker');
 				break;
 			case 2:
 				specMessageTeam.innerHTML = 'hider'
+				specMessageTeam.parentNode.parentNode.classList.add('hider');
 				break;
 			default:
-				specMessageTeam.innerHTML = ''
+				specMessageTeam.innerHTML = 'unkown'
 		}
 	};
 	
