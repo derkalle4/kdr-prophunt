@@ -39,9 +39,15 @@ local rotateMultipliers = {
     [CameraTypes.firstPerson] = rotateMultiplierBase
 }
 local freelookMultiplier = 0.6
-local freelookKey = InputDeviceKeys.IDK_LeftAlt
-local freecamUpwardKey = InputDeviceKeys.IDK_Space
-local freecamDownwardKey = InputDeviceKeys.IDK_LeftCtrl
+local keyConfig = {
+    nextPlayer = InputDeviceKeys.IDK_1,
+    prevPlayer = InputDeviceKeys.IDK_2,
+    freecam = InputDeviceKeys.IDK_3,
+    autocam = InputDeviceKeys.IDK_4,
+    freelook = InputDeviceKeys.IDK_LeftAlt,
+    freecamUpward = InputDeviceKeys.IDK_Space,
+    freecamDownward = InputDeviceKeys.IDK_LeftCtrl
+}
 
 local function resetIngameCamera()
     debugMessage('IngameCamera:resetIngameCamera')
@@ -649,25 +655,25 @@ local function onEngineUpdate(deltaTime)
         local sinfi = math.sin(yaw)
         local costheta = math.cos(pitch)
         local sintheta = math.sin(pitch)
-        local forward_direction = Vec3(sintheta * cosfi, costheta, sintheta * sinfi) * -1
-        forward_direction = forward_direction:Normalize()
+        local forwardDirection = Vec3(sintheta * cosfi, costheta, sintheta * sinfi) * -1
+        forwardDirection = forwardDirection:Normalize()
 
         if cameraForward ~= 0.0 then
-            cameraLookAtPos = cameraLookAtPos + forward_direction * cameraForward
+            cameraLookAtPos = cameraLookAtPos + forwardDirection * cameraForward
         end
 
         if cameraSidewards ~= 0.0 then
-            local right_direction = forward_direction:Cross(Vec3.up)
-            cameraLookAtPos = cameraLookAtPos - right_direction * cameraSidewards
+            local rightDirection = forwardDirection:Cross(Vec3.up)
+            cameraLookAtPos = cameraLookAtPos - rightDirection * cameraSidewards
         end
 
         if cameraUpward ~= 0.0 then
-            local right_direction = forward_direction:Cross(Vec3.up)
-            local upDirection = forward_direction:Cross(right_direction)
+            local rightDirection = forwardDirection:Cross(Vec3.up)
+            local upDirection = forwardDirection:Cross(rightDirection)
             cameraLookAtPos = cameraLookAtPos - upDirection * cameraUpward
         end
 
-        local cameraLocation = cameraLookAtPos - forward_direction
+        local cameraLocation = cameraLookAtPos - forwardDirection
 
         -- cameraEntityData calculate our new look at position
         cameraEntityData.transform:LookAtTransform(cameraLocation, cameraLookAtPos)
@@ -688,7 +694,7 @@ local function onPlayerUpdateInput(player, deltaTime)
         return
     end
     -- when freelook key went down
-    if cameraType == CameraTypes.thirdPerson and freelookKey ~= InputDeviceKeys.IDK_None and InputManager:WentKeyDown(freelookKey) then
+    if cameraType == CameraTypes.thirdPerson and InputManager:WentKeyDown(keyConfig.freelook) then
         -- if it is currently not locked and we are in hiding or seeking state
         if not isLocked and player.input ~= nil and
             (currentState.roundState == GameState.hiding or currentState.roundState == GameState.seeking) then
@@ -710,31 +716,31 @@ local function onPlayerUpdateInput(player, deltaTime)
     end
     -- freecam upward/downward movement
     if cameraType == CameraTypes.freeCam then
-        if freecamUpwardKey ~= InputDeviceKeys.IDK_None and InputManager:IsKeyDown(freecamUpwardKey) then
+        if InputManager:IsKeyDown(keyConfig.freecamUpward) then
             cameraUpward = freelookMultiplier / 4
-        elseif freecamUpwardKey ~= InputDeviceKeys.IDK_None and InputManager:IsKeyDown(freecamDownwardKey) then
+        elseif InputManager:IsKeyDown(keyConfig.freecamDownward) then
             cameraUpward = -1 * (freelookMultiplier / 4)
         else
             cameraUpward = 0.0
         end
     end
-    -- spectate next player
-    if not player.alive and InputManager:WentKeyDown(InputDeviceKeys.IDK_1) then
-        spectateNextPlayer()
-    end
-    -- spectate previous player
-    if not player.alive and InputManager:WentKeyDown(InputDeviceKeys.IDK_2) then
-        spectatePreviousPlayer()
-    end
-    -- swap freecam
-    if not player.alive and InputManager:WentKeyDown(InputDeviceKeys.IDK_3) then
-        -- swap to free view camera
-        switchToFreeCam()
-    end
-    -- swap autocam
-    if not player.alive and InputManager:WentKeyDown(InputDeviceKeys.IDK_4) then
-        -- swap to automatic camera
-        switchToAutoCam()
+    -- keys for spectators
+    if not player.alive then
+        -- spectate next player
+        if InputManager:WentKeyDown(keyConfig.nextPlayer) then
+            spectateNextPlayer()
+        -- spectate previous player
+        elseif InputManager:WentKeyDown(keyConfig.prevPlayer) then
+            spectatePreviousPlayer()
+        -- swap freecam
+        elseif InputManager:WentKeyDown(keyConfig.freecam) then
+            -- swap to free view camera
+            switchToFreeCam()
+        -- swap autocam
+        elseif InputManager:WentKeyDown(keyConfig.autocam) then
+            -- swap to automatic camera
+            switchToAutoCam()
+        end
     end
 end
 
