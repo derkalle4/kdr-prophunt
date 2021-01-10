@@ -1,13 +1,11 @@
 window.addEventListener("load", function(){
 
 	window.setRoundInfo = (data) => {
-		let playerCount = document.getElementById('prophunt-totalplayers-count');
 		let seekerCount = document.getElementById('prophunt-seeker-count');
 		let hiderCount = document.getElementById('prophunt-hider-count');
 		let specCount = document.getElementById('prophunt-spectator-count');
 		let roundState = document.getElementById('prophunt-roundstate');
 		let roundTimer = document.getElementById('prophunt-roundtimer');
-		playerCount.innerHTML = data.numPlayer;
 		seekerCount.innerHTML = data.numSeeker + ' / ' + data.totalNumSeeker;
 		hiderCount.innerHTML = data.numHider + ' / ' + data.totalNumHider;
 		specCount.innerHTML = data.numSpectator + ' spectator';

@@ -95,30 +95,6 @@ body {
   margin-left: 15px;
 }
 
-#prophunt-totalplayers {
-  position: absolute;
-  top:0;
-  right:20px;
-  width: 171px;
-  height: 90px;
-  text-align: center;
-  background-image:url(../img/ui_header_counter_background.png);
-  background-size:100% 100%;
-}
-
-#prophunt-totalplayers h1,
-#prophunt-totalplayers h2,
-#prophunt-totalplayers h3,
-#prophunt-totalplayers h6 {
-  color: #fff;
-  font-weight: bold;
-}
-
-#prophunt-totalplayers .row,
-#prophunt-totalplayers .col-sm {
-  height: 46px;
-}
-
 #prophunt-health-bar {
   display: none;
   position: absolute;
