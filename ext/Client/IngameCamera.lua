@@ -29,7 +29,12 @@ local cameraEntity = nil
 local maxPitch = 85.0 * (math.pi / 180.0)
 local minPitch = -70.0 * (math.pi / 180.0)
 local twoPi = math.pi * 2
-local rotateMultiplier = 1.916686
+local rotateMultiplierBase = 1.916686
+local rotateMultipliers = {
+    [CameraTypes.freeCam] = rotateMultiplierBase * 0.25,
+    [CameraTypes.thirdPerson] = rotateMultiplierBase,
+    [CameraTypes.firstPerson] = rotateMultiplierBase
+}
 local freelookMultiplier = 0.6
 local freelookKey = InputDeviceKeys.IDK_LeftAlt
 
@@ -413,8 +418,9 @@ local function onInputPreUpdate(hook, cache, deltaTime)
 
         -- Get the yaw and pitch movement values and multiply by it to figure out
         -- how much to rotate the camera.
-        local rotateYaw = cache[InputConceptIdentifiers.ConceptYaw] * rotateMultiplier
-        local rotatePitch = cache[InputConceptIdentifiers.ConceptPitch] * rotateMultiplier
+        local rotateYaw = cache[InputConceptIdentifiers.ConceptYaw] * rotateMultipliers[cameraType]
+        local rotatePitch = cache[InputConceptIdentifiers.ConceptPitch] * rotateMultipliers[cameraType]
+
         -- And then just rotate!
         cameraYaw = cameraYaw + rotateYaw
         cameraPitch = cameraPitch + rotatePitch
