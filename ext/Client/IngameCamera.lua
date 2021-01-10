@@ -301,7 +301,7 @@ local function spectateNextPlayer()
         -- get the player
         local player = players[playerIndex]
         -- when player is not nil, got a soldier, is not local player and alive pick him
-        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and localPlayer.alive then
+        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive then
             nextPlayer = player
             break
         end
@@ -372,7 +372,7 @@ local function spectatePreviousPlayer()
         -- get the player
         local player = players[playerIndex]
         -- when player is not nil, got a soldier, is not local player and alive pick him
-        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and localPlayer.alive then
+        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive then
             nextPlayer = player
             break
         end
