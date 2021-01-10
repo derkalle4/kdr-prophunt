@@ -24,6 +24,7 @@ local cameraYaw = 0.0
 local cameraPitch = 0.0
 local cameraForward = 0.0
 local cameraSidewards = 0.0
+local cameraUpward = 0.0
 local cameraLookAtPos = nil
 local isLocked = false
 local canAltPressAgain = true
@@ -39,6 +40,8 @@ local rotateMultipliers = {
 }
 local freelookMultiplier = 0.6
 local freelookKey = InputDeviceKeys.IDK_LeftAlt
+local freecamUpwardKey = InputDeviceKeys.IDK_Space
+local freecamDownwardKey = InputDeviceKeys.IDK_LeftCtrl
 
 local function resetIngameCamera()
     debugMessage('IngameCamera:resetIngameCamera')
@@ -419,7 +422,7 @@ local function onInputPreUpdate(hook, cache, deltaTime)
 
     -- update camera distance
     if cameraType == CameraTypes.freeCam or cameraType == CameraTypes.thirdPerson then
-        -- local temp = {["sii"] = InputConceptIdentifiers.ConceptSwitchInventoryItem, ["zoom"] = InputConceptIdentifiers.ConceptZoom}
+        -- local temp = {["jump"] = InputConceptIdentifiers.ConceptJump, ["coh"] = InputConceptIdentifiers.ConceptCrouchOnHold}
         -- for k, v in pairs(temp) do
         --     if cache[v] ~= 0.0 then
         --         print(k .. cache[v])
@@ -658,6 +661,12 @@ local function onEngineUpdate(deltaTime)
             cameraLookAtPos = cameraLookAtPos - right_direction * cameraSidewards
         end
 
+        if cameraUpward ~= 0.0 then
+            local right_direction = forward_direction:Cross(Vec3.up)
+            local upDirection = forward_direction:Cross(right_direction)
+            cameraLookAtPos = cameraLookAtPos - upDirection * cameraUpward
+        end
+
         local cameraLocation = cameraLookAtPos - forward_direction
 
         -- cameraEntityData calculate our new look at position
@@ -697,6 +706,16 @@ local function onPlayerUpdateInput(player, deltaTime)
             -- unhighlight key on UI
             WebUI:ExecuteJS('highlightKey("alt","green",false);')
             WebUI:ExecuteJS('highlightKey("alt2","green",false);')
+        end
+    end
+    -- freecam upward/downward movement
+    if cameraType == CameraTypes.freeCam then
+        if freecamUpwardKey ~= InputDeviceKeys.IDK_None and InputManager:IsKeyDown(freecamUpwardKey) then
+            cameraUpward = freelookMultiplier / 4
+        elseif freecamUpwardKey ~= InputDeviceKeys.IDK_None and InputManager:IsKeyDown(freecamDownwardKey) then
+            cameraUpward = -1 * (freelookMultiplier / 4)
+        else
+            cameraUpward = 0.0
         end
     end
     -- spectate next player
