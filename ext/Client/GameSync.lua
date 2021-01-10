@@ -126,7 +126,7 @@ local function onGameSync(info)
     -- sync currentState with state we got from server
     currentState = info
     -- set UI round information
-    WebUI:ExecuteJS('setRoundInfo(' .. info.numPlayer .. ',' .. info.numSeeker .. ', ' .. info.numHider .. ', ' .. info.numSpectator .. ', "' .. info.roundStatusMessage .. '", ' .. math.floor(info.roundTimer) .. ');')
+    WebUI:ExecuteJS('setRoundInfo(' .. json.encode(currentState) .. ');')
     -- check whether we got into a new state
     if oldState ~= info.roundState then
         -- get local player

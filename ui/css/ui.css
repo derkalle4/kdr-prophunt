@@ -79,6 +79,22 @@ body {
   height: 46px;
 }
 
+#prophunt-roundinfo .row:nth-child(2) .col-sm:nth-child(1) {
+  text-align: right;
+}
+
+#prophunt-roundinfo .row:nth-child(2) .col-sm:nth-child(1) h2 {
+  margin-right: 15px;
+}
+
+#prophunt-roundinfo .row:nth-child(2) .col-sm:nth-child(3) {
+  text-align: left;
+}
+
+#prophunt-roundinfo .row:nth-child(2) .col-sm:nth-child(3) h2 {
+  margin-left: 15px;
+}
+
 #prophunt-totalplayers {
   position: absolute;
   top:0;
