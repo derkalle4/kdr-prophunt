@@ -96,6 +96,15 @@ local function onPartitionLoaded(partition)
                 partition:RemoveInstance(instance)
             end
         end
+        -- make soldier world collision model smaller in radius so you can get closer to objects
+            -- soldier has a cylindrical model, you can also set CharacterPoseData.height to something higher for manipulating the height
+            -- of the cylinder - this is not done because you never know where players can get if they're that small in height)
+        -- all default values available in https://github.com/EmulatorNexus/Venice-EBX/blob/master/Characters/Soldiers/DefaultSoldierPhysics.txt
+        if instance:Is('CharacterPhysicsData') then
+            local s_Instance = CharacterPhysicsData(instance)
+            s_Instance:MakeWritable()
+            s_Instance.physicalRadius = 0.05
+        end
     end
 end
 
