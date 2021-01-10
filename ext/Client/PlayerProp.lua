@@ -288,7 +288,7 @@ end
 -- hooking bullet collision
 local function onBulletEntityCollision(hook, entity, hit, shooter)
     local localPlayer = PlayerManager:GetLocalPlayer()
-    if shooter ~= localPlayer or hit.rigidBody == nil then
+    if localPlayer == nil or shooter ~= localPlayer or hit.rigidBody == nil then
         return
     end
 
