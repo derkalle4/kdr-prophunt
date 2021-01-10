@@ -2,6 +2,9 @@
 
 This mod is a working Prophunt solution for Battlefield 3. This will only work with [Venice Unleashed](https://veniceunleashed.net). Feel free to open issues and create pull requests. There is a lot of room for further improvement. Some of them are listed below.
 
+## Attribution
+This mod has still some small parts that are based on [OrfeasZ prop-hunt](https://github.com/OrfeasZ/prop-hunt). Most of the code has been refactored and is not associated with any third party.
+
 ## Installation and usage
 
 Just copy all the kdr-prophunt to the Mods folder and add the mod name to the servers mod list and check on the configuration.lua on the server side folder. Join our [Discord](https://discord.kandru.net) for help.
