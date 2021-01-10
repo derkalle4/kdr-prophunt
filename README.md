@@ -3,7 +3,7 @@
 This mod is a working Prophunt solution for Battlefield 3. This will only work with [Venice Unleashed](https://veniceunleashed.net). Feel free to open issues and create pull requests. There is a lot of room for further improvement. Some of them are listed below.
 
 ## Attribution
-This mod has still some small parts that are based on [OrfeasZ prop-hunt](https://github.com/OrfeasZ/prop-hunt). Most of the code has been refactored and is not associated with any third party.
+This mod has still some small parts that are based on [OrfeasZ prop-hunt](https://github.com/OrfeasZ/prop-hunt). Most of the code has been refactored and is not associated with any third party. Also thanks to Jonniboy for improving some aspects of the Mod as well as Battletier for the UI design. Would not have been possible without you all!
 
 ## Installation and usage
 
