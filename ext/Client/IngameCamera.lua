@@ -18,6 +18,8 @@ local isFirstPerson = true
 local currentAutomaticRoute = {}
 local cameraHeight = 1.5
 local cameraDistance = 2.0
+local minCameraDistance = 1.0
+local maxCameraDistance = 8.0
 local cameraYaw = 0.0
 local cameraPitch = 0.0
 local cameraForward = 0.0
@@ -397,12 +399,15 @@ local function onInputPreUpdate(hook, cache, deltaTime)
     if not isActive then
         return
     end
+
     -- get the local player
     local player = PlayerManager:GetLocalPlayer()
+
     -- do nothing when our player does not exist
     if player == nil then
         return
     end
+
     -- if we are locking the player remove the mouse input
     if isLocked and cameraType == CameraTypes.thirdPerson then
         player:EnableInput(EntryInputActionEnum.EIAYaw, false)
@@ -411,6 +416,22 @@ local function onInputPreUpdate(hook, cache, deltaTime)
         player:EnableInput(EntryInputActionEnum.EIAYaw, true)
         player:EnableInput(EntryInputActionEnum.EIAPitch, true)
     end
+
+    -- update camera distance
+    if cameraType == CameraTypes.freeCam or cameraType == CameraTypes.thirdPerson then
+        -- local temp = {["sii"] = InputConceptIdentifiers.ConceptSwitchInventoryItem, ["zoom"] = InputConceptIdentifiers.ConceptZoom}
+        -- for k, v in pairs(temp) do
+        --     if cache[v] ~= 0.0 then
+        --         print(k .. cache[v])
+        --     end
+        -- end
+
+        local newCameraDistance = cameraDistance - cache[InputConceptIdentifiers.ConceptZoom]
+        if newCameraDistance <= maxCameraDistance and newCameraDistance >= minCameraDistance then
+            cameraDistance = newCameraDistance
+        end
+    end
+
     -- update the pitch manually when camera position is locked
     if isLocked or cameraType == CameraTypes.freeCam then
         -- 1.916686 is a magic number we use to somewhat match the rotation speed
