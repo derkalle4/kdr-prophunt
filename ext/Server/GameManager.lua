@@ -26,6 +26,8 @@ local function prepareIdleState()
     currentState.numSeeker = 0
     currentState.numHider = 0
     currentState.numPlayer = 0
+    currentState.totalNumSeeker = 0
+    currentState.totalNumHider = 0
     -- broadcast changes to clients
     broadCastClients(currentState)
 end
