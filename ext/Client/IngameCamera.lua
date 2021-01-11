@@ -11,10 +11,8 @@ local CameraTypes = {
 }
 local cameraType = CameraTypes.autoRoute
 local cameraFov = 100
-
 local isActive = false
 local spectatedPlayerID = nil
-local isFirstPerson = true
 local currentAutomaticRoute = {}
 local cameraHeight = 1.5
 local cameraDistance = 2.0
@@ -51,14 +49,18 @@ local keyConfig = {
 
 local function resetIngameCamera()
     debugMessage('IngameCamera:resetIngameCamera')
+    cameraFov = 100
     spectatedPlayerID = nil
-    isFirstPerson = true
-    lastEngineUpdate = 0.0
     currentAutomaticRoute = {}
     cameraHeight = 1.5
     cameraDistance = 2.0
+    minCameraDistance = 1.0
+    maxCameraDistance = 8.0
     cameraYaw = 0.0
     cameraPitch = 0.0
+    cameraForward = 0.0
+    cameraSidewards = 0.0
+    cameraUpward = 0.0
     cameraLookAtPos = nil
     isLocked = false
     canAltPressAgain = true
@@ -88,6 +90,8 @@ local function destroyCamera()
         cameraEntity = nil
     end
     cameraEntityData = nil
+    isActive = false
+    cameraType = CameraTypes.autoRoute
 end
 
 local function enable()
