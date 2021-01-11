@@ -295,7 +295,7 @@ local function spectateNextPlayer()
     end
     -- find index of current player
     for i, player in pairs(players) do
-        if player == spectatedPlayerID then
+        if player.id == spectatedPlayerID then
             currentIndex = i
             break
         end
@@ -366,7 +366,7 @@ local function spectatePreviousPlayer()
     end
     -- find index of current player
     for i, player in pairs(players) do
-        if player == spectatedPlayerID then
+        if player.id == spectatedPlayerID then
             currentIndex = i
             break
         end
