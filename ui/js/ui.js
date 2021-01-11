@@ -1,4 +1,5 @@
 window.addEventListener("load", function(){
+	var gameTipsInterval = null;
 
 	window.setRoundInfo = (data) => {
 		let seekerCount = document.getElementById('prophunt-seeker-count');
@@ -20,6 +21,57 @@ window.addEventListener("load", function(){
 			healthBar.style.display = 'block';
 		else
 			healthBar.style.display = 'none';
+	};
+
+	// show or hide tips
+	window.showGameTips = (teamID) => {
+		// function to change text
+		function seekerGameTips() {
+			let gameTipsContent = document.getElementById('prophunt-gametips-content');
+			let items = [
+				'you will lose health when shooting',
+				'when hitting a hider you will gain health',
+				'props can be destroyed - except for hider props',
+				'listen to the explosion and broken glass sounds to find hider',
+				'small hider props have little health',
+				'big hider props have lots of health'
+			];
+			gameTipsContent.innerHTML = items[Math.floor(Math.random() * items.length)];
+		}
+		function hiderGameTips() {
+			let gameTipsContent = document.getElementById('prophunt-gametips-content');
+			let items = [
+				'look at another prop and press "e" to immitate that prop',
+				'you can change your prop at any time',
+				'pick a random prop when pressing T',
+				'hide yourself in a place nobody will find you',
+				'run around and try to find seekers just for fun',
+				'squad up with friends to hide together',
+				'you can whistle when pressing Q',
+				'you will automatically whistle every 30 to 60 seconds',
+				'be aware of the falldamage! you can die!',
+				'big props do have a lot of health',
+				'small props do not have much health',
+				'the last prop alive may get a weapon to shoot all seekers'
+			];
+			gameTipsContent.innerHTML = items[Math.floor(Math.random() * items.length)];
+		}
+		let gameTips = document.getElementById('prophunt-gametips');
+		switch (teamID) {
+			case 1:
+				gameTips.style.display = 'block';
+				seekerGameTips();
+				gameTipsInterval = setInterval(seekerGameTips, 5000);
+				break;
+			case 2:
+				gameTips.style.display = 'block';
+				hiderGameTips();
+				setInterval(hiderGameTips, 5000);
+				break;
+			default:
+				gameTips.style.display = 'none';
+				clearInterval(gameTipsInterval);
+		}
 	};
 
 	// highlight key

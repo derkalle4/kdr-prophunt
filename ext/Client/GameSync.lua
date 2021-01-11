@@ -35,6 +35,8 @@ local function inHidingState(info, localPlayer)
         WebUI:ExecuteJS('setCenterMessage("wait until hiders are hidden", 7);')
         -- disable spectator message
         WebUI:ExecuteJS('setSpectatorMessage("");')
+        -- show ingame tips
+        WebUI:ExecuteJS('showGameTips(1);')
     elseif localPlayer.teamId == 2 then -- when player is hider
         -- set center message for hiding state
         WebUI:ExecuteJS('setCenterMessage("prepare to hide!", 7);')
@@ -42,11 +44,15 @@ local function inHidingState(info, localPlayer)
         WebUI:ExecuteJS('showHiderKeys(true);')
         -- disable spectator message
         WebUI:ExecuteJS('setSpectatorMessage("");')
+        -- show ingame tips
+        WebUI:ExecuteJS('showGameTips(2);')
     else -- when player is spectator
         -- set center message for hiding state
         WebUI:ExecuteJS('setCenterMessage("hiders going to hide themself", 7);')
         -- show spectator keys
         WebUI:ExecuteJS('showSpectatorKeys(true);')
+        -- hide ingame tips
+        WebUI:ExecuteJS('showGameTips(0);')
     end
     -- show killfeed
     WebUI:ExecuteJS('showKillfeed(true);')
@@ -118,6 +124,8 @@ local function inPostRoundState(info, localPlayer)
     WebUI:ExecuteJS('showHealthBar(false);')
     -- hide killfeed
     WebUI:ExecuteJS('showKillfeed(false);')
+    -- show ingame tips
+    WebUI:ExecuteJS('showGameTips(0);')
 end
 
 -- synchronisation of each server game object
