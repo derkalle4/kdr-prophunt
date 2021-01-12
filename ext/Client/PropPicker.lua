@@ -1,36 +1,35 @@
 -- PropPicker
 -- client side UI logic for picking props
 
-
-local Debug = require('debug')
+local maxDistance = 2.0
 
 local function getMesh(entity)
     local data = entity.data
-
+    -- reuturn when data is nil
     if data == nil then
         return nil
     end
-
+    -- return mesh for StaticModelEntityData
     if data:Is('StaticModelEntityData') then
         data = StaticModelEntityData(data)
         return data.mesh
     end
-
+    -- return mesh for RigidMeshEntityData
     if data:Is('RigidMeshEntityData') then
         data = RigidMeshEntityData(data)
         return data.mesh
     end
-
+    -- return mesh for CompositeMeshEntityData
     if data:Is('CompositeMeshEntityData') then
         data = CompositeMeshEntityData(data)
         return data.mesh
     end
-
+    -- return mesh for BreakableModelEntityData
     if data:Is('BreakableModelEntityData') then
         data = BreakableModelEntityData(data)
         return data.mesh
     end
-
+    -- otherwise return nil
     return nil
 end
 
@@ -92,211 +91,169 @@ local function intersect(from, to, aabb, transform, maxDist)
     return { tmin, tmax }
 end
 
-local function pickProp()
-    -- Make sure we have a local player.
-    local player = PlayerManager:GetLocalPlayer()
-    -- disable pick prop when player does not exist
-    if player == nil or player.soldier == nil then
-        return nil
+local function pickProp(drawOnly)
+    -- get local player
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    -- only proceed when player and soldier exist and player is alive
+    if localPlayer == nil or localPlayer.soldier == nil or not localPlayer.alive then
+        return
     end
-    -- disable pick prop when camera transformation is not possible
-    if getCameraTransform() == nil then
-        return nil
+    -- get camera data
+    local cameraTransform = getCameraTransform()
+    -- check whether camera transform is available
+    if cameraTransform == nil then
+        return
     end
-
-    -- Our prop-picking ray will start at what the camera is looking at and
-    -- extend forward by 3.0m.
-    local from = getCameraLookAtPos()
-    local target = from - getCameraTransform().forward * 3.0
-
-    -- Do a spatial raycast and a normal raycast.
-    -- We use the spatial raycast to find available propsand the normal raycast
-    -- to see if there's anything between us and that prop and also help us select
-    -- the prop to pick.
-    local entities = RaycastManager:SpatialRaycast(from, target, SpatialQueryFlags.AllGrids)
-    local hit = RaycastManager:Raycast(from, target, RayCastFlags.CheckDetailMesh | RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.DontCheckRagdoll)
-
-    local hitDistance = 3.0
-
+    -- prepare raycast data
+    local cameraLookAtPos = getCameraLookAtPos()
+    local raycastTarget = cameraLookAtPos - cameraTransform.forward * maxDistance
+    -- get entities
+    local raycastEntities = RaycastManager:SpatialRaycast(cameraLookAtPos, raycastTarget, SpatialQueryFlags.AllGrids)
+    -- set hit distance to maxDistance
+    local raycastHitDistance = maxDistance
+    -- get everything we hit
+    local raycastHit = RaycastManager:Raycast(cameraLookAtPos, raycastTarget, RayCastFlags.CheckDetailMesh | RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.DontCheckRagdoll)
+    -- check whether we hit something
     if hit ~= nil then
-        hitDistance = from:Distance(hit.position)
-
-        -- Add 1.5cm to account for innacuracies.
-        hitDistance = hitDistance + 0.015
+        raycastHitDistance = cameraLookAtPos:Distance(hit.position)
+        raycastHitDistance = raycastHitDistance + 0.020
     end
-
-    local raycastObjects = {}
-    local candidates = {}
-
-    local heading = target - from
-    local direction = heading:Normalize()
-
-    local wallHit = from + (direction * hitDistance)
-    Debug:setWallHit(wallHit)
-
-    -- Iterate through the entities until we find one we can use.
-    for _, entity in pairs(entities) do
-        -- We only care about spatial entities.
+    local possibleEntities = {}
+    -- iterate through all entities
+    for i, entity in pairs(raycastEntities) do
+        -- continue when it is no spatial entity
         if not entity:Is('SpatialEntity') then
             goto continue
         end
-
-        -- If this is a player prop entity then skip it.
+        -- continue when player prop
         if isPlayerProp(entity) then
             goto continue
         end
-
-        local mesh = getMesh(entity)
-        -- check whether this mesh is the current player mesh (and ignore it then to get the next one)
-        local currentPlayerMesh = getMesh(player.soldier)
-        if currentPlayerMesh ~= nil then
-            debugMessage('current local player mesh is ' .. currentPlayerMesh)
-            if mesh == currentPlayerMesh then
-                goto continue
-            end
+        -- get spatial entity from entity
+        entity = SpatialEntity(entity)
+        -- continue when entity is nil
+        if entity == nil then
+            goto continue
         end
-
-        -- If we couldn't get a mesh then it means this isn't a supported entity.
+        -- get mesh
+        local mesh = getMesh(entity)
+        -- continue when mesh is nil
         if mesh == nil then
             goto continue
         end
-
-        -- If this entity is blacklisted then skip it.
+        -- continue when mesh is not whitelisted
         if not isMeshWhitelisted(mesh) then
             goto continue
         end
-
-        -- Now we need to do our own ray-tracing because the entities we get back do
-        -- not necessarily intersect with our selection ray.
-        local spatialEntity = SpatialEntity(entity)
-
-        local aabb = spatialEntity.aabb
-        local aabbTrans = spatialEntity.aabbTransform
-
-        -- Try to get an intersection point between our ray and this entity's OBB.
-        local intersection = intersect(from, target, aabb, aabbTrans, 3.0)
-
-        -- No intersection found
-        if intersection == false then
-            table.insert(raycastObjects, { aabb, aabbTrans, mesh.name, nil, nil, false })
-            table.insert(candidates, { mesh, spatialEntity, {0.0, hitDistance * 2.0} })
+        -- get player mesh
+        local playerMesh = getMesh(localPlayer.soldier)
+         -- check whether this mesh is the current player mesh and ignore it
+        if playerMesh ~= nil and mesh ~= nil and playerMesh == mesh then
             goto continue
         end
-
-        -- We have an intersection! Add to a list of entities to process.
-        table.insert(candidates, { mesh, spatialEntity, intersection })
-
-        -- Add to debug render list.
-        local intersectStart = from + (direction * intersection[1])
-        local intersectEnd = from + (direction * intersection[2])
-
-        table.insert(raycastObjects, { aabb, aabbTrans, mesh.name, intersectStart, intersectEnd, false })
-
+        -- do secondary raytracing
+        local intersection = intersect(cameraLookAtPos, raycastTarget, entity.aabb, entity.aabbTransform, maxDistance)
+        -- check whether we got an intersection
+        if intersection then
+            table.insert(possibleEntities, { mesh, entity, intersection })
+        else
+            table.insert(possibleEntities, { mesh, entity, {0.0, raycastHitDistance * 2.0} })
+        end
         ::continue::
     end
-
-    -- Process our candidates to find the best one.
-    local selectedProp = nil
-
-    -- Find the prop whose intersection point is closest to the raycast hit.
-    for _, candidate in pairs(candidates) do
-        local intersectionStart = candidate[3][1]
-
-        if intersectionStart <= hitDistance then
-            if selectedProp == nil then
-                selectedProp = candidate
-            end
-
-            if intersectionStart > selectedProp[3][1] then
-                selectedProp = candidate
+    -- variable for our new prop
+    local foundProp = nil
+    -- find the prop closest to the player
+    for _, entity in pairs(possibleEntities) do
+        if entity[3][1] <= raycastHitDistance then
+            if foundProp == nil then
+                foundProp = entity
+            elseif entity[3][1] < foundProp[3][1] then
+                foundProp = entity
             end
         end
     end
-
-    -- If we have selected a prop then add it to the debug render list.
-    if selectedProp ~= nil then
-        local intersectStart = from + (direction * selectedProp[3][1])
-        local intersectEnd = from + (direction * selectedProp[3][2])
-
-        table.insert(raycastObjects, { selectedProp[2].aabb, selectedProp[2].aabbTransform, selectedProp[1].name, intersectStart, intersectEnd, true })
+    -- try to find a blueprint
+    if foundProp ~= nil then
+        if drawOnly then
+            DebugRenderer:DrawOBB(foundProp[2].aabb, foundProp[2].aabbTransform, Vec4(0, 0, 1, 1))
+            return
+        else
+            local bpName = string.lower(foundProp[1].name)
+            -- get blueprint name
+            bpName = string.gsub(bpName, '_mesh$', '')
+            -- debug message
+            -- return blueprint
+            return ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Game, bpName)
+        end
     end
-
-    -- Send debug draw commands.
-    Debug:setRaycastObjects(raycastObjects)
-    Debug:setRaycastLine(from, target)
-
-    -- If we have selected a prop then try to find a blueprint for its mesh.
-    if selectedProp ~= nil then
-        local bpName = string.lower(selectedProp[1].name)
-        bpName = string.gsub(bpName, '_mesh$', '')
-
-        local bp = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Game, bpName)
-        return bp
-    end
-
+    -- return nil otherwise
     return nil
 end
 
-local elapsedTime = 0.0
-
-local function onClientUpdateInput(delta)
-    elapsedTime = elapsedTime + delta
-
-    -- If we're not a prop then we shouldn't be able to pick.
-    if not isProp(PlayerManager:GetLocalPlayer()) then
+local lastUpdate = 0.0
+local function onClientUpdateInput(deltaTime)
+    -- get local player
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    -- check whether player exist and is alive
+    if localPlayer == nil or localPlayer.soldier == nil or not localPlayer.alive then
         return
     end
-
-    -- Make sure we have a local player and an alive soldier.
-    local player = PlayerManager:GetLocalPlayer()
-
-    if player == nil or player.soldier == nil then
+    -- check whether we are a prop
+    if not isProp(localPlayer) then
         return
     end
-
     -- check whether we are in hiding or seeking state to be able to change props
     if currentState.roundState ~= GameState.hiding and
         currentState.roundState ~= GameState.seeking and
         currentState.roundState ~= GameState.revenge then
         return
     end
-
-    -- If the player is pressing down the prop selection key do a
-    -- raycast to find a valid prop. We allow prop selection once every
-    -- 250ms to prevent lag.
-    if InputManager:IsKeyDown(InputDeviceKeys.IDK_E) and elapsedTime >= 0.25 then
-        elapsedTime = 0.0
-
-        -- Find a prop to turn into!
-        local bp = pickProp()
-
-        -- If we managed to find one, turn the player into it.
-        if bp ~= nil then
-            -- First create it (so there's no visual delay) and then inform the server.
-            debugMessage('[Client:UpdateInput] for ' .. player.name .. ': has selected blueprint ' .. Blueprint(bp).name)
-            createPlayerProp(player, bp)
-            NetEvents:Send(GameMessage.C2S_PROP_CHANGE, Blueprint(bp).name)
+    -- when player press E to select a prop
+    if InputManager:IsKeyDown(InputDeviceKeys.IDK_E) and lastUpdate >= 0.25 then
+        -- reset last update
+        lastUpdate = 0.0
+        -- pick a prop
+        local blueprint = pickProp(false)
+        -- return when we did not found one
+        if blueprint == nil then
+            return
         end
+        -- get blueprint name
+        local bpName = Blueprint(blueprint).name
+        -- debug message
+        debugMessage('[Client:UpdateInput] for ' .. localPlayer.name .. ': has selected blueprint ' .. bpName)
+        -- create prop
+        createPlayerProp(localPlayer, blueprint)
+        -- send to server
+        NetEvents:Send(GameMessage.C2S_PROP_CHANGE, bpName)
     end
     -- If the player is requesting a random prop
-    if InputManager:IsKeyDown(InputDeviceKeys.IDK_T) and elapsedTime >= 1.0 then
-        elapsedTime = 0.0
-
+    if InputManager:IsKeyDown(InputDeviceKeys.IDK_T) and lastUpdate >= 1.0 then
+        -- reset last update
+        lastUpdate = 0.0
         -- get level name
         local level = SharedUtils:GetLevelName()
         -- get random prop
         math.randomseed(SharedUtils:GetTimeMS())
         local bpName = RandomPropsBlueprints[level][MathUtils:GetRandomInt(1, #RandomPropsBlueprints[level])]
-
         -- If we managed to find one, turn the player into it.
         if bpName ~= nil then
             -- First create it (so there's no visual delay) and then inform the server.
-            debugMessage('[Client:UpdateInput] for ' .. player.name .. ': got random blueprint ' .. bpName)
-            changePlayerProp(player.id, bpName)
+            debugMessage('[Client:UpdateInput] for ' .. localPlayer.name .. ': got random blueprint ' .. bpName)
+            changePlayerProp(localPlayer.id, bpName)
             NetEvents:Send(GameMessage.C2S_PROP_CHANGE, bpName)
         end
     end
+    -- add time to our last update
+    lastUpdate = lastUpdate + deltaTime
+end
+
+-- on render UI
+local function onUiDrawHud()
+    pickProp(true)
 end
 
 -- events and hooks
 Events:Subscribe('Client:UpdateInput', onClientUpdateInput)
+Events:Subscribe('UI:DrawHud', onUiDrawHud)

@@ -140,24 +140,20 @@ RandomPropsBlueprints =  {
 function isMeshWhitelisted(mesh)
     local meshName = mesh.name
     meshName = string.lower(meshName)
-    debugMessage('isMeshWhitelisted: ' .. meshName)
     local level = SharedUtils:GetLevelName()
 
     if level == nil then
-        debugMessage('Level not found. Skipping prop change.')
         return false
     end
 
     local PlayerPropsBlacklistedMeshes = PlayerPropsBlacklist[level]
 
     if PlayerPropsBlacklistedMeshes == nil then
-        debugMessage('No blacklisted found. Skipping prop change.')
         return false
     end
 
     for _, blacklistedMesh in pairs(PlayerPropsBlacklistedMeshes) do
         if string.find(meshName, blacklistedMesh) then
-            debugMessage('prop blacklisted. Skipping prop change.')
             return false
         end
     end

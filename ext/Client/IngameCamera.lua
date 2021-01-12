@@ -180,12 +180,10 @@ end
 
 -- ggets the position of what the camera is currently looking at
 function getCameraLookAtPos()
-    debugMessage('IngameCamera:getCameraLookAtPos')
     return cameraLookAtPos
 end
 
 function getCameraTransform()
-    debugMessage('IngameCamera:getCameraTransform')
     if not isActive or cameraEntityData == nil then
         return nil
     end
