@@ -320,7 +320,7 @@ local function spectateNextPlayer()
         local player = players[playerIndex]
         -- when player is not nil, got a soldier, is not local player and alive
         -- and player team id is localplayer team id (or player is spectator)
-        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive and (player.teamId == localPlayer.teamId or isSpectator(player)) then
+        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive and (player.teamId == localPlayer.teamId or isSpectator(localPlayer)) then
             nextPlayer = player
             break
         end
@@ -392,7 +392,7 @@ local function spectatePreviousPlayer()
         local player = players[playerIndex]
         -- when player is not nil, got a soldier, is not local player and alive
         -- and player team id is localplayer team id (or player is spectator)
-        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive and (player.teamId == localPlayer.teamId or isSpectator(player)) then
+        if player ~= nil and player.soldier ~= nil and player ~= localPlayer and player.alive and (player.teamId == localPlayer.teamId or isSpectator(localPlayer)) then
             nextPlayer = player
             break
         end
