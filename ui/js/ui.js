@@ -68,7 +68,7 @@ window.addEventListener("load", function(){
 			case 2:
 				gameTips.style.display = 'block';
 				hiderGameTips();
-				setInterval(hiderGameTips, 5000);
+				gameTipsInterval = setInterval(hiderGameTips, 5000);
 				break;
 			default:
 				gameTips.style.display = 'none';
