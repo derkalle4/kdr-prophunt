@@ -251,7 +251,13 @@ end
 
 -- on render UI
 local function onUiDrawHud()
-    pickProp(true)
+    -- get local player
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    -- only when player is prop
+    if isProp(localPlayer) then
+        -- draw box around prop
+        pickProp(true)
+    end
 end
 
 -- events and hooks
