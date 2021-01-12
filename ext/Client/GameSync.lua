@@ -124,7 +124,7 @@ local function inPostRoundState(info, localPlayer)
     WebUI:ExecuteJS('showHealthBar(false);')
     -- hide killfeed
     WebUI:ExecuteJS('showKillfeed(false);')
-    -- show ingame tips
+    -- hide ingame tips
     WebUI:ExecuteJS('showGameTips(0);')
 end
 

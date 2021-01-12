@@ -355,6 +355,7 @@ body {
 }
 
 #prophunt-gametips {
+  display: none;
   position: absolute;
   color: #fff;
   font-weight: bold;

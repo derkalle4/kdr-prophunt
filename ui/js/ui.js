@@ -34,7 +34,8 @@ window.addEventListener("load", function(){
 				'props can be destroyed - except for hider props',
 				'listen to the explosion and broken glass sounds to find hider',
 				'small hider props have little health',
-				'big hider props have lots of health'
+				'big hider props have lots of health',
+				'when one hider is left it may get a weapon'
 			];
 			gameTipsContent.innerHTML = items[Math.floor(Math.random() * items.length)];
 		}
@@ -52,7 +53,8 @@ window.addEventListener("load", function(){
 				'be aware of the falldamage! you can die!',
 				'big props do have a lot of health',
 				'small props do not have much health',
-				'the last prop alive may get a weapon to shoot all seekers'
+				'the last prop alive may get a weapon to shoot all seekers',
+				'use the scroll wheel to change the distance to your prop'
 			];
 			gameTipsContent.innerHTML = items[Math.floor(Math.random() * items.length)];
 		}
