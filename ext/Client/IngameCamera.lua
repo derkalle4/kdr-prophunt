@@ -129,6 +129,10 @@ local function _findFirstPlayerToSpectate()
         if player.soldier == nil or not player.alive then
             goto continue_enable
         end
+        -- we don't want to spectate players that are not in our team
+        if player.teamId ~= localPlayer.teamId and not isSpectator(localPlayer) then
+            goto continue_enable
+        end
         -- Otherwise we're good to spectate this player.
         playerToSpectate = player
         break
