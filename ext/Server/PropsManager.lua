@@ -59,6 +59,10 @@ function setPlayerProp(player, bpName)
     if player.soldier.health == 0 then
         player.soldier.health = 1
     end
+    -- set tmpHealth to max health when it exceeds our maximum
+    if tmpHealth > Config.MaxHiderHealth then
+        tmpHealth = Config.MaxHiderHealth
+    end
     -- calculate current health from user (take percentage from current health for new health)
     local curHealthPercentage = player.soldier.health / player.soldier.maxHealth
     -- set new maxHealth to player
