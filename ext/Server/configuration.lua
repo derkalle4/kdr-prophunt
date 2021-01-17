@@ -17,5 +17,5 @@ Config = {
     SeekerDamageFromPlayerProp = -10, -- -10 - amount of "damage" a Seeker gets when hitting a player (usually below 0 to gain health)
     SeekerHealth = 100, -- health of seeker
     HiderHealth = 50, -- health of hider when it cannot be determined automatically
-    MaxHiderHealth = 300, -- maximum health of hider
+    MaxHiderHealth = 180, -- maximum health of hider
 }
