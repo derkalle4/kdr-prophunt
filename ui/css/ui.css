@@ -183,6 +183,7 @@ body {
   font-weight: bold;
   text-align: justify;
 }
+
 #prophunt-welcomemessage h1:nth-child(1) {
   float:left;
 }
@@ -196,6 +197,10 @@ body {
 #prophunt-welcomemessage h3,
 #prophunt-welcomemessage strong {
   color: #ffabab;
+}
+
+#prophunt-welcomemessage p {
+  margin-top: 15px;
 }
 
 #prophunt-spectator-keys,
