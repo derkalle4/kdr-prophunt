@@ -145,8 +145,9 @@ local function pickProp(drawOnly)
         if mesh == nil then
             goto continue
         end
-        -- continue when mesh is not whitelisted
-        if not isMeshWhitelisted(mesh) then
+        -- continue when mesh is whitelisted
+        local whitelistedMeshData = isMeshWhitelisted(mesh.name)
+        if whitelistedMeshData == false then
             goto continue
         end
         -- get player mesh
@@ -228,7 +229,7 @@ local function onClientUpdateInput(deltaTime)
         -- debug message
         debugMessage('[Client:UpdateInput] for ' .. localPlayer.name .. ': has selected blueprint ' .. bpName)
         -- create prop
-        createPlayerProp(localPlayer, blueprint)
+        createPlayerProp(localPlayer, bpName)
         -- send to server
         NetEvents:Send(GameMessage.C2S_PROP_CHANGE, bpName)
     end

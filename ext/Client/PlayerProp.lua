@@ -3,7 +3,6 @@
 
 
 -- local variables
-local playerPropBps = {} -- player props blueprints
 local playerProps = {} -- player props blueprint names
 local soldierEntityInstanceId = nil  -- soldier entity instance
 local propInstanceIds = {} -- prop instances
@@ -13,70 +12,34 @@ local playersHit = {} -- whether a player got hit
 
 -- check whether we are hitting the player physics entity
 function isHittingPlayerPhysicsEntity(player, hit)
-        local bus = playerProps[player.id]
-        if bus == nil then
+        local props = playerProps[player.id]
+        if props == nil or props['playerbus'] == nil then
             return false
         end
-        for _, prop in pairs(bus.entities) do
+        -- check player bus entities
+        for _, prop in pairs(props['playerbus'].entities) do
             if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
                 return true
+            end
+        end
+        -- check for additional meshes
+        if props['additionalMeshes'] ~= nil then
+            -- remove all additional meshes entities
+            for _, meshdata in pairs(props['additionalMeshes']) do
+                for _, prop in pairs(meshdata['bus'].entities) do
+                    if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
+                        return true
+                    end
+                end
             end
         end
     return false
 end
 
--- create a player prop
-function createPlayerProp(player, bp)
-    debugMessage('createPlayerProp for ' .. player.name)
-    local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
-    -- skip when we are this prop already
-    if playerPropBps[player.id] == bp then
-        return
-    end
-    -- skip when bp is nil
-    if bp == nil then
-        return
-    end
-    -- delete  old prop
-    if playerProps[player.id] ~= nil then
-        playerProps[player.id].entities[1]:Destroy()
-        playerProps[player.id] = nil
-    end
-
-    -- create the new player prop
-    local bus = EntityManager:CreateEntitiesFromBlueprint(bp, player.soldier.transform)
-    -- check whether creation did work or not
-    if bus == nil or #bus.entities == 0 then
-        debugMessage('Failed to create prop entity for client.')
-        return
-    end
-
-    -- cast and initialize the entity
-    playerPropBps[player.id] = bp
-
-    if isLocalPlayer then
-        propInstanceIds = {}
-    end
-
-    playerProps[player.id] = bus
-    -- iterate through all entities
-    for _, entity in pairs(bus.entities) do
-        entity:Init(Realm.Realm_Client, true)
-
-        if entity:Is('ClientPhysicsEntity') then
-            if isLocalPlayer then
-                table.insert(propInstanceIds, PhysicsEntity(entity).physicsEntityBase.instanceId)
-            end
-
-            PhysicsEntity(entity):RegisterDamageCallback(player.id, function() return false end)
-        end
-    end
-end
-
 -- check if entity is player prop
 function isPlayerProp(otherEntity)
-    for _, bus in pairs(playerProps) do
-        for _, entity in pairs(bus.entities) do
+    for _, props in pairs(playerProps) do
+        for _, entity in pairs(props['playerbus'].entities) do
             if entity.instanceId == otherEntity.instanceId then
                 return true
             end
@@ -89,18 +52,125 @@ end
 local function removePlayerProp(playerID)
     debugMessage('removePlayerProp ' .. playerID)
     -- get local entry for player
-    local bus = playerProps[playerID]
+    local props = playerProps[playerID]
     -- when there is no entry for that player
-    if bus == nil then
+    if props == nil or props['playerbus'] == nil then
         return
     end
-
-    for _, entity in pairs(bus.entities) do
+    -- remove all playerbus entities
+    for _, entity in pairs(props['playerbus'].entities) do
         entity:Destroy()
     end
-
+    -- remove all additional meshes entities
+    for _, meshdata in pairs(props['additionalMeshes']) do
+        for _, entity in pairs(meshdata['bus'].entities) do
+            entity:Destroy()
+        end
+    end
     playerProps[playerID] = nil
-    playerPropBps[playerID] = nil
+end
+
+-- create entity from blueprint
+function createEntityFromBlueprint(transform, bpName)
+    -- load blueprint
+    local blueprint = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Game, bpName)
+    -- check whether blueprint exists
+    if blueprint == nil then
+        debugMessage('createEntityFromBlueprint blueprint ' .. bpName .. ' is nil')
+        return nil
+    end
+    -- create the new player prop
+    local bus = EntityManager:CreateEntitiesFromBlueprint(blueprint, transform)
+    -- check whether creation did work or not
+    if bus == nil or #bus.entities == 0 then
+        debugMessage('createEntityFromBlueprint: failed to create prop entity')
+        return nil
+    end
+    return bus
+end
+
+-- create a player prop
+function createPlayerProp(player, bpName)
+    debugMessage('createPlayerProp for ' .. player.name)
+    local isLocalPlayer = PlayerManager:GetLocalPlayer() == player
+    -- check whether player already has a prop
+    if playerProps[player.id] ~= nil then
+        -- skip when we are this prop already
+        if playerProps[player.id]['bpname'] == bpName then
+            return
+        end
+        -- remove old prop
+        removePlayerProp(player.id)
+    end
+    -- continue only when mesh is whitelisted
+    local whitelistedMeshData = isMeshWhitelisted(bpName)
+    if whitelistedMeshData == false then
+        return
+    end
+    -- create player bus entity
+    local trans = player.soldier.transform
+    if whitelistedMeshData['position'] ~= nil then
+        trans.trans = trans.trans + whitelistedMeshData['position']
+    end
+    local playerbus = createEntityFromBlueprint(trans, bpName)
+    -- check whether we got a playerbus
+    if playerbus == nil then
+        return
+    end
+    -- create additional props for the player when necessary
+    local additionalMeshes = {}
+    if whitelistedMeshData['additionalMeshes'] ~= nil then
+        for mesh, options in pairs(whitelistedMeshData['additionalMeshes']) do
+            debugMessage('found additional mesh ' .. mesh)
+            local trans = player.soldier.transform
+            if options['position'] ~= nil then
+                trans.trans = trans.trans + options['position']
+            end
+            local tmpBus = createEntityFromBlueprint(trans, mesh)
+            if tmpBus ~= nil then
+                debugMessage('add to list of meshes')
+                additionalMeshes[mesh] = {
+                    ['bus'] = tmpBus,
+                    ['options'] = options
+                }
+            end
+        end
+    end
+    -- reset prop instance IDs when local player
+    if isLocalPlayer then
+        propInstanceIds = {}
+    end
+    -- create playerprop array
+    playerProps[player.id] = {
+        ['options'] = whitelistedMeshData,
+        ['bpname'] = bpName,
+        ['playerbus'] = playerbus,
+        ['additionalMeshes'] = additionalMeshes
+    }
+    -- create temporary table with all bus entities (playerbus and additional meshes)
+    local tmpBus = {playerbus}
+    for _, mesh in pairs(additionalMeshes) do
+        table.insert(tmpBus, mesh['bus'])
+    end
+    -- iterate through all available entities
+    for _, bus in pairs(tmpBus) do
+        for _, entity in pairs(bus.entities) do
+            -- init entity
+            entity:Init(Realm.Realm_Client, true)
+            -- check whether entity is a physics entity
+            if entity:Is('ClientPhysicsEntity') then
+                -- when it is the local player add the instance ID to our instance IDs (for player damage)
+                if isLocalPlayer then
+                    local tmpPhysicsEntity = PhysicsEntity(entity)
+                    if tmpPhysicsEntity ~= nil and tmpPhysicsEntity.physicsEntityBase ~= nil then
+                        table.insert(propInstanceIds, tmpPhysicsEntity.physicsEntityBase.instanceId)
+                    end
+                end
+                -- disable damage callback for entity (aka no [visible] damage at all)
+                PhysicsEntity(entity):RegisterDamageCallback(player.id, function() return false end)
+            end
+        end
+    end
 end
 
 -- player change prop
@@ -113,15 +183,8 @@ function changePlayerProp(playerID, bpName)
         debugMessage('changePlayerProp player or soldier nil')
         return
     end
-    -- load blueprint
-    local blueprint = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Game, bpName)
-    -- check whether blueprint exists
-    if blueprint == nil then
-        debugMessage('changePlayerProp blueprint ' .. bpName .. ' is nil')
-        return
-    end
     -- create player prop
-    createPlayerProp(player, blueprint)
+    createPlayerProp(player, bpName)
 end
 
 -- on engine update -> make props follow player
@@ -129,7 +192,7 @@ local function onEngineUpdate(delta, simDelta)
     -- reset player hit
     playersHit = {}
     -- iterate through all player props
-    for id, bus in pairs(playerProps) do
+    for id, props in pairs(playerProps) do
         -- get player entity
         local player = PlayerManager:GetPlayerById(id)
         -- check for nil values
@@ -137,16 +200,33 @@ local function onEngineUpdate(delta, simDelta)
             goto continue
         end
         -- get spatial entity
-        local entity = SpatialEntity(bus.entities[1])
+        local entity = SpatialEntity(props['playerbus'].entities[1])
         -- when entity is nil disable prop for user
         if entity == nil then
             removePlayerProp(id)
             goto continue
         end
         -- entity must follow player soldier entity
-        entity.transform = player.soldier.transform
+        local trans = player.soldier.transform
+        if props['options'] ~= nil and props['options']['position'] ~= nil then
+            trans.trans = trans.trans + props['options']['position']
+        end
+        entity.transform = trans
         entity:FireEvent('Disable')
         entity:FireEvent('Enable')
+
+        -- additional meshes must follow player soldier entity
+        for _, meshdata in pairs(props['additionalMeshes']) do
+            -- get spatial entity
+            local entity = SpatialEntity(meshdata['bus'].entities[1])
+            local trans = player.soldier.transform
+            if meshdata['options'] ~= nil and meshdata['options']['position'] ~= nil then
+                trans.trans = trans.trans + meshdata['options']['position']
+            end
+            entity.transform = trans
+            entity:FireEvent('Disable')
+            entity:FireEvent('Enable')
+        end
 
         ::continue::
     end
@@ -179,15 +259,30 @@ end
 local function cleanupRound()
     debugMessage('cleanupRound')
     WebUI:ExecuteJS('setUserTeam(0);')
-    for _, prop in pairs(playerProps) do
-        for _, entity in pairs(prop.entities) do
-            entity:Destroy()
+    if playerProps ~= nil then
+        for _, props in pairs(playerProps) do
+            if props ~= nil then
+                -- when we got a player prop delete all entities
+                if props['playerbus'] ~= nil then
+                    for _, entity in pairs(props.entities) do
+                        entity:Destroy()
+                    end
+                end
+                -- when we got additional meshes delete all entities
+                if props['additionalMeshes'] ~= nil then
+                    -- remove all additional meshes entities
+                    for _, meshdata in pairs(props['additionalMeshes']) do
+                        for _, entity in pairs(meshdata['bus'].entities) do
+                            entity:Destroy()
+                        end
+                    end
+                end
+            end
         end
     end
     -- disable ingame camera
     disableIngameCamera()
     playerProps = {}
-    playerPropBps = {}
     soldierEntityInstanceId = nil
     propInstanceIds = {}
     bloodFx = nil
@@ -292,12 +387,14 @@ local function onBulletEntityCollision(hook, entity, hit, shooter)
         return
     end
 
-    for playerId, bus in pairs(playerProps) do
+    for playerId, props in pairs(playerProps) do
         if playerId ~= localPlayer.id then
-            for _, prop in pairs(bus.entities) do
-                if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
-                    doPropDamage(playerId, hit.position)
-                    return
+            if props ~= nil or props['playerbus'] ~= nil then
+                for _, prop in pairs(props['playerbus'].entities) do
+                    if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
+                        doPropDamage(playerId, hit.position)
+                        return
+                    end
                 end
             end
         end
