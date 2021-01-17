@@ -2,6 +2,7 @@ body {
   display: none;
 	background-color: transparent;
   font-family: "bffont";
+  overflow: hidden;
 }
 
 @font-face {
