@@ -9,6 +9,23 @@ This mod has still some small parts that are based on [OrfeasZ prop-hunt](https:
 
 Just copy all the kdr-prophunt to the Mods folder and add the mod name to the servers mod list and check on the configuration.lua on the server side folder. Join our [Discord](https://discord.kandru.net) for help.
 
+Recommended server settings:
+```
+vars.maxPlayers 64
+vars.vehicleSpawnAllowed false
+vars.regenerateHealth false
+vars.idleBanRounds 0
+vars.friendlyFire false
+vars.idleTimeout 600
+vars.autoBalance false
+vars.killCam false
+vars.miniMap false
+vars.3dSpotting false
+vars.miniMapSpotting false
+vars.3pCam false
+vars.playerManDownTime 0
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Join our [Discord](https://discord.kandru.net) to discuss new contributions with us.
 
