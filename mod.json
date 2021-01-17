@@ -3,7 +3,7 @@
 	"Authors": [ "Kalle", "NoFaTe" ],
 	"URL": "https://kandru.net",
 	"Description": "Customized Prophunt (some parts still based on NoFates implementation)",
-	"Version": "0.0.1",
+	"Version": "0.0.3",
 	"HasVeniceEXT": true,
 	"HasWebUI": true,
 	"RequiredXPacks": [ 2 ],

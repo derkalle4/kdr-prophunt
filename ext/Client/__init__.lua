@@ -20,7 +20,7 @@ require('GameUi')
 require('NameTags')
 require('SoundManager')
 
-ModVersion = 'v0.0.1' -- mod version as long as one could not read it from the mod.json itself (will be displayed in the UI)
+ModVersion = 'v0.0.3' -- mod version as long as one could not read it from the mod.json itself (will be displayed in the UI)
 
 -- make player ready
 local function playerReady()
