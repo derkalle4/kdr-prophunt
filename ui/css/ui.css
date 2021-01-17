@@ -341,8 +341,8 @@ body {
 #prophunt-spectator-message {
   display: none;
   position: absolute;
-  left:30px;
-  bottom:15px;
+  left:170px;
+  bottom:25px;
   width: 250px;
   height: 70px;
   border-radius: 15px;
