@@ -20,12 +20,16 @@ require('GameUi')
 require('NameTags')
 require('SoundManager')
 
+ModVersion = 'v0.0.1' -- mod version as long as one could not read it from the mod.json itself (will be displayed in the UI)
+
 -- make player ready
 local function playerReady()
     debugMessage('player is ready!')
     NetEvents:SendLocal(GameMessage.C2S_CLIENT_READY)
     -- start web UI
     WebUI:Init()
+    -- set mod version
+    WebUI:ExecuteJS('setModVersion("' .. ModVersion .. '");')
 end
 
 -- when engine wrote a message

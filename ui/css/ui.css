@@ -53,6 +53,20 @@ body {
   background-color: rgb(133, 234, 105, 0.5) !important;
 }
 
+#prophunt-logo {
+  position: absolute;
+  left:10px;
+  bottom: 10px;
+  width: 128px;
+  height: 96px;
+  background-image:url(../img/logo_512px.png);
+  background-size:100% 100%;
+  opacity: 0.3;
+  text-align: center;
+  line-height: 45px;
+  font-weight: bold;
+}
+
 #prophunt-roundinfo {
 	position: absolute;
 	left:0;

@@ -92,6 +92,11 @@ window.addEventListener("load", function(){
 		playerAmmo.innerHTML = ammo;
 	};
 
+	window.setModVersion = (text) => {
+		let modVersion = document.getElementById('prophunt-logo');
+		modVersion.innerHTML = text;
+	};
+
 	window.setUserMessage = (msg) => {
 		let userMessage = document.getElementById('prophunt-usermessage');
 		let userMessageText = document.getElementById('prophunt-usermessage-text');
