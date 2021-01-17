@@ -203,7 +203,7 @@ window.addEventListener("load", function(){
 	};
 
 	// add element to killfeed
-	window.addToKillfeed = (name, team, type) => {
+	window.addToKillfeed = (name, team, type, data = null) => {
 		let killfeed = document.getElementById('prophunt-killfeed');
 		let killfeedList = document.getElementById('prophunt-killfeed-list');
 		// do nothing when killfeed is not visible
@@ -234,7 +234,11 @@ window.addEventListener("load", function(){
 				text = name + ' left';
 				break;
 			case 'whistle':
-				text = name + ' whistled';
+				if(data != null && parseInt(data) > 0) {
+					text = name + ' whistled (' + data + 'm)';
+				}else{
+					text = name + ' whistled';
+				}
 				bgcolor = 'bgcolor-50-orange';
 				break;
 		}

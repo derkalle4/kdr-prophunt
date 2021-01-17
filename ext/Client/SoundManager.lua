@@ -128,8 +128,13 @@ local function onSoundSync(playerID, sound)
     if player == localPlayer then
         playername = 'You'
     end
+    -- get distance to player
+    local playerDistance = 0
+    if localPlayer.soldier ~= nil then
+        playerDistance = math.floor(player.soldier.transform.trans:Distance(player.soldier.transform.trans))
+    end
     -- add to killfeed
-    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "whistle");')
+    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "whistle", ' .. playerDistance .. ');')
     -- spawn sound
     spawnSound(player, sound)
 end
