@@ -26,8 +26,6 @@ local function playerReady()
     NetEvents:SendLocal(GameMessage.C2S_CLIENT_READY)
     -- start web UI
     WebUI:Init()
-    -- show welcome message
-    WebUI:ExecuteJS('showWelcomeMessage(true);')
 end
 
 -- when engine wrote a message
