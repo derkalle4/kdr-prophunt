@@ -234,7 +234,7 @@ window.addEventListener("load", function(){
 				text = name + ' left';
 				break;
 			case 'whistle':
-				if(data != null && parseInt(data) > 0) {
+				if(data != null && data != 'null') {
 					text = name + ' whistled (' + data + 'm)';
 				}else{
 					text = name + ' whistled';

@@ -131,10 +131,14 @@ local function onSoundSync(playerID, sound)
     -- get distance to player
     local playerDistance = 0
     if localPlayer.soldier ~= nil then
-        playerDistance = math.floor(player.soldier.transform.trans:Distance(player.soldier.transform.trans))
+        playerDistance = math.floor(localPlayer.soldier.transform.trans:Distance(player.soldier.transform.trans))
+    end
+    -- do not show distance of whistle when prop is near
+    if playerDistance >= 0 and playerDistance <= 5 then
+        playerDistance = '~5'
     end
     -- add to killfeed
-    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "whistle", ' .. playerDistance .. ');')
+    WebUI:ExecuteJS('addToKillfeed("' .. playername .. '", ' .. player.teamId .. ', "whistle", "' .. playerDistance .. '");')
     -- spawn sound
     spawnSound(player, sound)
 end
