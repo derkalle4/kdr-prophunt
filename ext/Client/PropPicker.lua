@@ -106,6 +106,10 @@ local function pickProp(drawOnly)
     end
     -- prepare raycast data
     local cameraLookAtPos = getCameraLookAtPos()
+    -- check whether camera look at pos is available
+    if cameraLookAtPos == nil then
+        return
+    end
     local raycastTarget = cameraLookAtPos - cameraTransform.forward * maxDistance
     -- get entities
     local raycastEntities = RaycastManager:SpatialRaycast(cameraLookAtPos, raycastTarget, SpatialQueryFlags.AllGrids)
