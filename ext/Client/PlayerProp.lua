@@ -264,7 +264,7 @@ local function cleanupRound()
             if props ~= nil then
                 -- when we got a player prop delete all entities
                 if props['playerbus'] ~= nil then
-                    for _, entity in pairs(props.entities) do
+                    for _, entity in pairs(props['playerbus'].entities) do
                         entity:Destroy()
                     end
                 end
