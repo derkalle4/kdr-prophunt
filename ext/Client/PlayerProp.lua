@@ -389,11 +389,25 @@ local function onBulletEntityCollision(hook, entity, hit, shooter)
 
     for playerId, props in pairs(playerProps) do
         if playerId ~= localPlayer.id then
-            if props ~= nil or props['playerbus'] ~= nil then
-                for _, prop in pairs(props['playerbus'].entities) do
-                    if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
-                        doPropDamage(playerId, hit.position)
-                        return
+            if props ~= nil then
+                if props['playerbus'] ~= nil then
+                    for _, prop in pairs(props['playerbus'].entities) do
+                        if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
+                            doPropDamage(playerId, hit.position)
+                            return
+                        end
+                    end
+                    -- when we got additional meshes delete all entities
+                    if props['additionalMeshes'] ~= nil then
+                        -- remove all additional meshes entities
+                        for _, meshdata in pairs(props['additionalMeshes']) do
+                            for _, prop in pairs(meshdata['bus'].entities) do
+                                if prop:Is('ClientPhysicsEntity') and PhysicsEntity(prop).physicsEntityBase.instanceId == hit.rigidBody.instanceId then
+                                    doPropDamage(playerId, hit.position)
+                                    return
+                                end
+                            end
+                        end
                     end
                 end
             end
