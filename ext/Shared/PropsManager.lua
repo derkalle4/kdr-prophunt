@@ -71,7 +71,6 @@ PlayerPropsWhitelist = {
         ['XP2/Objects/ConferenceTable_02/ConferenceTable_02'] = {['name'] = 'Conference Table'},
         -- bathroom
         ['XP2/Objects/BathroomZinkDouble_01/BathroomZinkDouble_01'] = {['name'] = 'Bath double sink'},
-        ['XP2/Objects/Toilet_01/Toilet_01'] = {['name'] = 'Toilet'},
         ['XP2/Objects/Toilet_02/Toilet_02'] = {['name'] = 'Toilet'},
         -- bedroom
         ['XP2/Objects/LuxuryBed_02/Luxury_Bed_02'] = {['name'] = 'Luxury Bed'},
